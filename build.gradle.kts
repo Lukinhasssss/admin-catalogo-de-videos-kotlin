@@ -1,11 +1,14 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    jacoco
+    id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
 group = "com.lukinhasssss.admin.catalogo"
@@ -17,40 +20,45 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
 }
 
+// START OF DETEKT CONFIGURATION
 detekt {
-    toolVersion = "1.21.0"
+    toolVersion = "1.22.0-RC2"
     config = files("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+tasks.withType<Detekt>().configureEach {
     reports {
-        html.required.set(true)
         xml.required.set(true)
-        sarif.required.set(false)
+        html.required.set(true)
         txt.required.set(false)
+        sarif.required.set(false)
+        md.required.set(false)
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)
+val reportMerge by tasks.registering(ReportMergeTask::class) {
+    output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml")) // or "reports/detekt/merge.sarif"
+    // output.set(rootProject.buildDir.resolve("reports/detekt/merge.html"))
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+subprojects {
+    plugins.withType(DetektPlugin::class) {
+        tasks.withType(Detekt::class) detekt@{
+            finalizedBy(reportMerge)
+
+            reportMerge.configure {
+                input.from(this@detekt.xmlReportFile) // or .sarifReportFile
+                // input.from(this@detekt.htmlReportFile)
+            }
+        }
+    }
 }
+// END OF DETEKT CONFIGURATION
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-apply(from = "${project.rootDir}/sonar.gradle.kts")
-
+// START OF SONAR MULTI-MODULE CONFIGURATION
 sonarqube {
     properties {
         property("sonar.projectKey", "")
@@ -69,40 +77,33 @@ subprojects {
         }
     }
 }
+// END OF SONAR MULTI-MODULE CONFIGURATION
 
-// tasks.jacocoTestReport {
-//     subprojects {
-//         val project = this
-//         project.plugins.withType(JacocoPlugin::class).configureEach {
-//             project.tasks.matching { it.name == JacocoTaskExtension::class.qualifiedName }.configureEach {
-//                 val testTask = this
-//
-//                 if (testTask.extensions.getByType(JacocoTaskExtension::class).isEnabled) {
-//                     sourceSets(project.sourceSets.main.get())
-//                     executionData(testTask)
-//                 } else {
-//                     logger.warn("Jacoco extension is disabled for test task '${testTask.name}' in project '${project.name}'. this test task will be excluded from jacoco report.")
-//                 }
-//             }
-//         }
-//     }
-// }
+// START OF JACOCO MULTI-PROJECT CONFIGURATION
+tasks.register<JacocoReport>("codeCoverageReport") {
+    subprojects {
+        this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
+            this@subprojects.tasks.matching {
+                it.extensions.findByType<JacocoTaskExtension>() != null
+            }.configureEach {
+                sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
+                executionData(this)
+            }
+        }
+    }
 
-// tasks.register("codeCoverageReport", JacocoReport::class) {
-//     subprojects {
-//         val project = this
-//         logger.warn(project.name)
-//         project.plugins.withType(JacocoPlugin::class).configureEach {
-//             project.tasks.matching { logger.warn(it.name); it.name == JacocoTaskExtension::class.qualifiedName }.configureEach {
-//                 val testTask = this
-//
-//                 if (testTask.extensions.getByType(JacocoTaskExtension::class).isEnabled) {
-//                     sourceSets(project.sourceSets.main.get())
-//                     executionData(testTask)
-//                 } else {
-//                     logger.warn("Jacoco extension is disabled for test task '${testTask.name}' in project '${project.name}'. this test task will be excluded from jacoco report.")
-//                 }
-//             }
-//         }
-//     }
-// }
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+// END OF JACOCO MULTI-PROJECT CONFIGURATION
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.named("codeCoverageReport"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
