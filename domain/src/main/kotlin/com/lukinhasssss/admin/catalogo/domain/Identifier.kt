@@ -1,5 +1,4 @@
 package com.lukinhasssss.admin.catalogo.domain
 
-class Category {
-    val id: String = ""
+abstract class Identifier : ValueObject() {
 }

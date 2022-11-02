@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    id("jacoco")
+    jacoco
     id("org.sonarqube") version "3.4.0.2513"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     id("io.gitlab.arturbosch.detekt") version "1.21.0"
@@ -38,6 +38,11 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
 
 tasks.withType<KotlinCompile> {
@@ -64,3 +69,40 @@ subprojects {
         }
     }
 }
+
+// tasks.jacocoTestReport {
+//     subprojects {
+//         val project = this
+//         project.plugins.withType(JacocoPlugin::class).configureEach {
+//             project.tasks.matching { it.name == JacocoTaskExtension::class.qualifiedName }.configureEach {
+//                 val testTask = this
+//
+//                 if (testTask.extensions.getByType(JacocoTaskExtension::class).isEnabled) {
+//                     sourceSets(project.sourceSets.main.get())
+//                     executionData(testTask)
+//                 } else {
+//                     logger.warn("Jacoco extension is disabled for test task '${testTask.name}' in project '${project.name}'. this test task will be excluded from jacoco report.")
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// tasks.register("codeCoverageReport", JacocoReport::class) {
+//     subprojects {
+//         val project = this
+//         logger.warn(project.name)
+//         project.plugins.withType(JacocoPlugin::class).configureEach {
+//             project.tasks.matching { logger.warn(it.name); it.name == JacocoTaskExtension::class.qualifiedName }.configureEach {
+//                 val testTask = this
+//
+//                 if (testTask.extensions.getByType(JacocoTaskExtension::class).isEnabled) {
+//                     sourceSets(project.sourceSets.main.get())
+//                     executionData(testTask)
+//                 } else {
+//                     logger.warn("Jacoco extension is disabled for test task '${testTask.name}' in project '${project.name}'. this test task will be excluded from jacoco report.")
+//                 }
+//             }
+//         }
+//     }
+// }
