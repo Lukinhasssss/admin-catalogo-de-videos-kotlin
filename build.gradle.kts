@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
@@ -22,7 +22,7 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-// START OF DETEKT CONFIGURATION
+// START OF DETEKT AND KTLINT CONFIGURATION
 detekt {
     toolVersion = "1.22.0-RC2"
     config = files("config/detekt/detekt.yml")
@@ -45,6 +45,8 @@ val reportMerge by tasks.registering(ReportMergeTask::class) {
 }
 
 subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
     plugins.withType(DetektPlugin::class) {
         tasks.withType(Detekt::class) detekt@{
             finalizedBy(reportMerge)
@@ -56,7 +58,7 @@ subprojects {
         }
     }
 }
-// END OF DETEKT CONFIGURATION
+// END OF DETEKT AND KTLINT CONFIGURATION
 
 // START OF SONAR MULTI-MODULE CONFIGURATION
 sonarqube {
@@ -105,5 +107,6 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+    kotlinOptions.javaParameters = true
 }

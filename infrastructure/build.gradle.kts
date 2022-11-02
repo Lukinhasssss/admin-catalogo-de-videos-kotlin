@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
@@ -27,5 +27,6 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+    kotlinOptions.javaParameters = true
 }
