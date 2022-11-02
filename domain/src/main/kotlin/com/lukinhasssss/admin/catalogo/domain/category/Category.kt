@@ -4,7 +4,7 @@ import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
 import java.time.Instant
 
 class Category(
-    val id: CategoryID,
+    override val id: CategoryID,
     val name: String,
     val description: String,
     val isActive: Boolean,
