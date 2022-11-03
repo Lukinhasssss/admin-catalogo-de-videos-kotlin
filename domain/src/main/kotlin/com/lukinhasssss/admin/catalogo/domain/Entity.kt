@@ -1,5 +1,10 @@
 package com.lukinhasssss.admin.catalogo.domain
 
-open class Entity<ID : Identifier>(
+import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
+
+abstract class Entity<ID : Identifier>(
     open val id: ID
-)
+) {
+
+    abstract fun validate(handler: ValidationHandler)
+}

@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.domain.category
 
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
+import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import java.time.Instant
 
 class Category(
@@ -28,5 +29,9 @@ class Category(
                 deletedAt = null
             )
         }
+    }
+
+    override fun validate(handler: ValidationHandler) {
+        CategoryValidator(category = this, handler = handler).validate()
     }
 }

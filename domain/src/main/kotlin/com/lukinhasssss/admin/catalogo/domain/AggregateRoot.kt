@@ -1,3 +1,3 @@
 package com.lukinhasssss.admin.catalogo.domain
 
-open class AggregateRoot<ID : Identifier>(id: ID) : Entity<ID>(id)
+abstract class AggregateRoot<ID : Identifier>(id: ID) : Entity<ID>(id)
