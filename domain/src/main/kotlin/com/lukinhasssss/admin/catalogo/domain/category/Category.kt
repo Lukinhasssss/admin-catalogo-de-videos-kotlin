@@ -34,4 +34,28 @@ class Category(
     override fun validate(handler: ValidationHandler) {
         CategoryValidator(category = this, validationHandler = handler).validate()
     }
+
+    fun activate(): Category {
+        return Category(
+            id = id,
+            name = name,
+            description = description,
+            isActive = true,
+            createdAt = createdAt,
+            updatedAt = Instant.now(),
+            deletedAt = null
+        )
+    }
+
+    fun deactivate(): Category {
+        return Category(
+            id = id,
+            name = name,
+            description = description,
+            isActive = false,
+            createdAt = createdAt,
+            updatedAt = Instant.now(),
+            deletedAt = deletedAt ?: Instant.now()
+        )
+    }
 }
