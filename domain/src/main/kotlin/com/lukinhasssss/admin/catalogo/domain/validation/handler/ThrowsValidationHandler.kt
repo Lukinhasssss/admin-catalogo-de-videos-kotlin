@@ -7,7 +7,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 class ThrowsValidationHandler : ValidationHandler {
 
     override fun append(anError: Error): ValidationHandler {
-        throw DomainException.with(listOf(anError))
+        throw DomainException.with(anError)
     }
 
     override fun append(anHandler: ValidationHandler): ValidationHandler {
