@@ -39,9 +39,9 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-val reportMerge by tasks.registering(ReportMergeTask::class) {
-    output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml")) // or "reports/detekt/merge.sarif"
-    // output.set(rootProject.buildDir.resolve("reports/detekt/merge.html"))
+val detektReportMerge by tasks.registering(ReportMergeTask::class) {
+    output.set(rootProject.buildDir.resolve("reports/detekt/detekt-report.xml")) // or "reports/detekt/detekt-report.sarif"
+    output.set(rootProject.buildDir.resolve("reports/detekt/detekt-report.html"))
 }
 
 subprojects {
@@ -49,11 +49,11 @@ subprojects {
 
     plugins.withType(DetektPlugin::class) {
         tasks.withType(Detekt::class) detekt@{
-            finalizedBy(reportMerge)
+            finalizedBy(detektReportMerge)
 
-            reportMerge.configure {
+            detektReportMerge.configure {
                 input.from(this@detekt.xmlReportFile) // or .sarifReportFile
-                // input.from(this@detekt.htmlReportFile)
+                input.from(this@detekt.htmlReportFile)
             }
         }
     }
