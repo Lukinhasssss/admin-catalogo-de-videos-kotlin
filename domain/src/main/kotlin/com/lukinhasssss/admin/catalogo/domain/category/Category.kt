@@ -26,12 +26,12 @@ class Category(
                 isActive = isActive,
                 createdAt = now,
                 updatedAt = now,
-                deletedAt = null
+                deletedAt = if (isActive) null else now
             )
         }
     }
 
     override fun validate(handler: ValidationHandler) {
-        CategoryValidator(category = this, handler = handler).validate()
+        CategoryValidator(category = this, validationHandler = handler).validate()
     }
 }

@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.domain.validation
 
 abstract class Validator(
-    val handler: ValidationHandler
+    val validationHandler: ValidationHandler
 ) {
     abstract fun validate()
 }
