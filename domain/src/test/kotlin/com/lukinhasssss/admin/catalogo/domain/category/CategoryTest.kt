@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class CategoryTest {
 
@@ -144,6 +146,62 @@ class CategoryTest {
             assertNotNull(createdAt)
             assertNotNull(updatedAt)
             assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidActiveCategory_whenCallDeactivate_thenReturnCategoryInactivated() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = false
+
+        val aCategory = Category.newCategory(
+            aName = expectedName, aDescription = expectedDescription, isActive = true
+        )
+
+        assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
+
+        assertTrue(aCategory.isActive)
+        assertNull(aCategory.deletedAt)
+
+        val actualCategory = aCategory.deactivate()
+
+        with(actualCategory) {
+            assertEquals(aCategory.id, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(updatedAt.isAfter(aCategory.updatedAt))
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidInactiveCategory_whenCallActivate_thenReturnCategoryActivated() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val aCategory = Category.newCategory(
+            aName = expectedName, aDescription = expectedDescription, isActive = false
+        )
+
+        assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
+
+        assertFalse(aCategory.isActive)
+        assertNotNull(aCategory.deletedAt)
+
+        val actualCategory = aCategory.activate()
+
+        with(actualCategory) {
+            assertEquals(aCategory.id, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(updatedAt.isAfter(aCategory.updatedAt))
+            assertNull(deletedAt)
         }
     }
 }
