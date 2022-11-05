@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":domain"))
 
     testImplementation(kotlin("test"))
+    testImplementation("io.mockk:mockk:1.13.2")
 }
 
 tasks.test {
