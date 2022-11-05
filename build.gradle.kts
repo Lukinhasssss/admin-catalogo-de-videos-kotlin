@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.7.20"
     id("jacoco")
-    id("org.sonarqube") version "3.4.0.2513"
+    id("org.sonarqube") version "3.5.0.2730"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
@@ -63,8 +63,8 @@ subprojects {
 // START OF SONAR MULTI-MODULE CONFIGURATION
 sonarqube {
     properties {
-        property("sonar.projectKey", "")
-        property("sonar.projectName", "")
+        property("sonar.projectKey", "Lukinhasssss_admin-catalogo-de-videos-kotlin")
+        property("sonar.projectName", "admin-catalogo-de-videos-kotlin")
         property("sonar.organization", "lukinhasssss")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPaths", "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
