@@ -107,9 +107,9 @@ tasks.register<JacocoReport>("codeCoverageReport") {
 }
 // END OF JACOCO MULTI-PROJECT CONFIGURATION
 
-tasks.test {
+tasks.withType<Test> {
     useJUnitPlatform()
-    finalizedBy(tasks.named("codeCoverageReport"))
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.withType<KotlinCompile> {
