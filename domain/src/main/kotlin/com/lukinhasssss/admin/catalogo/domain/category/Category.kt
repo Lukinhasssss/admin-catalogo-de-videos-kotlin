@@ -58,4 +58,16 @@ class Category(
             deletedAt = deletedAt ?: Instant.now()
         )
     }
+
+    fun update(aName: String, aDescription: String, isActive: Boolean): Category {
+        return Category(
+            id = id,
+            name = aName,
+            description = aDescription,
+            isActive = if (isActive) activate().isActive else deactivate().isActive,
+            createdAt = createdAt,
+            updatedAt = Instant.now(),
+            deletedAt = if (isActive) activate().deletedAt else deactivate().deletedAt
+        )
+    }
 }
