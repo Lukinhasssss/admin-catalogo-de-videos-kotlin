@@ -2,8 +2,8 @@ package com.lukinhasssss.admin.catalogo.domain.exception
 
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 
-class DomainException(
-    message: String?,
+data class DomainException(
+    override val message: String?,
     val errors: List<Error>
 ) : NoStacktraceException(message) {
 
