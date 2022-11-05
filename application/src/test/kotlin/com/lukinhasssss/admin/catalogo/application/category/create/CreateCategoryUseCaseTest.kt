@@ -1,0 +1,151 @@
+package com.lukinhasssss.admin.catalogo.application.category.create
+
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
+import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+
+@ExtendWith(MockKExtension::class)
+class CreateCategoryUseCaseTest {
+
+    @InjectMockKs
+    lateinit var useCase: DefaultCreateCategoryUseCase
+
+    @MockK
+    lateinit var categoryGateway: CategoryGateway
+
+    @Test
+    fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val aCommand = CreateCategoryCommand.with(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        every { categoryGateway.create(any()) } answers { firstArg() }
+
+        val actualOutput = useCase.execute(aCommand)
+
+        with(actualOutput) {
+            assertNotNull(this)
+            assertNotNull(id)
+        }
+
+        verify(exactly = 1) {
+            categoryGateway.create(
+                withArg {
+                    assertNotNull(it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedDescription, it.description)
+                    assertEquals(expectedIsActive, it.isActive)
+                    assertNotNull(it.createdAt)
+                    assertNotNull(it.updatedAt)
+                    assertNull(it.deletedAt)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidName_whenCallsCreateCategory_shouldReturnDomainException() {
+        val expectedName = "     "
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "'name' should not be empty"
+
+        val aCommand = CreateCategoryCommand.with(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        val actualException = assertThrows<DomainException> { useCase.execute(aCommand) }
+
+        assertEquals(expectedErrorMessage, actualException.message)
+
+        verify(exactly = 0) { categoryGateway.create(any()) }
+    }
+
+    @Test
+    fun givenAValidCommandWithInactiveCategory_whenCallsCreateCategory_shouldReturnInactiveCategoryId() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = false
+
+        val aCommand = CreateCategoryCommand.with(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        every { categoryGateway.create(any()) } answers { firstArg() }
+
+        val actualOutput = useCase.execute(aCommand)
+
+        with(actualOutput) {
+            assertNotNull(this)
+            assertNotNull(id)
+        }
+
+        verify(exactly = 1) {
+            categoryGateway.create(
+                withArg {
+                    assertNotNull(it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedDescription, it.description)
+                    assertEquals(expectedIsActive, it.isActive)
+                    assertNotNull(it.createdAt)
+                    assertNotNull(it.updatedAt)
+                    assertNotNull(it.deletedAt)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAValidCommand_whenGatewayThrowsRandomException_shouldReturnAnException() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "Gateway error"
+
+        val aCommand = CreateCategoryCommand.with(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        every { categoryGateway.create(any()) } throws(IllegalStateException(expectedErrorMessage))
+
+        val actualException = assertThrows<IllegalStateException> { useCase.execute(aCommand) }
+
+        assertEquals(expectedErrorMessage, actualException.message)
+
+        verify(exactly = 1) {
+            categoryGateway.create(
+                withArg {
+                    assertNotNull(it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedDescription, it.description)
+                    assertEquals(expectedIsActive, it.isActive)
+                    assertNotNull(it.createdAt)
+                    assertNotNull(it.updatedAt)
+                    assertNull(it.deletedAt)
+                }
+            )
+        }
+    }
+}
