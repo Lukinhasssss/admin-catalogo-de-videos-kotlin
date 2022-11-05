@@ -1,11 +1,14 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
     id("jacoco")
-    id("org.sonarqube") version "3.4.0.2513"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    id("org.sonarqube") version "3.5.0.2730"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
 group = "com.lukinhasssss.admin.catalogo"
@@ -17,50 +20,99 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
 }
 
+// START OF DETEKT AND KTLINT CONFIGURATION
 detekt {
-    toolVersion = "1.21.0"
+    toolVersion = "1.22.0-RC2"
     config = files("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+tasks.withType<Detekt>().configureEach {
     reports {
-        html.required.set(true)
         xml.required.set(true)
-        sarif.required.set(false)
+        html.required.set(true)
         txt.required.set(false)
+        sarif.required.set(false)
+        md.required.set(false)
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
+val detektReportMerge by tasks.registering(ReportMergeTask::class) {
+    output.set(rootProject.buildDir.resolve("reports/detekt/detekt-report.xml")) // or "reports/detekt/detekt-report.sarif"
+    output.set(rootProject.buildDir.resolve("reports/detekt/detekt-report.html"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    plugins.withType(DetektPlugin::class) {
+        tasks.withType(Detekt::class) detekt@{
+            finalizedBy(detektReportMerge)
+
+            detektReportMerge.configure {
+                input.from(this@detekt.xmlReportFile) // or .sarifReportFile
+                input.from(this@detekt.htmlReportFile)
+            }
+        }
+    }
 }
+// END OF DETEKT AND KTLINT CONFIGURATION
 
-apply(from = "${project.rootDir}/sonar.gradle.kts")
-
-sonarqube {
+// START OF SONAR MULTI-MODULE CONFIGURATION
+sonar {
     properties {
-        property("sonar.projectKey", "")
-        property("sonar.projectName", "")
+        property("sonar.projectKey", "Lukinhasssss_admin-catalogo-de-videos-kotlin")
+        property("sonar.projectName", "admin-catalogo-de-videos-kotlin")
         property("sonar.organization", "lukinhasssss")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        )
         property("sonar.exclusions", "build/generated/**/*")
     }
 }
 
 subprojects {
-    sonarqube {
+    sonar {
         properties {
-            property("sonar.coverage.jacoco.xmlReportPaths", "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+            )
         }
     }
+}
+// END OF SONAR MULTI-MODULE CONFIGURATION
+
+// START OF JACOCO MULTI-PROJECT CONFIGURATION
+tasks.register<JacocoReport>("codeCoverageReport") {
+    subprojects {
+        this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
+            this@subprojects.tasks.matching {
+                it.extensions.findByType<JacocoTaskExtension>() != null
+            }.configureEach {
+                sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
+                executionData(this)
+            }
+        }
+    }
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+// END OF JACOCO MULTI-PROJECT CONFIGURATION
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.named("codeCoverageReport"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+    kotlinOptions.javaParameters = true
 }
