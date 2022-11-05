@@ -61,21 +61,27 @@ subprojects {
 // END OF DETEKT AND KTLINT CONFIGURATION
 
 // START OF SONAR MULTI-MODULE CONFIGURATION
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "Lukinhasssss_admin-catalogo-de-videos-kotlin")
         property("sonar.projectName", "admin-catalogo-de-videos-kotlin")
         property("sonar.organization", "lukinhasssss")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        )
         property("sonar.exclusions", "build/generated/**/*")
     }
 }
 
 subprojects {
-    sonarqube {
+    sonar {
         properties {
-            property("sonar.coverage.jacoco.xmlReportPaths", "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+            )
         }
     }
 }
