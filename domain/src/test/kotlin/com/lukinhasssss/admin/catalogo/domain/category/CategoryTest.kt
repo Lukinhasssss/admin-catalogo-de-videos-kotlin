@@ -204,4 +204,100 @@ class CategoryTest {
             assertNull(deletedAt)
         }
     }
+
+    @Test
+    fun givenAValidCategory_whenCallUpdate_thenReturnCategoryUpdated() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val aCategory = Category.newCategory(
+            aName = "Film", aDescription = "A categoria", isActive = expectedIsActive
+        )
+
+        assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
+
+        assertTrue(aCategory.isActive)
+        assertNull(aCategory.deletedAt)
+
+        val actualCategory = aCategory.update(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        with(actualCategory) {
+            assertEquals(aCategory.id, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(updatedAt.isAfter(aCategory.updatedAt))
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidCategory_whenCallUpdateToInactivate_thenReturnCategoryUpdated() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = false
+
+        val aCategory = Category.newCategory(
+            aName = "Film", aDescription = "A categoria", isActive = true
+        )
+
+        assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
+
+        assertTrue(aCategory.isActive)
+        assertNull(aCategory.deletedAt)
+
+        val actualCategory = aCategory.update(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        with(actualCategory) {
+            assertEquals(aCategory.id, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(updatedAt.isAfter(aCategory.updatedAt))
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidCategory_whenCallUpdateWithInvalidParams_thenReturnCategoryUpdated() {
+        val expectedName = "F"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val aCategory = Category.newCategory(
+            aName = "Film", aDescription = "A categoria", isActive = expectedIsActive
+        )
+
+        assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
+
+        assertTrue(aCategory.isActive)
+        assertNull(aCategory.deletedAt)
+
+        val actualCategory = aCategory.update(
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
+        )
+
+        with(actualCategory) {
+            assertEquals(aCategory.id, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(updatedAt.isAfter(aCategory.updatedAt))
+            assertNull(deletedAt)
+        }
+    }
 }
