@@ -11,8 +11,8 @@ class DefaultCreateCategoryUseCase(
     private val categoryGateway: CategoryGateway
 ) : CreateCategoryUseCase() {
 
-    override fun execute(aCommand: CreateCategoryCommand): Either<Notification, CreateCategoryOutput> {
-        with(aCommand) {
+    override fun execute(anIn: CreateCategoryCommand): Either<Notification, CreateCategoryOutput> {
+        with(anIn) {
             val notification = Notification.create()
 
             val aCategory = Category.newCategory(

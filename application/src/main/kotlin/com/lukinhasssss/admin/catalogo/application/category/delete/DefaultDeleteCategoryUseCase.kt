@@ -7,7 +7,7 @@ class DefaultDeleteCategoryUseCase(
     private val categoryGateway: CategoryGateway
 ) : DeleteCategoryUseCase() {
 
-    override fun execute(anId: String) {
-        categoryGateway.deleteById(CategoryID.from(anId))
+    override fun execute(anIn: String) {
+        categoryGateway.deleteById(CategoryID.from(anIn))
     }
 }

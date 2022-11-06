@@ -14,8 +14,8 @@ class DefaultUpdateCategoryUseCase(
     private val categoryGateway: CategoryGateway
 ) : UpdateCategoryUseCase() {
 
-    override fun execute(aCommand: UpdateCategoryCommand): Either<Notification, UpdateCategoryOutput> {
-        with(aCommand) {
+    override fun execute(anIn: UpdateCategoryCommand): Either<Notification, UpdateCategoryOutput> {
+        with(anIn) {
             val anId = CategoryID.from(id)
 
             val aCategory = categoryGateway.findById(anId) ?: throw notFound(anId)

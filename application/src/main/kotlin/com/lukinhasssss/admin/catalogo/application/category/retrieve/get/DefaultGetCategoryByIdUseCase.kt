@@ -10,8 +10,8 @@ class DefaultGetCategoryByIdUseCase(
     private val categoryGateway: CategoryGateway
 ) : GetCategoryByIdUseCase() {
 
-    override fun execute(anId: String): CategoryOutput {
-        val anCategoryID = CategoryID.from(anId)
+    override fun execute(anIn: String): CategoryOutput {
+        val anCategoryID = CategoryID.from(anIn)
 
         return categoryGateway.findById(anCategoryID)?.map()
             ?: throw notFound(anCategoryID)
