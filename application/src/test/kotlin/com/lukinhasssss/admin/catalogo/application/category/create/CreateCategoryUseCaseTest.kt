@@ -1,14 +1,12 @@
 package com.lukinhasssss.admin.catalogo.application.category.create
 
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
-import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -37,7 +35,7 @@ class CreateCategoryUseCaseTest {
 
         every { categoryGateway.create(any()) } answers { firstArg() }
 
-        val actualOutput = useCase.execute(aCommand)
+        val actualOutput = useCase.execute(aCommand).get()
 
         with(actualOutput) {
             assertNotNull(this)
@@ -65,6 +63,7 @@ class CreateCategoryUseCaseTest {
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
         val expectedErrorMessage = "'name' should not be empty"
+        val expectedErrorCount = 1
 
         val aCommand = CreateCategoryCommand.with(
             aName = expectedName,
@@ -72,9 +71,12 @@ class CreateCategoryUseCaseTest {
             isActive = expectedIsActive
         )
 
-        val actualException = assertThrows<DomainException> { useCase.execute(aCommand) }
+        val notification = useCase.execute(aCommand).left
 
-        assertEquals(expectedErrorMessage, actualException.message)
+        with(notification) {
+            assertEquals(expectedErrorCount, getErrors().size)
+            assertEquals(expectedErrorMessage, firstError().message)
+        }
 
         verify(exactly = 0) { categoryGateway.create(any()) }
     }
@@ -93,7 +95,7 @@ class CreateCategoryUseCaseTest {
 
         every { categoryGateway.create(any()) } answers { firstArg() }
 
-        val actualOutput = useCase.execute(aCommand)
+        val actualOutput = useCase.execute(aCommand).get()
 
         with(actualOutput) {
             assertNotNull(this)
@@ -121,6 +123,7 @@ class CreateCategoryUseCaseTest {
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
         val expectedErrorMessage = "Gateway error"
+        val expectedErrorCount = 1
 
         val aCommand = CreateCategoryCommand.with(
             aName = expectedName,
@@ -130,9 +133,12 @@ class CreateCategoryUseCaseTest {
 
         every { categoryGateway.create(any()) } throws(IllegalStateException(expectedErrorMessage))
 
-        val actualException = assertThrows<IllegalStateException> { useCase.execute(aCommand) }
+        val notification = useCase.execute(aCommand).left
 
-        assertEquals(expectedErrorMessage, actualException.message)
+        with(notification) {
+            assertEquals(expectedErrorCount, getErrors().size)
+            assertEquals(expectedErrorMessage, firstError().message)
+        }
 
         verify(exactly = 1) {
             categoryGateway.create(
