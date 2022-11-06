@@ -18,7 +18,10 @@ repositories {
 dependencies {
     implementation(project(":domain"))
 
+    implementation("io.vavr:vavr-kotlin:0.10.2")
+
     testImplementation(kotlin("test"))
+    testImplementation("io.mockk:mockk:1.13.2")
 }
 
 tasks.test {
