@@ -1,0 +1,28 @@
+quarkus:
+  application:
+    name: Administração do Catálogo de Videos
+
+  http:
+    port: 8080
+    enable-compression: true
+    compress-media-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    io-threads: 4
+
+  vertx:
+    worker-pool-size: 64
+
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      url: jdbc:postgresql://${POSTGRES_URL:localhost:5432}/${POSTGRES_DB:adm_videos}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+      max-size: 20 # The datasource pool maximum size.
+    username: ${POSTGRES_USER:username}
+    password: ${POSTGRES_PASSWORD:password}
+
+  flyway:
+    migrate-at-start: true
+    sql-migration-prefix: V
+    validate-on-migrate: true
+    create-schemas: true
+#    validate-migration-naming: false
+#    repair-at-start: true

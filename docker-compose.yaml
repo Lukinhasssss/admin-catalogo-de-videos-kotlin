@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: adm_videos_postgres
+    security_opt:
+      - seccomp:unconfined
+    ports:
+      - "5432:5432"
+    networks:
+      - adm_videos_network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+      POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+
+networks:
+  adm_videos_network:

@@ -1,0 +1,9 @@
+quarkus:
+  http:
+    test-port: 8081
+  datasource:
+    db-kind: h2
+    jdbc:
+      url: jdbc:h2:mem:testdb
+  hibernate-orm:
+    - org.hibernate.dialect.H2Dialect
