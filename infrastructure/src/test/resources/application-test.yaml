@@ -1,0 +1,9 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///adm_videos_test;MODE=POSTGRESQL;DATABASE_TO_LOWER=TRUE # É possível persistir em um arquivo alterando "mem:adm_videos" para, por exemplo: "file:./.h2/dev"
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2
