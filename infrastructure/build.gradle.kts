@@ -39,8 +39,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    implementation("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    testRuntimeOnly("com.h2database:h2")
+
+    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    // implementation("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
 }
 
 allOpen {

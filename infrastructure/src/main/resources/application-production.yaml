@@ -1,0 +1,11 @@
+postgres:
+  username: ${DB_POSTGRES_USERNAME;username}
+  password: ${DB_POSTGRES_PASSWORD;password}
+  schema: adm_videos
+  url: ${DB_POSTGRES_URL:localhost:5432}
+
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
