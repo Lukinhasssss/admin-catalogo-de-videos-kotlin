@@ -1,6 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.flywaydb:flyway-mysql:9.7.0")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.spring") version "1.7.20"
@@ -11,6 +20,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
     id("org.springframework.boot") version "2.7.5"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    id("org.flywaydb.flyway") version "9.7.0"
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -55,6 +65,12 @@ allOpen {
     annotation("org.springframework.boot.autoconfigure.SpringBootApplication")
     annotation("org.springframework.context.annotation.Configuration")
     annotation("org.springframework.boot.test.context.SpringBootTest")
+}
+
+flyway {
+    url = System.getenv("FLYWAY_DB") ?: "jdbc:postgresql://localhost:5432/adm_videos"
+    user = System.getenv("FLYWAY_USER") ?: "lukinhasssss"
+    password = System.getenv("FLYWAY_PASSWORD") ?: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
 }
 
 tasks.withType<Test> {
