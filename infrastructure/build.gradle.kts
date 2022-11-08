@@ -42,6 +42,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -49,16 +50,25 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
     implementation("org.postgresql:postgresql")
+    implementation("org.postgresql:r2dbc-postgresql")
+
+    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    testRuntimeOnly("com.h2database:h2")
+    // testRuntimeOnly("com.h2database:h2")
+    testImplementation("io.r2dbc:r2dbc-h2")
 
-    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    // implementation("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
+    // implementation("org.springframework.boot:spring-boot-starter-webflux")
+    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    // testImplementation("io.projectreactor:reactor-test")
+    // testImplementation("org.testcontainers:junit-jupiter")
+    // testImplementation("org.testcontainers:postgresql")
+    // testImplementation("org.testcontainers:r2dbc")
 }
 
 allOpen {
