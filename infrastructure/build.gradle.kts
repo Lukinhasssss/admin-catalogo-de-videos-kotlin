@@ -2,8 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.spring") version "1.7.20"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.spring") version "1.6.21"
+    kotlin("plugin.jpa") version "1.6.21"
     id("application")
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
@@ -33,7 +34,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -42,31 +42,25 @@ dependencies {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
     implementation("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core:9.7.0")
-    // implementation("org.postgresql:r2dbc-postgresql")
-
-    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     testRuntimeOnly("com.h2database:h2")
-    // testImplementation("io.r2dbc:r2dbc-h2")
 
+    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    // testImplementation("io.r2dbc:r2dbc-h2")
+    // implementation("org.postgresql:r2dbc-postgresql")
+    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     // implementation("org.springframework.boot:spring-boot-starter-webflux")
     // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // testImplementation("io.projectreactor:reactor-test")
     // testImplementation("org.testcontainers:junit-jupiter")
     // testImplementation("org.testcontainers:postgresql")
     // testImplementation("org.testcontainers:r2dbc")
-}
-
-allOpen {
-    annotation("org.springframework.boot.autoconfigure.SpringBootApplication")
-    annotation("org.springframework.context.annotation.Configuration")
-    annotation("org.springframework.boot.test.context.SpringBootTest")
 }
 
 flyway {
