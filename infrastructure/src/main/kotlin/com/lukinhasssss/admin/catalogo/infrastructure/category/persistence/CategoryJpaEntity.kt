@@ -3,19 +3,32 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category.persistence
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
+import javax.persistence.Column
+import javax.persistence.Table
 
 @Table(name = "category")
 class CategoryJpaEntity(
 
     @Id
     val id: String,
+
+    @Column(name = "name", nullable = false)
     val name: String,
+
+    @Column(name = "description", length = 4000)
     val description: String?,
+
+    @Column(name = "active", nullable = false)
     val isActive: Boolean,
+
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
     val createdAt: Instant,
+
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
     val updatedAt: Instant,
+
+    @Column(name = "delete_at", columnDefinition = "TIMESTAMP(6)")
     val deletedAt: Instant?
 ) {
 
