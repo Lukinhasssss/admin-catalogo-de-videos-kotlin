@@ -2,11 +2,13 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category.persistence
 
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import org.springframework.data.annotation.Id
 import java.time.Instant
 import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
 import javax.persistence.Table
 
+@Entity
 @Table(name = "category")
 class CategoryJpaEntity(
 
@@ -28,7 +30,7 @@ class CategoryJpaEntity(
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
     val updatedAt: Instant,
 
-    @Column(name = "delete_at", columnDefinition = "TIMESTAMP(6)")
+    @Column(name = "deleted_at", columnDefinition = "TIMESTAMP(6)")
     val deletedAt: Instant?
 ) {
 
