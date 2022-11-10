@@ -2,42 +2,40 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category.persistence
 
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
-@Entity
 @Table(name = "category")
-class CategoryJpaEntity(
+class CategoryEntity(
 
     @Id
     val id: String,
 
-    @Column(name = "name", nullable = false)
+    @Column(value = "name")
     val name: String,
 
-    @Column(name = "description", length = 4000)
+    @Column(value = "description")
     val description: String?,
 
-    @Column(name = "active", nullable = false)
+    @Column(value = "active")
     val isActive: Boolean,
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
+    @Column(value = "created_at")
     val createdAt: Instant,
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
+    @Column(value = "updated_at")
     val updatedAt: Instant,
 
-    @Column(name = "deleted_at", columnDefinition = "TIMESTAMP(6)")
+    @Column(value = "deleted_at")
     val deletedAt: Instant?
 ) {
 
     companion object {
-        fun from(aCategory: Category): CategoryJpaEntity {
+        fun from(aCategory: Category): CategoryEntity {
             return with(aCategory) {
-                CategoryJpaEntity(
+                CategoryEntity(
                     id = id.value,
                     name = name,
                     description = description,
