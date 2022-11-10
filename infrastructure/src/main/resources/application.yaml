@@ -10,17 +10,18 @@ server:
       io: 4 # Number of I/O threads to create for the worker. The default is derived from the number of available processors.
 
 spring:
-  datasource:
-    url: jdbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+  r2dbc:
+    url: r2dbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${postgres.username}
     password: ${postgres.password}
-    hikari: # É responsável por gerenciar o pool de conexões
-      auto-commit: false
-      connection-timeout: 250 # É uma configuração em milliseconds. O ideal é manter baixo para que estoure timeout logo e não prenda as threads.
+    pool: # É responsável por gerenciar o pool de conexões
+      enabled: true
+      initial-size: 10
+      max-size: 20 # Mantemos até no máx 20 conexões com o banco de dados. O ideal é manter baixo mesmo, pois é algo custoso para o banco gerenciar. https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
       max-lifetime: 600000 # Tempo máximo que uma conexão pode ficar aberta (10 min) - security.
-      maximum-pool-size: 20 # Mantemos até no máx 20 conexões com o banco de dados. O ideal é manter baixo mesmo, pois é algo custoso para o banco gerenciar. https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
-      minimum-idle: 10
-      pool-name: master
+      max-idle-time: 10m
+      max-create-connection-time: 250
+      max-acquire-time: 250
   jpa:
     open-in-view: false
     show-sql: true
@@ -34,18 +35,17 @@ spring:
       # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
 
 #spring:
-#  r2dbc:
-#    url: r2dbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+#  datasource:
+#    url: jdbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
 #    username: ${postgres.username}
 #    password: ${postgres.password}
-#    pool: # É responsável por gerenciar o pool de conexões
-#      enabled: true
-#      initial-size: 10
-#      max-size: 20 # Mantemos até no máx 20 conexões com o banco de dados. O ideal é manter baixo mesmo, pois é algo custoso para o banco gerenciar. https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+#    hikari: # É responsável por gerenciar o pool de conexões
+#      auto-commit: false
+#      connection-timeout: 250 # É uma configuração em milliseconds. O ideal é manter baixo para que estoure timeout logo e não prenda as threads.
 #      max-lifetime: 600000 # Tempo máximo que uma conexão pode ficar aberta (10 min) - security.
-#      max-idle-time: 10m
-#      max-create-connection-time: 250
-#      max-acquire-time: 250
+#      maximum-pool-size: 20 # Mantemos até no máx 20 conexões com o banco de dados. O ideal é manter baixo mesmo, pois é algo custoso para o banco gerenciar. https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+#      minimum-idle: 10
+#      pool-name: master
 #  jpa:
 #    open-in-view: false
 #    show-sql: true

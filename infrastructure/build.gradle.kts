@@ -34,30 +34,29 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(module = "spring-boot-starter-tomcat")
+    implementation("io.projectreactor:reactor-tools")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    implementation("org.springframework.boot:spring-boot-starter-webflux") {
+        exclude(module = "spring-boot-starter-netty")
     }
+
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.postgresql:postgresql")
+    implementation("org.postgresql:r2dbc-postgresql")
     implementation("org.flywaydb:flyway-core:9.7.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    testRuntimeOnly("com.h2database:h2")
-
-    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    // testImplementation("io.r2dbc:r2dbc-h2")
-    // implementation("org.postgresql:r2dbc-postgresql")
-    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    // implementation("org.springframework.boot:spring-boot-starter-webflux")
-    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.r2dbc:r2dbc-h2")
+    testImplementation("io.projectreactor:reactor-test")
     // testImplementation("org.testcontainers:junit-jupiter")
     // testImplementation("org.testcontainers:postgresql")
     // testImplementation("org.testcontainers:r2dbc")
