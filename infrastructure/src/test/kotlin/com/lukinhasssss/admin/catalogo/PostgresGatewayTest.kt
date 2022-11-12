@@ -1,4 +1,4 @@
-package com.lukinhasssss.admin.catalogo.infrastructure
+package com.lukinhasssss.admin.catalogo
 
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
