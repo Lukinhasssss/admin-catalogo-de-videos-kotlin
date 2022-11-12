@@ -30,7 +30,9 @@ class CategoryPostgresGateway(
     }
 
     override fun deleteById(anID: CategoryID) {
-        TODO("Not yet implemented")
+        with(anID.value) {
+            if (repository.existsById(this)) repository.deleteById(this)
+        }
     }
 
     private fun save(aCategory: Category): Category {
