@@ -10,6 +10,8 @@ class CleanUpExtension : BeforeEachCallback {
         val repositories = SpringExtension.getApplicationContext(context)
             .getBeansOfType(CrudRepository::class.java)
             .values
+
+        cleanUp(repositories)
     }
 
     private fun cleanUp(repositories: MutableCollection<CrudRepository<*, *>>) {
