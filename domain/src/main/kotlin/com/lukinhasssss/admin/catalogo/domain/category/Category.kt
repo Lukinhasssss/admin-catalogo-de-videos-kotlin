@@ -29,6 +29,38 @@ class Category(
                 deletedAt = if (isActive) null else now
             )
         }
+
+        fun with(aCategory: Category): Category {
+            return with(aCategory) {
+                Category(
+                    id = id,
+                    name = name,
+                    description = description,
+                    isActive = isActive,
+                    createdAt = createdAt,
+                    updatedAt = updatedAt,
+                    deletedAt = deletedAt
+                )
+            }
+        }
+
+        fun with(
+            anId: CategoryID,
+            aName: String,
+            aDescription: String?,
+            isActive: Boolean,
+            createdAt: Instant,
+            updatedAt: Instant,
+            deletedAt: Instant?
+        ) = Category(
+            id = anId,
+            name = aName,
+            description = aDescription,
+            isActive = isActive,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt
+        )
     }
 
     override fun validate(handler: ValidationHandler) {

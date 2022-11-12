@@ -1,18 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.flywaydb:flyway-mysql:9.7.0")
-    }
-}
-
 plugins {
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.spring") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
+    kotlin("plugin.spring") version "1.7.21"
+    kotlin("plugin.jpa") version "1.7.21"
     id("application")
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
@@ -42,7 +34,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -50,37 +41,21 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.postgresql:postgresql")
-    implementation("org.postgresql:r2dbc-postgresql")
-
-    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    // testRuntimeOnly("com.h2database:h2")
-    testImplementation("io.r2dbc:r2dbc-h2")
-
-    // implementation("org.springframework.boot:spring-boot-starter-webflux")
-    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // testImplementation("io.projectreactor:reactor-test")
-    // testImplementation("org.testcontainers:junit-jupiter")
-    // testImplementation("org.testcontainers:postgresql")
-    // testImplementation("org.testcontainers:r2dbc")
-}
-
-allOpen {
-    annotation("org.springframework.boot.autoconfigure.SpringBootApplication")
-    annotation("org.springframework.context.annotation.Configuration")
-    annotation("org.springframework.boot.test.context.SpringBootTest")
+    testImplementation("com.h2database:h2")
+    testImplementation("org.flywaydb:flyway-core:9.7.0")
 }
 
 flyway {
     url = System.getenv("FLYWAY_DB") ?: "jdbc:postgresql://localhost:5432/adm_videos"
     user = System.getenv("FLYWAY_USER") ?: "lukinhasssss"
     password = System.getenv("FLYWAY_PASSWORD") ?: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
+
+    cleanDisabled = false
 }
 
 tasks.withType<Test> {
@@ -89,7 +64,9 @@ tasks.withType<Test> {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xuse-k2", "-Xjsr305=strict")
+        useK2 = false
+        javaParameters = true
         jvmTarget = JavaVersion.VERSION_17.toString()
+        freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 }
