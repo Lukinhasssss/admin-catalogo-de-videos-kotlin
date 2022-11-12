@@ -57,6 +57,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.r2dbc:r2dbc-h2")
     testImplementation("io.projectreactor:reactor-test")
+    // testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
     // testImplementation("org.testcontainers:junit-jupiter")
     // testImplementation("org.testcontainers:postgresql")
     // testImplementation("org.testcontainers:r2dbc")
