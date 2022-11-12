@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category
 
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
@@ -160,5 +161,186 @@ class CategoryPostgresGatewayTest {
         val actualCategory = categoryGateway.findById(CategoryID.from("idNotStored"))
 
         assertNull(actualCategory)
+    }
+
+    @Test
+    fun givenPrePersistedCategories_whenCallsFindAll_shouldReturnPaginated() {
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTotal = 3L
+
+        val filmes = Category.newCategory("Filmes", null, true)
+        val series = Category.newCategory("Series", null, true)
+        val animes = Category.newCategory("Animes", null, true)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAllAndFlush(
+            listOf(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(animes)
+            )
+        )
+
+        assertEquals(3, categoryRepository.count())
+
+        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        val actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(animes.id.value, items.first().id.value)
+        }
+    }
+
+    @Test
+    fun givenEmptyCategoriesTable_whenCallsFindAll_shouldReturnEmptyPage() {
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTotal = 0L
+
+        assertEquals(0, categoryRepository.count())
+
+        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        val actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(0, items.size)
+        }
+    }
+
+    @Test
+    fun givenFollowPagination_whenCallsFindAllWithPage1_shouldReturnPaginated() {
+        var expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTotal = 3L
+
+        val filmes = Category.newCategory("Filmes", null, true)
+        val series = Category.newCategory("Series", null, true)
+        val animes = Category.newCategory("Animes", null, true)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAllAndFlush(
+            listOf(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(animes)
+            )
+        )
+
+        assertEquals(3, categoryRepository.count())
+
+        var query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        var actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(animes.id.value, items.first().id.value)
+        }
+
+        expectedPage = 1
+
+        query = CategorySearchQuery(page = 1, perPage = 1, terms = "", sort = "name", direction = "asc")
+        actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(filmes.id.value, items.first().id.value)
+        }
+
+        expectedPage = 2
+
+        query = CategorySearchQuery(page = 2, perPage = 1, terms = "", sort = "name", direction = "asc")
+        actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(series.id.value, items.first().id.value)
+        }
+    }
+
+    @Test
+    fun givenPrePersistedCategoriesAndFilAsTerms_whenCallsFindAllAndTermsMatchsCategoryName_shouldReturnPaginated() {
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTotal = 1L
+
+        val filmes = Category.newCategory("Filmes", null, true)
+        val series = Category.newCategory("Series", null, true)
+        val animes = Category.newCategory("Animes", null, true)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAllAndFlush(
+            listOf(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(animes)
+            )
+        )
+
+        assertEquals(3, categoryRepository.count())
+
+        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "fil", sort = "name", direction = "asc")
+        val actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(filmes.id.value, items.first().id.value)
+        }
+    }
+
+    @Test
+    fun givenPrePersistedCategoriesAndMaisAssistidaAsTerms_whenCallsFindAllAndTermsMatchsCategoryDescription_shouldReturnPaginated() {
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTotal = 1L
+
+        val filmes = Category.newCategory("Filmes", "Os melhores filmes", true)
+        val series = Category.newCategory("Series", "A categoria mais assistida", true)
+        val animes = Category.newCategory("Animes", "Os animes mais assistidos", true)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAllAndFlush(
+            listOf(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(animes)
+            )
+        )
+
+        assertEquals(3, categoryRepository.count())
+
+        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "MAIS ASSISTIDA", sort = "name", direction = "asc")
+        val actualResult = categoryGateway.findAll(query)
+
+        with(actualResult) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedPerPage, items.size)
+            assertEquals(series.id.value, items.first().id.value)
+        }
     }
 }
