@@ -30,7 +30,9 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        useK2 = false
+        javaParameters = true
         jvmTarget = JavaVersion.VERSION_17.toString()
+        freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 }
