@@ -18,4 +18,4 @@ import java.lang.annotation.Inherited
     ]
 )
 @ExtendWith(CleanUpExtension::class)
-annotation class PostgresGatewayTest()
+annotation class PostgresGatewayTest
