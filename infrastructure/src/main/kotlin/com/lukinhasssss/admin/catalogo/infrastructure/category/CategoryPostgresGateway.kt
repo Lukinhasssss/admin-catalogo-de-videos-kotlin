@@ -14,7 +14,7 @@ class CategoryPostgresGateway(
     private val repository: CategoryRepository
 ) : CategoryGateway {
     override fun create(aCategory: Category): Category {
-        return repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
+        return save(aCategory)
     }
 
     override fun findById(anID: CategoryID): Category? {
@@ -26,10 +26,14 @@ class CategoryPostgresGateway(
     }
 
     override fun update(aCategory: Category): Category {
-        TODO("Not yet implemented")
+        return save(aCategory)
     }
 
     override fun deleteById(anID: CategoryID) {
         TODO("Not yet implemented")
+    }
+
+    private fun save(aCategory: Category): Category {
+        return repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
     }
 }
