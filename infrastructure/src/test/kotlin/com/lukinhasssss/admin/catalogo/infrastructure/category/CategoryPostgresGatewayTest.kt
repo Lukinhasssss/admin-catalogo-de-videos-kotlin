@@ -123,4 +123,42 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(0, categoryRepository.count())
     }
+
+    @Test
+    fun givenAPrePersistedCategoryAndValidCategoryId_whenCallsFindbyId_shouldReturnACategory() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val aCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(aCategory))
+
+        assertEquals(1, categoryRepository.count())
+
+        val actualCategory = categoryGateway.findById(aCategory.id)
+
+        assertEquals(1, categoryRepository.count())
+
+        with(actualCategory!!) {
+            assertEquals(aCategory.id.value, id.value)
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertEquals(aCategory.updatedAt, updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenValidCategoryIdNotStored_whenCallsFindById_shouldReturnNull() {
+        assertEquals(0, categoryRepository.count())
+
+        val actualCategory = categoryGateway.findById(CategoryID.from("idNotStored"))
+
+        assertNull(actualCategory)
+    }
 }
