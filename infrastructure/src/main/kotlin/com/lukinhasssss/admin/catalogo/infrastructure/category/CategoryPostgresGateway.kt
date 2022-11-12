@@ -18,7 +18,8 @@ class CategoryPostgresGateway(
     }
 
     override fun findById(anID: CategoryID): Category? {
-        TODO("Not yet implemented")
+        return repository.findById(anID.value)
+            .map { it.toAggregate() }.orElseGet { null }
     }
 
     override fun findAll(aQuery: CategorySearchQuery): Pagination<Category> {
