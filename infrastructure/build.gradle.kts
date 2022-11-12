@@ -44,23 +44,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.postgresql:postgresql")
-    implementation("org.flywaydb:flyway-core:9.7.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    testRuntimeOnly("com.h2database:h2")
-
-    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    // testImplementation("io.r2dbc:r2dbc-h2")
-    // implementation("org.postgresql:r2dbc-postgresql")
-    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    // implementation("org.springframework.boot:spring-boot-starter-webflux")
-    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // testImplementation("io.projectreactor:reactor-test")
-    // testImplementation("org.testcontainers:junit-jupiter")
-    // testImplementation("org.testcontainers:postgresql")
-    // testImplementation("org.testcontainers:r2dbc")
+    testImplementation("com.h2database:h2")
+    testImplementation("org.flywaydb:flyway-core:9.7.0")
 }
 
 flyway {
