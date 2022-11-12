@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.category
 
 import com.lukinhasssss.admin.catalogo.domain.category.Category
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.infrastructure.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
@@ -97,5 +98,29 @@ class CategoryPostgresGatewayTest {
             assertTrue(aCategory.updatedAt.isBefore(updatedAt))
             assertNull(deletedAt)
         }
+    }
+
+    @Test
+    fun givenAPrePersistedCategoryAndValidCategoryId_whenTryToDeleteIt_shouldDeleteCategory() {
+        val aCategory = Category.newCategory("Filmes", null, true)
+
+        assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(aCategory))
+
+        assertEquals(1, categoryRepository.count())
+
+        categoryGateway.deleteById(aCategory.id)
+
+        assertEquals(0, categoryRepository.count())
+    }
+
+    @Test
+    fun givenAnInvalidCategoryId_whenTryToDeleteIt_shouldDeleteCategory() {
+        assertEquals(0, categoryRepository.count())
+
+        categoryGateway.deleteById(CategoryID.from("invalidId"))
+
+        assertEquals(0, categoryRepository.count())
     }
 }
