@@ -50,6 +50,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.7.0")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
 }
 
 flyway {
