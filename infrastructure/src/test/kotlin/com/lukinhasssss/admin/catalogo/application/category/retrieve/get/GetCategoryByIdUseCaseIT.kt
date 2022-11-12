@@ -1,32 +1,32 @@
 package com.lukinhasssss.admin.catalogo.application.category.retrieve.get
 
+import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
-import io.mockk.clearAllMocks
+import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
+import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
+import com.ninjasquad.springmockk.SpykBean
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import org.springframework.beans.factory.annotation.Autowired
 
-@ExtendWith(MockKExtension::class)
-class GetCategorybyIdUseCaseTest {
+@IntegrationTest
+class GetCategoryByIdUseCaseIT {
 
-    @InjectMockKs
-    private lateinit var useCase: DefaultGetCategoryByIdUseCase
+    @Autowired
+    private lateinit var useCase: GetCategoryByIdUseCase
 
-    @MockK
+    @Autowired
+    private lateinit var categoryRepository: CategoryRepository
+
+    @SpykBean
     private lateinit var categoryGateway: CategoryGateway
-
-    @BeforeEach
-    fun cleanUp() { clearAllMocks() }
 
     @Test
     fun givenAValidId_whenCallsGetCategory_shouldReturnCategory() {
@@ -42,18 +42,19 @@ class GetCategorybyIdUseCaseTest {
 
         val expectedId = aCategory.id
 
-        every { categoryGateway.findById(any()) } returns aCategory
+        save(aCategory)
 
         val actualCategory = useCase.execute(expectedId.value)
 
         with(actualCategory) {
-            assertEquals(CategoryOutput.from(aCategory), this)
-            assertEquals(expectedId, id)
+            assertEquals(expectedId.value, id.value)
             assertEquals(expectedName, name)
             assertEquals(expectedDescription, description)
             assertEquals(expectedIsActive, isActive)
-            assertEquals(aCategory.createdAt, createdAt)
-            assertEquals(aCategory.updatedAt, updatedAt)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            // assertEquals(aCategory.updatedAt, updatedAt)
+            // assertEquals(aCategory.updatedAt, updatedAt)
             assertNull(deletedAt)
         }
     }
@@ -63,8 +64,6 @@ class GetCategorybyIdUseCaseTest {
         val expectedId = CategoryID.from("123")
         val expectedErrorMessage = "Category with ID 123 was not found"
         val expectedErrorCount = 1
-
-        every { categoryGateway.findById(any()) } returns null
 
         val actualException = assertThrows<DomainException> { useCase.execute(expectedId.value) }
 
@@ -82,5 +81,11 @@ class GetCategorybyIdUseCaseTest {
         val actualException = assertThrows<IllegalStateException> { useCase.execute(expectedId.value) }
 
         assertEquals(expectedErrorMessage, actualException.message)
+    }
+
+    private fun save(vararg aCategory: Category) {
+        categoryRepository.saveAllAndFlush(
+            aCategory.map(CategoryJpaEntity::from).toList()
+        )
     }
 }
