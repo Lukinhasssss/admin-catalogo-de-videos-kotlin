@@ -1,6 +1,8 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.category.presenters
 
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.CategoryOutput
+import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.CategoryListOutput
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 
 fun CategoryOutput.toCategoryResponse() =
@@ -11,6 +13,16 @@ fun CategoryOutput.toCategoryResponse() =
         active = isActive,
         createdAt = createdAt,
         updatedAt = updatedAt,
+        deletedAt = deletedAt
+    )
+
+fun CategoryListOutput.toCategoryListResponse() =
+    CategoryListResponse(
+        id = id.value,
+        name = name,
+        description = description,
+        active = isActive,
+        createdAt = createdAt,
         deletedAt = deletedAt
     )
 

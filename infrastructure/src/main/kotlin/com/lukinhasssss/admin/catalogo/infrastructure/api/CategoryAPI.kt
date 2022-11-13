@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
@@ -62,7 +63,7 @@ interface CategoryAPI {
         @RequestParam(name = "perPage", required = false, defaultValue = "10") perPage: Int,
         @RequestParam(name = "sort", required = false, defaultValue = "name") sort: String,
         @RequestParam(name = "dir", required = false, defaultValue = "asc") direction: String
-    ): Pagination<Any>
+    ): Pagination<CategoryListResponse>
 
     @PutMapping(value = ["{id}"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     @Operation(summary = "Update a category by it's identifier")

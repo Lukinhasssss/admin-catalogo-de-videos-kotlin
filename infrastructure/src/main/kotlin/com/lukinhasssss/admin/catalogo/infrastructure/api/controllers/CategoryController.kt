@@ -5,15 +5,19 @@ import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategor
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.delete.DeleteCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.ListCategoriesUseCase
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryCommand
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryUseCase
+import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.api.CategoryAPI
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.category.presenters.toCategoryListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.presenters.toCategoryResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -24,6 +28,7 @@ import java.util.function.Function
 class CategoryController(
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
+    private val listCategoriesUseCase: ListCategoriesUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase
 ) : CategoryAPI {
@@ -60,8 +65,12 @@ class CategoryController(
         perPage: Int,
         sort: String,
         direction: String
-    ): Pagination<Any> {
-        TODO("Not yet implemented")
+    ): Pagination<CategoryListResponse> {
+        val aQuery = CategorySearchQuery(page, perPage, search, sort, direction)
+
+        val categoryListOutputPagination = listCategoriesUseCase.execute(aQuery)
+
+        return categoryListOutputPagination.map { it.toCategoryListResponse() }
     }
 
     override fun updateById(id: String, request: UpdateCategoryRequest): ResponseEntity<Any> {
