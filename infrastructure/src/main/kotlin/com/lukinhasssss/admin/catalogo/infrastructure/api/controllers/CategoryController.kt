@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryCommand
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
+import com.lukinhasssss.admin.catalogo.application.category.delete.DeleteCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryCommand
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
@@ -23,7 +24,8 @@ import java.util.function.Function
 class CategoryController(
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
-    private val updateCategoryUseCase: UpdateCategoryUseCase
+    private val updateCategoryUseCase: UpdateCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase
 ) : CategoryAPI {
 
     override fun createCategory(request: CreateCategoryRequest): ResponseEntity<Any> {
@@ -80,4 +82,6 @@ class CategoryController(
 
         return updateCategoryUseCase.execute(aCommand).fold(onError, onSuccess)
     }
+
+    override fun deleteById(id: String) = deleteCategoryUseCase.execute(id)
 }
