@@ -62,13 +62,11 @@ class GetCategoryByIdUseCaseTest {
     fun givenAnInvalidId_whenCallsGetCategory_shouldReturnNotFound() {
         val expectedId = CategoryID.from("123")
         val expectedErrorMessage = "Category with ID 123 was not found"
-        val expectedErrorCount = 1
 
         every { categoryGateway.findById(any()) } returns null
 
         val actualException = assertThrows<DomainException> { useCase.execute(expectedId.value) }
 
-        assertEquals(expectedErrorCount, actualException.errors.size)
         assertEquals(expectedErrorMessage, actualException.message)
     }
 
