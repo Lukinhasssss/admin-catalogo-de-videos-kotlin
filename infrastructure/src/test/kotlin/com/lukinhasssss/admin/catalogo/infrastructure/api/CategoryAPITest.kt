@@ -6,6 +6,8 @@ import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategor
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.CategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
+import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
@@ -13,6 +15,7 @@ import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
 import org.hamcrest.Matchers.equalTo
@@ -30,6 +33,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -49,6 +53,9 @@ class CategoryAPITest {
 
     @MockBean
     private lateinit var getCategoryByIdUseCase: GetCategoryByIdUseCase
+
+    @MockBean
+    private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
@@ -131,6 +138,7 @@ class CategoryAPITest {
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
         val expectedMessage = "'name' should not be empty"
+        val expectedErrorCount = 1
 
         val anInput = CreateCategoryRequest(
             name = expectedName,
@@ -153,7 +161,7 @@ class CategoryAPITest {
             .andExpect(header().string("Location", nullValue()))
             .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.message", equalTo(expectedMessage)))
-            .andExpect(jsonPath("$.errors.size()", equalTo(1)))
+            .andExpect(jsonPath("$.errors.size()", equalTo(expectedErrorCount)))
             .andExpect(jsonPath("$.errors[0].message", equalTo(expectedMessage)))
 
         verify(createCategoryUseCase, times(1)).execute(
@@ -220,5 +228,95 @@ class CategoryAPITest {
         response.andExpect(status().isNotFound)
             .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
+    }
+
+    @Test
+    fun givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() {
+        // given
+        val expectedId = "123"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        whenever(updateCategoryUseCase.execute(any()))
+            .thenReturn(right(UpdateCategoryOutput.from(expectedId)))
+
+        val aCommand = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        // when
+        val request = put("/categories/$expectedId")
+            .contentType(APPLICATION_JSON)
+            .content(mapper.writeValueAsString(aCommand))
+
+        val response = mvc.perform(request).andDo(print())
+
+        // then
+        response.andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo("123")))
+
+        verify(updateCategoryUseCase, times(1)).execute(
+            argThat {
+                expectedName == name && expectedDescription == description && expectedIsActive == isActive
+            }
+        )
+    }
+
+    @Test
+    fun givenACommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() {
+        // given
+        val expectedId = "not-found"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "Category with ID $expectedId was not found"
+
+        whenever(updateCategoryUseCase.execute(any()))
+            .thenThrow(NotFoundException.with(CategoryID.from(expectedId), Category::class))
+
+        val aCommand = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        // when
+        val request = put("/categories/$expectedId")
+            .contentType(APPLICATION_JSON)
+            .content(mapper.writeValueAsString(aCommand))
+
+        val response = mvc.perform(request).andDo(print())
+
+        // then
+
+        // then
+        response.andExpect(status().isNotFound)
+            .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
+    }
+
+    @Test
+    fun givenAnInvalidName_whenCallsUpdateCategory_shouldReturnDomainException() {
+        // given
+        val expectedId = "123"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "'name' should not be null"
+        val expectedErrorCount = 1
+
+        whenever(updateCategoryUseCase.execute(any()))
+            .thenReturn(left(Notification.create(Error(expectedErrorMessage))))
+
+        val aCommand = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        // when
+        val request = put("/categories/$expectedId")
+            .contentType(APPLICATION_JSON)
+            .content(mapper.writeValueAsString(aCommand))
+
+        val response = mvc.perform(request).andDo(print())
+
+        // then
+
+        // then
+        response.andExpect(status().isUnprocessableEntity)
+            .andExpect(jsonPath("$.errors.size()", equalTo(expectedErrorCount)))
+            .andExpect(jsonPath("$.errors[0].message", equalTo(expectedErrorMessage)))
     }
 }

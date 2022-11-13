@@ -3,7 +3,7 @@ package com.lukinhasssss.admin.catalogo.application.category.update
 import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
-import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.ninjasquad.springmockk.SpykBean
@@ -185,13 +185,12 @@ class UpdateCategoryUseCaseIT {
     }
 
     @Test
-    fun givenACommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFountException() {
+    fun givenACommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() {
         val expectedId = "not-found"
         val expectedName = "Filmes"
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = false
         val expectedErrorMessage = "Category with ID $expectedId was not found"
-        val expectedErrorCount = 1
 
         val aCommand = UpdateCategoryCommand(
             id = expectedId,
@@ -200,12 +199,9 @@ class UpdateCategoryUseCaseIT {
             isActive = expectedIsActive
         )
 
-        val actualException = assertThrows<DomainException> { useCase.execute(aCommand) }
+        val actualException = assertThrows<NotFoundException> { useCase.execute(aCommand) }
 
-        with(actualException.errors) {
-            assertEquals(expectedErrorCount, size)
-            assertEquals(expectedErrorMessage, first().message)
-        }
+        assertEquals(expectedErrorMessage, actualException.message)
     }
 
     private fun save(vararg aCategory: Category) {
