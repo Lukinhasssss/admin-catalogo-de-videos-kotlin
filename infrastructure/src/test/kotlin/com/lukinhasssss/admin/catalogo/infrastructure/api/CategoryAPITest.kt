@@ -7,12 +7,15 @@ import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategor
 import com.lukinhasssss.admin.catalogo.application.category.delete.DeleteCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.CategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.CategoryListOutput
+import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.ListCategoriesUseCase
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
@@ -62,6 +65,9 @@ class CategoryAPITest {
 
     @MockBean
     private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
+
+    @MockBean
+    private lateinit var listCategoriesUseCase: ListCategoriesUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
@@ -342,5 +348,55 @@ class CategoryAPITest {
         response.andExpect(status().isNoContent)
 
         verify(deleteCategoryUseCase, times(1)).execute(expectedId)
+    }
+
+    @Test
+    fun givenValidParams_whenCallsListCategories_shouldReturnCategories() {
+        // given
+        val aCategory = Category.newCategory("Movies", null, true)
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = "movies"
+        val expectedSort = "description"
+        val expectedDirection = "desc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(CategoryListOutput.from(aCategory))
+
+        // when
+        whenever(listCategoriesUseCase.execute(any()))
+            .thenReturn(Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems))
+
+        val request = get("/categories")
+            .queryParam("page", expectedPage.toString())
+            .queryParam("perPage", expectedPerPage.toString())
+            .queryParam("sort", expectedSort)
+            .queryParam("dir", expectedDirection)
+            .queryParam("search", expectedTerms)
+
+        val response = mvc.perform(request).andDo(print())
+
+        // then
+        with(aCategory) {
+            response.andExpect(status().isOk)
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items.size()", equalTo(expectedItemsCount)))
+                .andExpect(jsonPath("$.items[0].id", equalTo(id.value)))
+                .andExpect(jsonPath("$.items[0].name", equalTo(name)))
+                .andExpect(jsonPath("$.items[0].description", equalTo(description)))
+                .andExpect(jsonPath("$.items[0].is_active", equalTo(isActive)))
+                .andExpect(jsonPath("$.items[0].created_at", equalTo(createdAt.toString())))
+                .andExpect(jsonPath("$.items[0].deleted_at", equalTo(deletedAt)))
+        }
+
+        verify(listCategoriesUseCase, times(1)).execute(
+            argThat {
+                expectedPage == page && expectedPerPage == perPage && expectedDirection == direction &&
+                    expectedSort == sort && expectedTerms == terms
+            }
+        )
     }
 }
