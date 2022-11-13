@@ -34,6 +34,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.12")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.12")
 
     implementation("io.vavr:vavr-kotlin:0.10.2")
 
