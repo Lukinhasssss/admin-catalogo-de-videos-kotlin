@@ -3,10 +3,13 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryCommand
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
+import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.api.CategoryAPI
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.category.presenters.toCategoryResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
@@ -14,7 +17,8 @@ import java.util.function.Function
 
 @RestController
 class CategoryController(
-    private val createCategoryUseCase: CreateCategoryUseCase
+    private val createCategoryUseCase: CreateCategoryUseCase,
+    private val getCategoryByIdUseCase: GetCategoryByIdUseCase
 ) : CategoryAPI {
 
     override fun createCategory(request: CreateCategoryRequest): ResponseEntity<Any> {
@@ -35,6 +39,12 @@ class CategoryController(
         }
 
         return createCategoryUseCase.execute(aCommand).fold(onError, onSuccess)
+    }
+
+    override fun getById(id: String): CategoryResponse {
+        val categoryOutput = getCategoryByIdUseCase.execute(id)
+
+        return categoryOutput.toCategoryResponse()
     }
 
     override fun listCategories(

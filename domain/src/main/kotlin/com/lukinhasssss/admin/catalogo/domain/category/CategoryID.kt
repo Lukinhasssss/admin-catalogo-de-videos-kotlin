@@ -4,7 +4,7 @@ import com.lukinhasssss.admin.catalogo.domain.Identifier
 import java.util.UUID
 
 class CategoryID(
-    val value: String
+    override val value: String
 ) : Identifier() {
 
     companion object {

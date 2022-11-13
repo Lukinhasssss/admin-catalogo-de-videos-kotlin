@@ -1,3 +1,5 @@
 package com.lukinhasssss.admin.catalogo.domain
 
-open class Identifier : ValueObject()
+abstract class Identifier : ValueObject() {
+    abstract val value: String
+}
