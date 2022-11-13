@@ -1,12 +1,15 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
+import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.infrastructure.api.CategoryAPI
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class CategoryController : CategoryAPI {
+class CategoryController(
+    private val createCategoryUseCase: CreateCategoryUseCase
+) : CategoryAPI {
     override fun createCategory(): ResponseEntity<*> {
         TODO("Not yet implemented")
     }
