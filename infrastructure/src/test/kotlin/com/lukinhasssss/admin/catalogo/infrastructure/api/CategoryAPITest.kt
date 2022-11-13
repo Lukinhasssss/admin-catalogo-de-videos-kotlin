@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
+import com.lukinhasssss.admin.catalogo.application.category.delete.DeleteCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.CategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
@@ -23,6 +24,7 @@ import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -31,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -56,6 +59,9 @@ class CategoryAPITest {
 
     @MockBean
     private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
+
+    @MockBean
+    private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
@@ -318,5 +324,23 @@ class CategoryAPITest {
         response.andExpect(status().isUnprocessableEntity)
             .andExpect(jsonPath("$.errors.size()", equalTo(expectedErrorCount)))
             .andExpect(jsonPath("$.errors[0].message", equalTo(expectedErrorMessage)))
+    }
+
+    @Test
+    fun givenAValidId_whenCallsDeleteCategory_shouldReturnNoContent() {
+        // given
+        val expectedId = "123"
+
+        // when
+        doNothing().whenever(deleteCategoryUseCase).execute(any())
+
+        val request = delete("/categories/$expectedId")
+
+        val response = mvc.perform(request).andDo(print())
+
+        // then
+        response.andExpect(status().isNoContent)
+
+        verify(deleteCategoryUseCase, times(1)).execute(expectedId)
     }
 }
