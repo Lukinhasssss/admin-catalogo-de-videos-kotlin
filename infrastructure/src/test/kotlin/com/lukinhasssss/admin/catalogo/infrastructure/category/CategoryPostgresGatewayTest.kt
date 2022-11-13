@@ -1,9 +1,9 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.category
 
+import com.lukinhasssss.admin.catalogo.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
-import com.lukinhasssss.admin.catalogo.infrastructure.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals

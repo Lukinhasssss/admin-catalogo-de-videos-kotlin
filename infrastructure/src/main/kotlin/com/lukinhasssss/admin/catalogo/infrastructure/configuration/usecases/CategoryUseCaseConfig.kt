@@ -2,6 +2,8 @@ package com.lukinhasssss.admin.catalogo.infrastructure.configuration.usecases
 
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.create.DefaultCreateCategoryUseCase
+import com.lukinhasssss.admin.catalogo.application.category.delete.DefaultDeleteCategoryUseCase
+import com.lukinhasssss.admin.catalogo.application.category.delete.DeleteCategoryUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.DefaultGetCategoryByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.DefaultListCategoriesUseCase
@@ -35,5 +37,10 @@ class CategoryUseCaseConfig(
     @Bean
     fun listCategoriesUseCase(): ListCategoriesUseCase {
         return DefaultListCategoriesUseCase(categoryGateway)
+    }
+
+    @Bean
+    fun deleteCategoryUseCase(): DeleteCategoryUseCase {
+        return DefaultDeleteCategoryUseCase(categoryGateway)
     }
 }
