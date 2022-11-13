@@ -54,8 +54,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.7.0")
+
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    testImplementation("io.rest-assured:kotlin-extensions:5.2.0")
 }
 
 flyway {
