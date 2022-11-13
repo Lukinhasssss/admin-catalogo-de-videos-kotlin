@@ -48,7 +48,7 @@ class CreateCategoryUseCaseIT {
 
         assertEquals(1, categoryRepository.count())
 
-        val actualCategory = categoryRepository.findById(actualOutput.id.value).get()
+        val actualCategory = categoryRepository.findById(actualOutput.id).get()
 
         with(actualCategory) {
             assertEquals(expectedName, name)
@@ -111,7 +111,7 @@ class CreateCategoryUseCaseIT {
 
         assertEquals(1, categoryRepository.count())
 
-        val actualCategory = categoryRepository.findById(actualOutput.id.value).get()
+        val actualCategory = categoryRepository.findById(actualOutput.id).get()
 
         with(actualCategory) {
             assertEquals(expectedName, name)
