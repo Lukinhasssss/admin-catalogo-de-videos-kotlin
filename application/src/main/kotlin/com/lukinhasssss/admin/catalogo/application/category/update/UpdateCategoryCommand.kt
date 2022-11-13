@@ -3,7 +3,7 @@ package com.lukinhasssss.admin.catalogo.application.category.update
 data class UpdateCategoryCommand(
     val id: String,
     val name: String,
-    val description: String,
+    val description: String?,
     val isActive: Boolean
 ) {
 
@@ -11,7 +11,7 @@ data class UpdateCategoryCommand(
         fun with(
             anId: String,
             aName: String,
-            aDescription: String,
+            aDescription: String?,
             isActive: Boolean
         ) = UpdateCategoryCommand(anId, aName, aDescription, isActive)
     }
