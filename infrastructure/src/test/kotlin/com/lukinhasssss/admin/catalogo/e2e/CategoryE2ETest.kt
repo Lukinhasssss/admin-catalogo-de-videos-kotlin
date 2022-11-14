@@ -11,9 +11,13 @@ import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
+import io.restassured.response.Response
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -49,6 +53,9 @@ class CategoryE2ETest {
 
     @Test
     fun asACatalogAdminIShouldBeAbleToCreateANewCategoryWithValidValues() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
         val expectedName = "Filmes"
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
@@ -65,6 +72,115 @@ class CategoryE2ETest {
             assertNotNull(updatedAt)
             assertNull(deletedAt)
         }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToNavigateToAllCategories() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedStatusCode = HttpStatus.OK.value()
+
+        givenACategory("Filmes", null, true)
+        givenACategory("Animes", null, true)
+        givenACategory("Séries", null, true)
+
+        listCategories(page = 0, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Animes"))
+        }
+
+        listCategories(page = 1, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(1))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Filmes"))
+        }
+
+        listCategories(page = 2, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(2))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Séries"))
+        }
+
+        listCategories(page = 3, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(3))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(0))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleSearchBetweenAllCategories() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedStatusCode = HttpStatus.OK.value()
+
+        givenACategory("Filmes", null, true)
+        givenACategory("Animes", null, true)
+        givenACategory("Séries", null, true)
+
+        listCategories(page = 0, perPage = 1, search = "fil") Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(1))
+            body("total", equalTo(1))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Filmes"))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeToSortAllCategoriesByDescriptionDesc() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedStatusCode = HttpStatus.OK.value()
+
+        givenACategory("Filmes", "A", true)
+        givenACategory("Animes", "B", true)
+        givenACategory("Séries", "C", true)
+
+        listCategories(page = 0, perPage = 3, search = "", sort = "description", direction = "desc") Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(3))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(3))
+            body("items.get(0).name", equalTo("Séries"))
+            body("items.get(1).name", equalTo("Animes"))
+            body("items.get(2).name", equalTo("Filmes"))
+        }
+    }
+
+    private fun listCategories(page: Int, perPage: Int): Response {
+        return listCategories(page = page, perPage = perPage, search = "", sort = "", direction = "")
+    }
+
+    private fun listCategories(page: Int, perPage: Int, search: String): Response {
+        return listCategories(page = page, perPage = perPage, search = search, sort = "", direction = "")
+    }
+
+    private fun listCategories(page: Int, perPage: Int, search: String, sort: String, direction: String): Response {
+        return Given {
+            param("page", page)
+            param("perPage", perPage)
+            param("search", search)
+            param("sort", sort)
+            param("dir", direction)
+        } When { get("/api/categories") }
     }
 
     private fun givenACategory(aName: String, aDescription: String?, isActive: Boolean): CategoryID {
