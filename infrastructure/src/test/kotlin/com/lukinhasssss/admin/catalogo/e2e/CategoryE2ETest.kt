@@ -4,6 +4,7 @@ import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
 import io.restassured.http.ContentType
@@ -26,6 +27,8 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.description
+import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.name
 
 @E2ETest
 @Testcontainers
@@ -200,6 +203,102 @@ class CategoryE2ETest {
         } Then {
             statusCode(HttpStatus.NOT_FOUND.value())
             body("message", equalTo(expectedMessage))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToUpdateACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val actualId = givenACategory("Movies", null, true)
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        Given {
+            contentType(ContentType.JSON)
+            body(Json.writeValueAsString(requestBody))
+        } When {
+            put("/api/categories/${actualId.value}")
+        } Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        with(actualCategory) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToInactivateACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = false
+
+        val actualId = givenACategory(expectedName, expectedDescription, true)
+
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        Given {
+            contentType(ContentType.JSON)
+            body(Json.writeValueAsString(requestBody))
+        } When {
+            put("/api/categories/${actualId.value}")
+        } Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        with(actualCategory) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToActivateACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val actualId = givenACategory(expectedName, expectedDescription, false)
+
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+
+        Given {
+            contentType(ContentType.JSON)
+            body(Json.writeValueAsString(requestBody))
+        } When {
+            put("/api/categories/${actualId.value}")
+        } Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        with(actualCategory) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, isActive)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
         }
     }
 
