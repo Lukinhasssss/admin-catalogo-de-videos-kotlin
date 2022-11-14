@@ -216,7 +216,7 @@ class CategoryAPITest {
                 .andExpect(jsonPath("$.is_active", equalTo(expectedIsActive)))
                 .andExpect(jsonPath("$.created_at", equalTo(createdAt.toString())))
                 .andExpect(jsonPath("$.updated_at", equalTo(updatedAt.toString())))
-                .andExpect(jsonPath("$.deleted_at", equalTo(deletedAt)))
+            // .andExpect(jsonPath("$.deleted_at", equalTo(deletedAt)))
         }
 
         verify(getCategoryByIdUseCase, times(1)).execute(expectedId)
@@ -386,10 +386,10 @@ class CategoryAPITest {
                 .andExpect(jsonPath("$.items.size()", equalTo(expectedItemsCount)))
                 .andExpect(jsonPath("$.items[0].id", equalTo(id.value)))
                 .andExpect(jsonPath("$.items[0].name", equalTo(name)))
-                .andExpect(jsonPath("$.items[0].description", equalTo(description)))
+                // .andExpect(jsonPath("$.items[0].description", equalTo(description)))
                 .andExpect(jsonPath("$.items[0].is_active", equalTo(isActive)))
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(createdAt.toString())))
-                .andExpect(jsonPath("$.items[0].deleted_at", equalTo(deletedAt)))
+            // .andExpect(jsonPath("$.items[0].deleted_at", equalTo(deletedAt)))
         }
 
         verify(listCategoriesUseCase, times(1)).execute(
