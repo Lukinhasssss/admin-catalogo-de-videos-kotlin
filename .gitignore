@@ -40,4 +40,7 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Store!/.env
+
+### Other files and folders ###
+.env
