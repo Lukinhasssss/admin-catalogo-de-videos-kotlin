@@ -10,6 +10,9 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@SpringBootTest(classes = [WebServerConfig::class])
+@SpringBootTest(
+    classes = [WebServerConfig::class],
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+)
 @ExtendWith(CleanUpExtension::class)
 annotation class E2ETest
