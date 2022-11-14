@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo
 
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import com.lukinhasssss.admin.catalogo.infrastructure.configuration.ObjectMapperConfig
+import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.test.context.ActiveProfiles
@@ -11,11 +11,9 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@DataJpaTest
-@ComponentScan(
+@JsonTest(
     includeFilters = [
-        ComponentScan.Filter(type = FilterType.REGEX, pattern = [".[PostgresGateway]"])
+        ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [ObjectMapperConfig::class])
     ]
 )
-@ExtendWith(CleanUpExtension::class)
-annotation class PostgresGatewayTest
+annotation class JacksonTest

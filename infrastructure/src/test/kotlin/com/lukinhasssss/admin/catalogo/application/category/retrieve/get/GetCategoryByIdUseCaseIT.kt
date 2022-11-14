@@ -4,7 +4,7 @@ import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.ninjasquad.springmockk.SpykBean
@@ -63,11 +63,9 @@ class GetCategoryByIdUseCaseIT {
     fun givenAnInvalidId_whenCallsGetCategory_shouldReturnNotFound() {
         val expectedId = CategoryID.from("123")
         val expectedErrorMessage = "Category with ID 123 was not found"
-        val expectedErrorCount = 1
 
-        val actualException = assertThrows<DomainException> { useCase.execute(expectedId.value) }
+        val actualException = assertThrows<NotFoundException> { useCase.execute(expectedId.value) }
 
-        assertEquals(expectedErrorCount, actualException.errors.size)
         assertEquals(expectedErrorMessage, actualException.message)
     }
 

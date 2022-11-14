@@ -34,6 +34,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
+
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.12")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.12")
 
     implementation("io.vavr:vavr-kotlin:0.10.2")
 
@@ -50,8 +55,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.7.0")
+
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    testImplementation("io.rest-assured:kotlin-extensions:5.2.0")
 }
 
 flyway {

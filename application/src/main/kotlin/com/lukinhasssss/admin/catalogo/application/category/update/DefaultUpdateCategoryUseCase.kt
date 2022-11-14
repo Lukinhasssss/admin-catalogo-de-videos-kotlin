@@ -3,8 +3,7 @@ package com.lukinhasssss.admin.catalogo.application.category.update
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
-import com.lukinhasssss.admin.catalogo.domain.validation.Error
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import io.vavr.control.Either
 import io.vavr.kotlin.Try
@@ -37,5 +36,5 @@ class DefaultUpdateCategoryUseCase(
     }
 
     private fun notFound(anId: CategoryID) =
-        DomainException.with(Error("Category with ID ${anId.value} was not found"))
+        NotFoundException.with(anId, Category::class)
 }
