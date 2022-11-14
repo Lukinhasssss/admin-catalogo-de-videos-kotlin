@@ -58,8 +58,11 @@ dependencies {
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-
     testImplementation("io.rest-assured:kotlin-extensions:5.2.0")
+
+    testImplementation("org.testcontainers:testcontainers:1.17.4")
+    testImplementation("org.testcontainers:postgresql:1.17.4")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.4")
 }
 
 flyway {

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.test.context.ActiveProfiles
 import java.lang.annotation.Inherited
 
-@ActiveProfiles("test")
+@ActiveProfiles("test-integration")
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
