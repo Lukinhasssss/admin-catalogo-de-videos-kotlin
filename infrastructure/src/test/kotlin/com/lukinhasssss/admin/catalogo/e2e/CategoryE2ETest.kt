@@ -16,6 +16,7 @@ import io.restassured.response.Response
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -300,6 +301,22 @@ class CategoryE2ETest {
             assertNotNull(updatedAt)
             assertNull(deletedAt)
         }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToDeleteACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val actualId = givenACategory("Filmes", null, true)
+
+        When {
+            delete("/api/categories/${actualId.value}")
+        } Then {
+            statusCode(HttpStatus.NO_CONTENT.value())
+        }
+
+        assertFalse(categoryRepository.existsById(actualId.value))
     }
 
     private fun listCategories(page: Int, perPage: Int): Response {
