@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import java.util.concurrent.Callable
 
@@ -28,7 +27,7 @@ enum class Json {
         .modules(
             JavaTimeModule(), Jdk8Module(), afterburnerModule(),
             KotlinModule.Builder()
-                .withReflectionCacheSize(512)
+                .withReflectionCacheSize(Json.REFLECTION_CACHE_SIZE)
                 .configure(KotlinFeature.NullToEmptyCollection, true)
                 .configure(KotlinFeature.NullToEmptyMap, true)
                 .configure(KotlinFeature.NullIsSameAsDefault, true)
@@ -48,7 +47,9 @@ enum class Json {
     }
 
     companion object {
-        fun mapper() = INSTANCE.mapper.copy()
+        const val REFLECTION_CACHE_SIZE = 512
+
+        fun mapper(): ObjectMapper = INSTANCE.mapper.copy()
 
         fun writeValueAsString(obj: Any): String {
             return invoke { INSTANCE.mapper.writeValueAsString(obj) }
