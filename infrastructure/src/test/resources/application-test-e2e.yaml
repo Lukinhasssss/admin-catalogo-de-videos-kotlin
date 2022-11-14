@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: info
+
+postgres:
+  username: username
+  password: password
+  schema: adm_videos
+  url: localhost:${postgres.port}

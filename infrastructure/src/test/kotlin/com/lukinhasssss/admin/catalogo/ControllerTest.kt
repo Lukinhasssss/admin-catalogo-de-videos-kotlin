@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
 
-@ActiveProfiles("test")
+@ActiveProfiles("test-integration")
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
