@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import java.util.concurrent.Callable
 
@@ -22,7 +25,17 @@ enum class Json {
             DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES,
             SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
         )
-        .modules(JavaTimeModule(), Jdk8Module(), afterburnerModule())
+        .modules(
+            JavaTimeModule(), Jdk8Module(), afterburnerModule(),
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, true)
+                .configure(KotlinFeature.NullToEmptyMap, true)
+                .configure(KotlinFeature.NullIsSameAsDefault, true)
+                .configure(KotlinFeature.SingletonSupport, true)
+                .configure(KotlinFeature.StrictNullChecks, true)
+                .build()
+        )
         .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         .build()
 

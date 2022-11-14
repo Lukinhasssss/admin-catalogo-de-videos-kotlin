@@ -14,7 +14,7 @@ data class CategoryListResponse(
     @JsonProperty(value = "description")
     val description: String?,
 
-    @field:JsonProperty(value = "is_active")
+    @JsonProperty(value = "is_active")
     val active: Boolean,
 
     @JsonProperty(value = "created_at")
