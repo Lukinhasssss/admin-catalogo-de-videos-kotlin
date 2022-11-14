@@ -28,8 +28,6 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.description
-import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.name
 
 @E2ETest
 @Testcontainers
