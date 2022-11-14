@@ -62,12 +62,12 @@ class CategoryE2ETest {
 
         val actualId = givenACategory(expectedName, expectedDescription, expectedIsActive)
 
-        val actualCategory = retrieveACategory(actualId.value)
+        val actualCategory = categoryRepository.findById(actualId.value).get()
 
         with(actualCategory) {
             assertEquals(expectedName, name)
             assertEquals(expectedDescription, description)
-            assertEquals(expectedIsActive, active)
+            assertEquals(expectedIsActive, isActive)
             assertNotNull(createdAt)
             assertNotNull(updatedAt)
             assertNull(deletedAt)
@@ -162,6 +162,44 @@ class CategoryE2ETest {
             body("items.get(0).name", equalTo("Séries"))
             body("items.get(1).name", equalTo("Animes"))
             body("items.get(2).name", equalTo("Filmes"))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToGetACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        val actualId = givenACategory(expectedName, expectedDescription, expectedIsActive)
+
+        val actualCategory = retrieveACategory(actualId.value)
+
+        with(actualCategory) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedIsActive, active)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCategory() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, categoryRepository.count())
+
+        val expectedMessage = "Category with ID 123 was not found"
+
+        When {
+            get("/api/categories/123")
+        } Then {
+            statusCode(HttpStatus.NOT_FOUND.value())
+            body("message", equalTo(expectedMessage))
         }
     }
 
