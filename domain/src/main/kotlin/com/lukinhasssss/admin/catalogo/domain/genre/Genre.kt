@@ -2,7 +2,9 @@ package com.lukinhasssss.admin.catalogo.domain.genre
 
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
+import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import java.time.Instant
 
 class Genre(
@@ -14,6 +16,14 @@ class Genre(
     val updatedAt: Instant,
     val deletedAt: Instant?
 ) : AggregateRoot<GenreID>(id) {
+
+    init {
+        val notification = Notification.create()
+        validate(notification)
+
+        if (notification.hasError())
+            throw NotificationException(notification = notification)
+    }
 
     companion object {
         fun newGenre(aName: String, isActive: Boolean): Genre {
@@ -41,7 +51,6 @@ class Genre(
 
     fun isActive() = active
 
-    override fun validate(handler: ValidationHandler) {
-        TODO("Not yet implemented")
-    }
+    override fun validate(handler: ValidationHandler) =
+        GenreValidator(this, handler).validate()
 }
