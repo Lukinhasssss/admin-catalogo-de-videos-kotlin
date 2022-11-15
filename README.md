@@ -20,6 +20,17 @@
 - Nome deve conter no mínimo 3 caracteres
 - Descrição pode ser nula ou em branco
 
+## Entidade Gênero
+
+### Campos
+- Nome
+- Relação N para N com Categorias
+- Ativar ou desativar
+- Auditoria (data de criação, atualização e deleção)
+
+### Regras de Negócio
+- Nome não deve ser nulo ou em branco
+
 ## Ferramentas necessárias
 
 - JDK 17
