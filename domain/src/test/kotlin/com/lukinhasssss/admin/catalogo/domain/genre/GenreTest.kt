@@ -4,8 +4,10 @@ import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class GenreTest {
 
@@ -60,6 +62,60 @@ class GenreTest {
         with(actualException.errors) {
             assertEquals(expectedErrorCount, size)
             assertEquals(expectedErrorMessage, first().message)
+        }
+    }
+
+    @Test
+    fun givenAnActiveGenre_whenCallDeactivate_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = 0
+
+        val aGenre = Genre.newGenre(expectedName, true)
+
+        with(aGenre) {
+            assertNotNull(this)
+            assertTrue(isActive())
+            assertNull(deletedAt)
+        }
+
+        val actualGenre = aGenre.deactivate()
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories.size)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAnInactiveGenre_whenCallActivate_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = 0
+
+        val aGenre = Genre.newGenre(expectedName, false)
+
+        with(aGenre) {
+            assertNotNull(this)
+            assertFalse(isActive())
+            assertNotNull(deletedAt)
+        }
+
+        val actualGenre = aGenre.activate()
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories.size)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
         }
     }
 }
