@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.genre
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
+import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import java.time.Instant
@@ -28,7 +29,7 @@ class Genre(
     companion object {
         fun newGenre(aName: String, isActive: Boolean): Genre {
             val anId = GenreID.unique()
-            val now = Instant.now()
+            val now = InstantUtils.now()
             val deletedAt = if (isActive) null else now
 
             return Genre(anId, aName, isActive, mutableListOf(), now, now, deletedAt)
@@ -51,6 +52,25 @@ class Genre(
 
     fun isActive() = active
 
-    override fun validate(handler: ValidationHandler) =
-        GenreValidator(this, handler).validate()
+    override fun validate(handler: ValidationHandler) = GenreValidator(this, handler).validate()
+
+    fun activate() = Genre(
+        id = id,
+        name = name,
+        active = true,
+        categories = categories,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        deletedAt = null
+    )
+
+    fun deactivate() = Genre(
+        id = id,
+        name = name,
+        active = false,
+        categories = categories,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        deletedAt = deletedAt ?: InstantUtils.now()
+    )
 }
