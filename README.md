@@ -18,6 +18,7 @@
 ### Regras de Negócio
 - Nome não deve ser nulo ou em branco
 - Nome deve conter no mínimo 3 caracteres
+- Nome deve conter no máximo 255 caracteres
 - Descrição pode ser nula ou em branco
 
 ## Entidade Gênero
@@ -30,6 +31,7 @@
 
 ### Regras de Negócio
 - Nome não deve ser nulo ou em branco
+- Nome deve conter no máximo 255 caracteres
 
 ## Ferramentas necessárias
 
