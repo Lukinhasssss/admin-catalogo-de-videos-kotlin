@@ -10,7 +10,6 @@ import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.Categ
 import com.ninjasquad.springmockk.SpykBean
 import io.mockk.every
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -51,10 +50,8 @@ class GetCategoryByIdUseCaseIT {
             assertEquals(expectedName, name)
             assertEquals(expectedDescription, description)
             assertEquals(expectedIsActive, isActive)
-            assertNotNull(createdAt)
-            assertNotNull(updatedAt)
-            // assertEquals(aCategory.updatedAt, updatedAt)
-            // assertEquals(aCategory.updatedAt, updatedAt)
+            assertEquals(aCategory.updatedAt, updatedAt)
+            assertEquals(aCategory.updatedAt, updatedAt)
             assertNull(deletedAt)
         }
     }
