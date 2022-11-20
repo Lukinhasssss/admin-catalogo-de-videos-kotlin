@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.domain.category
 
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
+import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import java.time.Instant
 
@@ -17,7 +18,7 @@ class Category(
     companion object {
         fun newCategory(aName: String, aDescription: String?, isActive: Boolean): Category {
             val id = CategoryID.unique()
-            val now = Instant.now()
+            val now = InstantUtils.now()
 
             return Category(
                 id = id,
@@ -74,7 +75,7 @@ class Category(
             description = description,
             isActive = true,
             createdAt = createdAt,
-            updatedAt = Instant.now(),
+            updatedAt = InstantUtils.now(),
             deletedAt = null
         )
     }
@@ -86,8 +87,8 @@ class Category(
             description = description,
             isActive = false,
             createdAt = createdAt,
-            updatedAt = Instant.now(),
-            deletedAt = deletedAt ?: Instant.now()
+            updatedAt = InstantUtils.now(),
+            deletedAt = deletedAt ?: InstantUtils.now()
         )
     }
 
@@ -98,7 +99,7 @@ class Category(
             description = aDescription,
             isActive = if (isActive) activate().isActive else deactivate().isActive,
             createdAt = createdAt,
-            updatedAt = Instant.now(),
+            updatedAt = InstantUtils.now(),
             deletedAt = if (isActive) activate().deletedAt else deactivate().deletedAt
         )
     }

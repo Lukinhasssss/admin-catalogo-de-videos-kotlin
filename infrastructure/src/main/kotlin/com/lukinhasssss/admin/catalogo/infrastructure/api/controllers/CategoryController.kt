@@ -9,8 +9,8 @@ import com.lukinhasssss.admin.catalogo.application.category.retrieve.list.ListCa
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryCommand
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.update.UpdateCategoryUseCase
-import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.api.CategoryAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryListResponse
@@ -66,7 +66,7 @@ class CategoryController(
         sort: String,
         direction: String
     ): Pagination<CategoryListResponse> {
-        val aQuery = CategorySearchQuery(page, perPage, search, sort, direction)
+        val aQuery = SearchQuery(page, perPage, search, sort, direction)
 
         val categoryListOutputPagination = listCategoriesUseCase.execute(aQuery)
 

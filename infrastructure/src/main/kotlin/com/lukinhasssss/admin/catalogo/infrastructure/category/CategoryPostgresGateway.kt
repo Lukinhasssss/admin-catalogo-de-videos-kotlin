@@ -3,8 +3,8 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.SpecificationUtils
@@ -28,7 +28,7 @@ class CategoryPostgresGateway(
             .map { it.toAggregate() }.orElse(null)
     }
 
-    override fun findAll(aQuery: CategorySearchQuery): Pagination<Category> = with(aQuery) {
+    override fun findAll(aQuery: SearchQuery): Pagination<Category> = with(aQuery) {
         // Paginação
         val page = PageRequest.of(page, perPage, Sort.by(Direction.fromString(direction), sort))
 

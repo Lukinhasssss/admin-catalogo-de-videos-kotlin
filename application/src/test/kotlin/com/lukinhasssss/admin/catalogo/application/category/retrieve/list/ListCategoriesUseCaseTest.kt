@@ -2,8 +2,8 @@ package com.lukinhasssss.admin.catalogo.application.category.retrieve.list
 
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
-import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -40,7 +40,7 @@ class ListCategoriesUseCaseTest {
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
 
@@ -70,7 +70,7 @@ class ListCategoriesUseCaseTest {
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
 
@@ -99,7 +99,7 @@ class ListCategoriesUseCaseTest {
         val expectedDirection = "asc"
         val expectedErrorMessage = "GatewayError"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         every { categoryGateway.findAll(aQuery) } throws IllegalStateException(expectedErrorMessage)
 

@@ -65,7 +65,7 @@ class UpdateCategoryUseCaseIT {
             assertEquals(expectedName, name)
             assertEquals(expectedDescription, description)
             assertEquals(expectedIsActive, isActive)
-            assertNotNull(createdAt)
+            assertEquals(aCategory.createdAt, createdAt)
             assertTrue(updatedAt.isAfter(aCategory.updatedAt))
             assertNull(deletedAt)
         }
@@ -137,8 +137,8 @@ class UpdateCategoryUseCaseIT {
             assertEquals(expectedName, name)
             assertEquals(expectedDescription, description)
             assertEquals(expectedIsActive, isActive)
-            assertNotNull(createdAt)
-            assertNotNull(updatedAt)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertTrue(aCategory.updatedAt.isBefore(updatedAt))
             assertNotNull(deletedAt)
         }
     }
@@ -178,8 +178,8 @@ class UpdateCategoryUseCaseIT {
             assertEquals(aCategory.name, name)
             assertEquals(aCategory.description, description)
             assertEquals(aCategory.isActive, isActive)
-            assertNotNull(createdAt)
-            assertNotNull(updatedAt)
+            assertEquals(aCategory.createdAt, createdAt)
+            assertEquals(aCategory.updatedAt, updatedAt)
             assertNull(deletedAt)
         }
     }

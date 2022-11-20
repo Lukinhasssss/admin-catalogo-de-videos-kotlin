@@ -1,11 +1,11 @@
-package com.lukinhasssss.admin.catalogo.domain.category
+package com.lukinhasssss.admin.catalogo.domain.genre
 
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.validation.Validator
 
-class CategoryValidator(
-    private val category: Category,
+class GenreValidator(
+    private val genre: Genre,
     validationHandler: ValidationHandler
 ) : Validator(validationHandler) {
 
@@ -14,12 +14,12 @@ class CategoryValidator(
     }
 
     companion object {
-        const val MIN_NAME_LENGTH = 3
+        const val MIN_NAME_LENGTH = 1
         const val MAX_NAME_LENGTH = 255
     }
 
     private fun checkNameConstraints() {
-        with(category.name) {
+        with(genre.name) {
             if (isBlank()) {
                 validationHandler.append(Error(message = "'name' should not be empty"))
                 return
@@ -28,7 +28,7 @@ class CategoryValidator(
             val nameLength = trim().length
 
             if (nameLength < MIN_NAME_LENGTH || nameLength > MAX_NAME_LENGTH)
-                validationHandler.append(Error(message = "'name' must be between 3 and 255 characters"))
+                validationHandler.append(Error(message = "'name' must be between 1 and 255 characters"))
         }
     }
 }
