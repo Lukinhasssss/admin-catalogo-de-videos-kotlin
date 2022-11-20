@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.genre
 
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -116,6 +117,82 @@ class GenreTest {
             assertEquals(aGenre.createdAt, createdAt)
             assertTrue(aGenre.updatedAt.isBefore(updatedAt))
             assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidInactiveGenre_whenCallUpdateWithActivate_shouldReceiveGenreUpdated() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(CategoryID.from("123"))
+
+        val aGenre = Genre.newGenre("animacao", false)
+
+        with(aGenre) {
+            assertNotNull(this)
+            assertFalse(isActive())
+            assertNotNull(deletedAt)
+        }
+
+        val actualGenre = aGenre.update(expectedName, expectedIsActive, expectedCategories)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories.size, categories.size)
+            assertEquals(expectedCategories, categories)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidActiveGenre_whenCallUpdateWithInactivate_shouldReceiveGenreUpdated() {
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = listOf(CategoryID.from("123"))
+
+        val aGenre = Genre.newGenre("animacao", true)
+
+        with(aGenre) {
+            assertNotNull(this)
+            assertTrue(isActive())
+            assertNull(deletedAt)
+        }
+
+        val actualGenre = aGenre.update(expectedName, expectedIsActive, expectedCategories)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories.size, categories.size)
+            assertEquals(expectedCategories, categories)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidGenre_whenCallUpdateWithEmptyName_shouldReceiveNotificationException() {
+        val expectedName = "    "
+        val expectedIsActive = true
+        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedErrorCount = 1
+
+        val actualGenre = Genre.newGenre("animacao", false)
+        val expectedErrorMessage = "'name' should not be empty"
+
+        val actualException = assertThrows<NotificationException> {
+            actualGenre.update(expectedName, expectedIsActive, expectedCategories)
+        }
+
+        with(actualException.errors) {
+            assertEquals(expectedErrorCount, size)
+            assertEquals(expectedErrorMessage, first().message)
         }
     }
 }
