@@ -3,7 +3,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.category
 import com.lukinhasssss.admin.catalogo.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -185,7 +185,7 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        val query = SearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
         val actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -205,7 +205,7 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(0, categoryRepository.count())
 
-        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        val query = SearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
         val actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -238,7 +238,7 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(3, categoryRepository.count())
 
-        var query = CategorySearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
+        var query = SearchQuery(page = 0, perPage = 1, terms = "", sort = "name", direction = "asc")
         var actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -251,7 +251,7 @@ class CategoryPostgresGatewayTest {
 
         expectedPage = 1
 
-        query = CategorySearchQuery(page = 1, perPage = 1, terms = "", sort = "name", direction = "asc")
+        query = SearchQuery(page = 1, perPage = 1, terms = "", sort = "name", direction = "asc")
         actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -264,7 +264,7 @@ class CategoryPostgresGatewayTest {
 
         expectedPage = 2
 
-        query = CategorySearchQuery(page = 2, perPage = 1, terms = "", sort = "name", direction = "asc")
+        query = SearchQuery(page = 2, perPage = 1, terms = "", sort = "name", direction = "asc")
         actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -298,7 +298,7 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "fil", sort = "name", direction = "asc")
+        val query = SearchQuery(page = 0, perPage = 1, terms = "fil", sort = "name", direction = "asc")
         val actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {
@@ -332,7 +332,7 @@ class CategoryPostgresGatewayTest {
 
         assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(page = 0, perPage = 1, terms = "MAIS ASSISTIDA", sort = "name", direction = "asc")
+        val query = SearchQuery(page = 0, perPage = 1, terms = "MAIS ASSISTIDA", sort = "name", direction = "asc")
         val actualResult = categoryGateway.findAll(query)
 
         with(actualResult) {

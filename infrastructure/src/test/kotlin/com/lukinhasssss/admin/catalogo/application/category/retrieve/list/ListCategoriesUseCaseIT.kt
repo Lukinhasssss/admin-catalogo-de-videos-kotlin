@@ -2,7 +2,7 @@ package com.lukinhasssss.admin.catalogo.application.category.retrieve.list
 
 import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
-import com.lukinhasssss.admin.catalogo.domain.category.CategorySearchQuery
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -46,7 +46,7 @@ class ListCategoriesUseCaseIT {
         val expectedItemsCount = 0
         val expectedTotal = 0L
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val actualResult = useCase.execute(aQuery)
 
@@ -78,7 +78,7 @@ class ListCategoriesUseCaseIT {
         val expectedSort = "name"
         val expectedDirection = "asc"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val actualResult = useCase.execute(aQuery)
 
@@ -107,7 +107,7 @@ class ListCategoriesUseCaseIT {
     ) {
         val expectedTerms = ""
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val actualResult = useCase.execute(aQuery)
 
@@ -136,7 +136,7 @@ class ListCategoriesUseCaseIT {
         val expectedDirection = "asc"
         val expectedTerms = ""
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val actualResult = useCase.execute(aQuery)
 
