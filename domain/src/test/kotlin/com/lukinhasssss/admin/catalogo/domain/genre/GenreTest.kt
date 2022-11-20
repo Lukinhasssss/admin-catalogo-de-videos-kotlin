@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.genre
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -124,7 +125,7 @@ class GenreTest {
     fun givenAValidInactiveGenre_whenCallUpdateWithActivate_shouldReceiveGenreUpdated() {
         val expectedName = "Ação"
         val expectedIsActive = true
-        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedCategories = mutableListOf(CategoryID.from("123"))
 
         val aGenre = Genre.newGenre("animacao", false)
 
@@ -152,7 +153,7 @@ class GenreTest {
     fun givenAValidActiveGenre_whenCallUpdateWithInactivate_shouldReceiveGenreUpdated() {
         val expectedName = "Ação"
         val expectedIsActive = false
-        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedCategories = mutableListOf(CategoryID.from("123"))
 
         val aGenre = Genre.newGenre("animacao", true)
 
@@ -180,7 +181,7 @@ class GenreTest {
     fun givenAValidGenre_whenCallUpdateWithEmptyName_shouldReceiveNotificationException() {
         val expectedName = "    "
         val expectedIsActive = true
-        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedCategories = mutableListOf(CategoryID.from("123"))
         val expectedErrorCount = 1
 
         val actualGenre = Genre.newGenre("animacao", false)
@@ -193,6 +194,92 @@ class GenreTest {
         with(actualException.errors) {
             assertEquals(expectedErrorCount, size)
             assertEquals(expectedErrorMessage, first().message)
+        }
+    }
+
+    @Test
+    fun givenAValidGenre_whenCallUpdateWithNullCategories_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = emptyList<CategoryID>()
+
+        val aGenre = Genre.newGenre("animacao", false)
+
+        with(aGenre) {
+            assertNotNull(this)
+            assertFalse(isActive())
+            assertNotNull(deletedAt)
+        }
+
+        val actualGenre = assertDoesNotThrow {
+            aGenre.update(expectedName, expectedIsActive, null)
+        }
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidEmptyCategoriesGenre_whenCallAddCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(seriesID, moviesID)
+
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        assertTrue(actualGenre.categories.isEmpty())
+
+        actualGenre.addCategory(seriesID)
+        actualGenre.addCategory(moviesID)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories)
+            assertEquals(actualCreatedAt, createdAt)
+            assertTrue(actualUpdatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidGenreWithTwoCategories_whenCallRemoveCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = mutableListOf(moviesID)
+
+        val aGenre = Genre.newGenre("animacao", false)
+        val actualGenre = aGenre.update(expectedName, expectedIsActive, mutableListOf(seriesID, moviesID))
+
+        assertEquals(2, actualGenre.categories.size)
+
+        actualGenre.removeCategory(seriesID)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories)
+            assertEquals(aGenre.createdAt, createdAt)
+            assertTrue(aGenre.updatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
         }
     }
 }
