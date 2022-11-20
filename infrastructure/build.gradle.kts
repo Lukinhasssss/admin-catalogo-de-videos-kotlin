@@ -12,7 +12,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
     id("org.springframework.boot") version "2.7.5"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.flywaydb.flyway") version "9.7.0"
+    id("org.flywaydb.flyway") version "9.8.1"
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -54,7 +54,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
-    testImplementation("org.flywaydb:flyway-core:9.7.0")
+    testImplementation("org.flywaydb:flyway-core:9.8.1")
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
