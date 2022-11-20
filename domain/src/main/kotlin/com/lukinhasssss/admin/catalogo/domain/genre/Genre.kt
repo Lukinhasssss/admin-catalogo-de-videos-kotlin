@@ -12,9 +12,9 @@ class Genre(
     override val id: GenreID,
     val name: String,
     val active: Boolean,
-    val categories: List<CategoryID>,
+    val categories: MutableList<CategoryID>,
     val createdAt: Instant,
-    val updatedAt: Instant,
+    var updatedAt: Instant,
     val deletedAt: Instant?
 ) : AggregateRoot<GenreID>(id) {
 
@@ -39,7 +39,7 @@ class Genre(
             anId: GenreID,
             aName: String,
             isActive: Boolean,
-            categories: List<CategoryID>,
+            categories: MutableList<CategoryID>,
             createdAt: Instant,
             updatedAt: Instant,
             deletedAt: Instant?
@@ -74,13 +74,25 @@ class Genre(
         deletedAt = deletedAt ?: InstantUtils.now()
     )
 
-    fun update(aName: String, isActive: Boolean, categories: List<CategoryID>) = Genre(
+    fun update(aName: String, isActive: Boolean, categories: MutableList<CategoryID>?) = Genre(
         id = id,
         name = aName,
         active = if (isActive) activate().isActive() else deactivate().isActive(),
-        categories = categories,
+        categories = categories ?: mutableListOf(),
         createdAt = createdAt,
         updatedAt = InstantUtils.now(),
         deletedAt = if (isActive) activate().deletedAt else deactivate().deletedAt
     )
+
+    fun addCategory(aCategoryID: CategoryID): Genre {
+        categories.add(aCategoryID)
+        updatedAt = InstantUtils.now()
+        return this
+    }
+
+    fun removeCategory(aCategoryID: CategoryID): Genre {
+        categories.remove(aCategoryID)
+        updatedAt = InstantUtils.now()
+        return this
+    }
 }
