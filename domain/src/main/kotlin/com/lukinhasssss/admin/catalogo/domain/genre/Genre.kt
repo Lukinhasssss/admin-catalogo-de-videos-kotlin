@@ -73,4 +73,14 @@ class Genre(
         updatedAt = InstantUtils.now(),
         deletedAt = deletedAt ?: InstantUtils.now()
     )
+
+    fun update(aName: String, isActive: Boolean, categories: List<CategoryID>) = Genre(
+        id = id,
+        name = aName,
+        active = if (isActive) activate().isActive() else deactivate().isActive(),
+        categories = categories,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        deletedAt = if (isActive) activate().deletedAt else deactivate().deletedAt
+    )
 }
