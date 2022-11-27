@@ -12,7 +12,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
     id("org.springframework.boot") version "2.7.5"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.flywaydb.flyway") version "9.8.1"
+    id("org.flywaydb.flyway") version "9.8.2"
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -37,8 +37,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
 
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.12")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.12")
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.13")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
 
     implementation("io.vavr:vavr-kotlin:0.10.2")
 
@@ -54,15 +54,15 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
-    testImplementation("org.flywaydb:flyway-core:9.8.1")
+    testImplementation("org.flywaydb:flyway-core:9.8.2")
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-    testImplementation("io.rest-assured:kotlin-extensions:5.2.0")
+    testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 
-    testImplementation("org.testcontainers:testcontainers:1.17.4")
-    testImplementation("org.testcontainers:postgresql:1.17.4")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.4")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
 }
 
 flyway {
