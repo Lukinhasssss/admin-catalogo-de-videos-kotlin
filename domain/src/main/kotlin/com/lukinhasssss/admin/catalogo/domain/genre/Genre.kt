@@ -8,7 +8,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import java.time.Instant
 
-class Genre(
+data class Genre(
     override val id: GenreID,
     val name: String,
     val active: Boolean,
@@ -86,6 +86,15 @@ class Genre(
 
     fun addCategory(aCategoryID: CategoryID): Genre {
         categories.add(aCategoryID)
+        updatedAt = InstantUtils.now()
+        return this
+    }
+
+    fun addCategories(categories: List<CategoryID>): Genre {
+        if (categories.isEmpty())
+            return this
+
+        this.categories.addAll(categories)
         updatedAt = InstantUtils.now()
         return this
     }

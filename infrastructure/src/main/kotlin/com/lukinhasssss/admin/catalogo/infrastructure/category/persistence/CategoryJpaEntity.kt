@@ -10,7 +10,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "category")
-class CategoryJpaEntity(
+data class CategoryJpaEntity(
 
     @Id
     val id: String,

@@ -3,7 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.category
 import com.lukinhasssss.admin.catalogo.domain.Identifier
 import java.util.UUID
 
-class CategoryID(
+data class CategoryID(
     override val value: String
 ) : Identifier() {
 

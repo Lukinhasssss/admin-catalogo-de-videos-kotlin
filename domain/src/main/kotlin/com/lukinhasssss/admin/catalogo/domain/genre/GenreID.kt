@@ -3,7 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.genre
 import com.lukinhasssss.admin.catalogo.domain.Identifier
 import java.util.UUID
 
-class GenreID(
+data class GenreID(
     override val value: String
 ) : Identifier() {
 
