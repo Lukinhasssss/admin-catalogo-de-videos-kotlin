@@ -1,31 +1,27 @@
 package com.lukinhasssss.admin.catalogo.application.category.retrieve.list
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
-class ListCategoriesUseCaseTest {
+class ListCategoriesUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultListCategoriesUseCase
 
     @MockK
     private lateinit var categoryGateway: CategoryGateway
-
-    @BeforeEach
-    fun cleanUp() { clearAllMocks() }
 
     @Test
     fun givenAValidQuery_whenCallsListCategories_thenShouldReturnCategories() {

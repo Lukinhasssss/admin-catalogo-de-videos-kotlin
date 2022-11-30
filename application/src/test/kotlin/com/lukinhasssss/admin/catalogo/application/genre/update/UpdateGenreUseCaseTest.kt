@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.application.genre.update
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
@@ -19,7 +20,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
-class UpdateGenreUseCaseTest {
+class UpdateGenreUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultUpdateGenreUseCase

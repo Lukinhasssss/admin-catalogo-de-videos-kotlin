@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.category.create
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -10,21 +10,17 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class CreateCategoryUseCaseTest {
+class CreateCategoryUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultCreateCategoryUseCase
 
     @MockK
     private lateinit var categoryGateway: CategoryGateway
-
-    @BeforeEach
-    fun cleanUp() { clearAllMocks() }
 
     @Test
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {

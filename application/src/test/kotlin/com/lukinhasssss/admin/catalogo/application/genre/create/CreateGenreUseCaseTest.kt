@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.application.genre.create
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
@@ -17,7 +18,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class CreateGenreUseCaseTest {
+class CreateGenreUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultCreateGenreUseCase
