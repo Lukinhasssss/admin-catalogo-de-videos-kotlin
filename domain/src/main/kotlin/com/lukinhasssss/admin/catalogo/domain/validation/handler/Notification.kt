@@ -33,7 +33,7 @@ class Notification(
     }
 
     // TODO: Tentar entender pq isso funciona em Java mas não em Kotlin
-    override fun <T> validate(aValidation: ValidationHandler.Validation<T>): T {
+    /*override fun <T> validate(aValidation: ValidationHandler.Validation<T>): T {
         try {
             return aValidation.validate()
         } catch (ex: DomainException) {
@@ -43,7 +43,7 @@ class Notification(
         }
 
         return aValidation.validate()
-    }
+    }*/
 
     override fun <T> validate(aValidation: () -> T): T? {
         try {
