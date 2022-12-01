@@ -14,17 +14,22 @@ class ThrowsValidationHandler : ValidationHandler {
         throw DomainException.with(anHandler.getErrors())
     }
 
-    override fun validate(aValidation: ValidationHandler.Validation): ValidationHandler {
+    // TODO: Tentar entender pq isso funciona em Java mas não em Kotlin
+    /*override fun <T> validate(aValidation: ValidationHandler.Validation<T>): T {
         try {
-            aValidation.validate()
+            return aValidation.validate()
         } catch (ex: Exception) {
             throw DomainException.with(listOf(Error(ex.message)))
         }
+    }*/
 
-        return this
+    override fun <T> validate(aValidation: () -> T): T {
+        try {
+            return aValidation.invoke()
+        } catch (ex: Exception) {
+            throw DomainException.with(listOf(Error(ex.message)))
+        }
     }
 
-    override fun getErrors(): List<Error> {
-        return emptyList()
-    }
+    override fun getErrors() = emptyList<Error>()
 }

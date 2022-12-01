@@ -1,33 +1,32 @@
-package com.lukinhasssss.admin.catalogo.application.category.retrieve.list
+package com.lukinhasssss.admin.catalogo.application.genre.retrive.list
 
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
-import com.lukinhasssss.admin.catalogo.domain.category.Category
-import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
+import com.lukinhasssss.admin.catalogo.domain.genre.Genre
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
-@ExtendWith(MockKExtension::class)
-class ListCategoriesUseCaseTest : UseCaseTest() {
+class ListGenreUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
-    private lateinit var useCase: DefaultListCategoriesUseCase
+    private lateinit var useCase: DefaultListGenreUseCase
 
     @MockK
-    private lateinit var categoryGateway: CategoryGateway
+    private lateinit var genreGateway: GenreGateway
 
     @Test
-    fun givenAValidQuery_whenCallsListCategories_thenShouldReturnCategories() {
-        val categories = listOf(
-            Category.newCategory("Filmes", null, true),
-            Category.newCategory("Series", null, true)
+    fun givenAValidQuery_whenCallsListGenre_shouldReturnGenres() {
+        // given
+        val genres = listOf(
+            Genre.newGenre("Ação", true),
+            Genre.newGenre("Aventura", true)
         )
 
         val expectedPage = 0
@@ -35,72 +34,82 @@ class ListCategoriesUseCaseTest : UseCaseTest() {
         val expectedTerms = ""
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
+        val expectedTotal = genres.size.toLong()
+        val expectedItems = genres.map { GenreListOutput.from(it) }
 
         val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
+        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, genres)
 
-        val expectedItemsCount = 2
-        val expectedResult = expectedPagination.map { CategoryListOutput.from(it) }
+        every { genreGateway.findAll(aQuery) } returns expectedPagination
 
-        every { categoryGateway.findAll(aQuery) } returns expectedPagination
-
+        // when
         val actualResult = useCase.execute(aQuery)
 
+        // then
         with(actualResult) {
-            assertEquals(expectedItemsCount, items.size)
-            assertEquals(expectedResult, this)
             assertEquals(expectedPage, currentPage)
             assertEquals(expectedPerPage, perPage)
-            assertEquals(categories.size.toLong(), total)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItems, items)
         }
+
+        verify(exactly = 1) { genreGateway.findAll(aQuery) }
     }
 
     @Test
-    fun givenAValidQuery_whenHasNoResults_thenShouldReturnEmptyCategories() {
-        val categories = emptyList<Category>()
+    fun givenAValidQuery_whenCallsListGenreAndResultIsEmpty_shouldReturnGenres() {
+        // given
+        val genres = listOf<Genre>()
 
         val expectedPage = 0
         val expectedPerPage = 10
         val expectedTerms = ""
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
+        val expectedTotal = 0L
+        val expectedItems = listOf<GenreListOutput>()
 
         val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
+        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, genres)
 
-        val expectedItemsCount = 0
-        val expectedResult = expectedPagination.map { CategoryListOutput.from(it) }
+        every { genreGateway.findAll(aQuery) } returns expectedPagination
 
-        every { categoryGateway.findAll(aQuery) } returns expectedPagination
-
+        // when
         val actualResult = useCase.execute(aQuery)
 
+        // then
         with(actualResult) {
-            assertEquals(expectedItemsCount, items.size)
-            assertEquals(expectedResult, this)
             assertEquals(expectedPage, currentPage)
             assertEquals(expectedPerPage, perPage)
-            assertEquals(categories.size.toLong(), total)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItems, items)
         }
+
+        verify(exactly = 1) { genreGateway.findAll(aQuery) }
     }
 
     @Test
     fun givenAValidQuery_whenGatewayThrowsException_thenReturnException() {
+        // given
         val expectedPage = 0
         val expectedPerPage = 10
         val expectedTerms = ""
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
-        val expectedErrorMessage = "GatewayError"
+        val expectedErrorMessage = "Gateway error"
 
         val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        every { categoryGateway.findAll(aQuery) } throws IllegalStateException(expectedErrorMessage)
+        every { genreGateway.findAll(aQuery) } throws IllegalStateException(expectedErrorMessage)
 
+        // when
         val actualException = assertThrows<IllegalStateException> { useCase.execute(aQuery) }
 
+        // then
         assertEquals(expectedErrorMessage, actualException.message)
+
+        verify(exactly = 1) { genreGateway.findAll(aQuery) }
     }
 }

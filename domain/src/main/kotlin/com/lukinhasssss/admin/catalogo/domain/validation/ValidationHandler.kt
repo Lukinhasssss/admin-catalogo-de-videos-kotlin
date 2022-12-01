@@ -6,7 +6,10 @@ interface ValidationHandler {
 
     fun append(anHandler: ValidationHandler): ValidationHandler
 
-    fun validate(aValidation: Validation): ValidationHandler
+    // TODO: Tentar entender pq isso funciona em Java mas não em Kotlin
+    // fun <T> validate(aValidation: Validation<T>): T
+
+    fun <T> validate(aValidation: () -> T): T?
 
     fun getErrors(): List<Error>
 
@@ -14,7 +17,7 @@ interface ValidationHandler {
 
     fun firstError(): Error = getErrors()[0]
 
-    interface Validation {
-        fun validate()
+    interface Validation<T> {
+        fun validate(): T
     }
 }

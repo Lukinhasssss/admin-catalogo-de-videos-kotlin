@@ -5,7 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import java.time.Instant
 
-class Category(
+data class Category(
     override val id: CategoryID,
     val name: String,
     val description: String?,

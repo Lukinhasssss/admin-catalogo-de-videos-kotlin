@@ -58,6 +58,11 @@ class CategoryPostgresGateway(
         }
     }
 
+    override fun existsByIds(ids: Iterable<CategoryID>): List<CategoryID> {
+        // TODO: Implementar quando chegar na camada de infraestrutura de Genre.
+        return emptyList()
+    }
+
     private fun save(aCategory: Category): Category {
         return repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
     }

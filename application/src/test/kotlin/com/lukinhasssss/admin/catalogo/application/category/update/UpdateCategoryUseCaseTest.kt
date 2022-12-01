@@ -1,16 +1,15 @@
 package com.lukinhasssss.admin.catalogo.application.category.update
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import io.mockk.Called
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,16 +19,13 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
-class UpdateCategoryUseCaseTest {
+class UpdateCategoryUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultUpdateCategoryUseCase
 
     @MockK
     private lateinit var categoryGateway: CategoryGateway
-
-    @BeforeEach
-    fun cleanUp() { clearAllMocks() }
 
     @Test
     fun givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() {

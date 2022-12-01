@@ -14,4 +14,6 @@ interface CategoryGateway {
     fun update(aCategory: Category): Category
 
     fun deleteById(anID: CategoryID)
+
+    fun existsByIds(ids: Iterable<CategoryID>): List<CategoryID>
 }

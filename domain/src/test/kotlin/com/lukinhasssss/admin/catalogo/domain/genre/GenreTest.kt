@@ -282,4 +282,59 @@ class GenreTest {
             assertNull(deletedAt)
         }
     }
+
+    @Test
+    fun givenAValidEmptyCategoriesGenre_whenCallAddCategories_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(seriesID, moviesID)
+
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        assertTrue(actualGenre.categories.isEmpty())
+
+        actualGenre.addCategories(expectedCategories)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories)
+            assertEquals(actualCreatedAt, createdAt)
+            assertTrue(actualUpdatedAt.isBefore(updatedAt))
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAValidEmptyCategoriesGenre_whenCallAddCategoriesWithEmptyList_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = emptyList<CategoryID>()
+
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        assertTrue(actualGenre.categories.isEmpty())
+
+        actualGenre.addCategories(expectedCategories)
+
+        with(actualGenre) {
+            assertNotNull(id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, isActive())
+            assertEquals(expectedCategories, categories)
+            assertEquals(actualCreatedAt, createdAt)
+            assertEquals(actualUpdatedAt, updatedAt)
+            assertNull(deletedAt)
+        }
+    }
 }
