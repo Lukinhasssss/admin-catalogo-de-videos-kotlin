@@ -11,5 +11,5 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
 @SpringBootTest(classes = [WebServerConfig::class])
-@ExtendWith(CleanUpExtension::class)
+@ExtendWith(PostgresCleanUpExtension::class)
 annotation class IntegrationTest

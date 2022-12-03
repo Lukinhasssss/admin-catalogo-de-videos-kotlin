@@ -14,5 +14,5 @@ import java.lang.annotation.Inherited
     classes = [WebServerConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
-@ExtendWith(CleanUpExtension::class)
+@ExtendWith(PostgresCleanUpExtension::class)
 annotation class E2ETest
