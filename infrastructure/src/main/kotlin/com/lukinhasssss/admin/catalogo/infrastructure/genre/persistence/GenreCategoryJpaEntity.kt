@@ -9,7 +9,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "genres_categories")
-class GenreCategoryJpaEntity(
+data class GenreCategoryJpaEntity(
 
     @EmbeddedId
     val id: GenreCategoryID,
