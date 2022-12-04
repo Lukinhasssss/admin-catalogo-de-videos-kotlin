@@ -12,10 +12,10 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.util.Optional
 
-@Service
+@Component
 class CategoryPostgresGateway(
     private val repository: CategoryRepository
 ) : CategoryGateway {
@@ -35,11 +35,7 @@ class CategoryPostgresGateway(
         // Busca dinâmica pelo critério terms (name ou description)
         val specifications = Optional.ofNullable(terms)
             .filter { it.isNotBlank() }
-            .map {
-                val nameLike: Specification<CategoryJpaEntity> = SpecificationUtils.like("name", it)
-                val descriptionLike: Specification<CategoryJpaEntity> = SpecificationUtils.like("description", it)
-                nameLike.or(descriptionLike)
-            }.orElse(null)
+            .map { assembleSpecification(it) }.orElse(null)
 
         val pageResult = repository.findAll(Specification.where(specifications), page)
 
@@ -63,7 +59,11 @@ class CategoryPostgresGateway(
         return emptyList()
     }
 
-    private fun save(aCategory: Category): Category {
-        return repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
+    private fun assembleSpecification(str: String): Specification<CategoryJpaEntity> {
+        val nameLike: Specification<CategoryJpaEntity> = SpecificationUtils.like("name", str)
+        val descriptionLike: Specification<CategoryJpaEntity> = SpecificationUtils.like("description", str)
+        return nameLike.or(descriptionLike)
     }
+
+    private fun save(aCategory: Category) = repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
 }
