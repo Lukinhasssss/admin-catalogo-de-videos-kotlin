@@ -59,7 +59,7 @@ data class GenreJpaEntity(
         anId = GenreID.from(id),
         aName = name,
         isActive = active,
-        categories = categories.map { CategoryID.from(it.id.categoryId) }.toMutableList(),
+        categories = getCategoryIDs(),
         createdAt = createdAt,
         updatedAt = updatedAt,
         deletedAt = deletedAt
@@ -70,4 +70,6 @@ data class GenreJpaEntity(
 
     fun removeCategory(anId: CategoryID) =
         categories.remove(GenreCategoryJpaEntity.from(aCategoryID = anId, aGenre = this))
+
+    fun getCategoryIDs() = categories.map { CategoryID.from(it.id.categoryId) }.toMutableList()
 }
