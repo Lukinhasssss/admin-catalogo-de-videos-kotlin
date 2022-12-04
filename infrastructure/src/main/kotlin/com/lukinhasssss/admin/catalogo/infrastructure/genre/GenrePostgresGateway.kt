@@ -27,7 +27,7 @@ class GenrePostgresGateway(
     }
 
     override fun update(aGenre: Genre): Genre {
-        TODO("Not yet implemented")
+        return save(aGenre)
     }
 
     override fun deleteById(anID: GenreID) {
