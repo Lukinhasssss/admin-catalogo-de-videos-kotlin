@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GenrePostgresGateway(
-    private val genreRepository: GenreRepository
+    private val repository: GenreRepository
 ) : GenreGateway {
 
     override fun create(aGenre: Genre): Genre {
@@ -31,9 +31,11 @@ class GenrePostgresGateway(
     }
 
     override fun deleteById(anID: GenreID) {
-        TODO("Not yet implemented")
+        with(anID.value) {
+            if (repository.existsById(this)) repository.deleteById(this)
+        }
     }
 
     private fun save(aGenre: Genre) =
-        genreRepository.save(GenreJpaEntity.from(aGenre)).toAggregate()
+        repository.save(GenreJpaEntity.from(aGenre)).toAggregate()
 }
