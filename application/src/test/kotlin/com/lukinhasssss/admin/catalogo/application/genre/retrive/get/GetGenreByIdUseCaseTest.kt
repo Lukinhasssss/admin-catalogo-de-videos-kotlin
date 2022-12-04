@@ -25,22 +25,6 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidId_whenCallsGetGenre_shouldReturnGenre() {
         // given
-        val expectedId = GenreID.from("123")
-        val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
-
-        every { genreGateway.findById(expectedId) } returns null
-
-        // when
-        val actualException = assertThrows<NotFoundException> { useCase.execute(expectedId.value) }
-
-        assertEquals(expectedErrorMessage, actualException.message)
-
-        verify(exactly = 1) { genreGateway.findById(expectedId) }
-    }
-
-    @Test
-    fun givenAValidId_whenCallsGetGenreAndDoesNotExists_shouldReturnNotFound() {
-        // given
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = listOf(
@@ -66,6 +50,22 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
             assertEquals(aGenre.updatedAt, updatedAt)
             assertEquals(aGenre.deletedAt, deletedAt)
         }
+
+        verify(exactly = 1) { genreGateway.findById(expectedId) }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsGetGenreAndDoesNotExists_shouldReturnNotFound() {
+        // given
+        val expectedId = GenreID.from("123")
+        val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
+
+        every { genreGateway.findById(expectedId) } returns null
+
+        // when
+        val actualException = assertThrows<NotFoundException> { useCase.execute(expectedId.value) }
+
+        assertEquals(expectedErrorMessage, actualException.message)
 
         verify(exactly = 1) { genreGateway.findById(expectedId) }
     }
