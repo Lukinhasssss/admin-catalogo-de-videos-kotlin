@@ -5,6 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.category.CategoryPostgresGateway
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 
 @PostgresGatewayTest
@@ -400,6 +403,154 @@ class GenrePostgresGatewayTest {
 
         // then
         assertNull(actualGenre)
+    }
+
+    @Test
+    fun givenEmptyGenres_whenCallsFindAll_shouldReturnEmptyList() {
+        // given
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTerms = ""
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val expectedTotal = 0
+
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        // when
+        val actualPage = genreGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal.toLong(), total)
+            assertEquals(expectedTotal, items.size)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "aç, 0, 10, 1, 1, Ação",
+        "dr, 0, 10, 1, 1, Drama",
+        "com, 0, 10, 1, 1, Comédia Romântica",
+        "cien, 0, 10, 1, 1, Ficção Científica",
+        "terr, 0, 10, 1, 1, Terror"
+    )
+    fun givenAValidTerm_whenCallsFindAll_shouldReturnFiltered(
+        expectedTerms: String,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenreName: String
+    ) {
+        // given
+        mockGenres()
+
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        // when
+        val actualPage = genreGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItemsCount, items.size)
+            assertEquals(expectedGenreName, items[0].name)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "name, asc, 0, 10, 5, 5, Ação",
+        "name, desc, 0, 10, 5, 5, Terror",
+        "createdAt, asc, 0, 10, 5, 5, Comédia Romântica",
+        "createdAt, desc, 0, 10, 5, 5, Ficção Científica"
+    )
+    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+        expectedSort: String,
+        expectedDirection: String,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenreName: String
+    ) {
+        // given
+        mockGenres()
+
+        val expectedTerms = ""
+
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        // when
+        val actualPage = genreGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItemsCount, items.size)
+            assertEquals(expectedGenreName, items[0].name)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0, 2, 2, 5, Ação;Comédia Romântica",
+        "1, 2, 2, 5, Drama;Ficção Científica",
+        "2, 2, 1, 5, Terror"
+    )
+    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenres: String
+    ) {
+        // given
+        mockGenres()
+
+        val expectedTerms = ""
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        // when
+        val actualPage = genreGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItemsCount, items.size)
+
+            for ((index, expectedGenreName) in expectedGenres.split(";").withIndex()) {
+                val actualGenreName = items[index].name
+                assertEquals(expectedGenreName, actualGenreName)
+            }
+        }
+    }
+
+    private fun mockGenres() {
+        genreRepository.saveAllAndFlush(
+            listOf(
+                GenreJpaEntity.from(Genre.newGenre("Comédia Romântica", true)),
+                GenreJpaEntity.from(Genre.newGenre("Ação", true)),
+                GenreJpaEntity.from(Genre.newGenre("Drama", true)),
+                GenreJpaEntity.from(Genre.newGenre("Terror", true)),
+                GenreJpaEntity.from(Genre.newGenre("Ficção Científica", true))
+            )
+        )
     }
 
     private fun sorted(expectedCategories: Iterable<CategoryID>) =
