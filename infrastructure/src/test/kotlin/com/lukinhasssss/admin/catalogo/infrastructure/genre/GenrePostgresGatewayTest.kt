@@ -354,6 +354,54 @@ class GenrePostgresGatewayTest {
         assertEquals(0, genreRepository.count())
     }
 
+    @Test
+    fun givenAPrePersistedGenre_whenCallsFindById_shouldReturnGenre() {
+        // given
+        val filmes = categoryGateway.create(Category.newCategory("Filmes", null, true))
+        val series = categoryGateway.create(Category.newCategory("Series", null, true))
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = mutableListOf(filmes.id, series.id)
+
+        val aGenre = Genre.newGenre(expectedName, expectedIsActive).addCategories(expectedCategories)
+
+        val expectedId = aGenre.id
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(aGenre))
+
+        assertEquals(1, genreRepository.count())
+
+        // when
+        val actualGenre = genreGateway.findById(expectedId)
+
+        // then
+
+        with(actualGenre!!) {
+            assertEquals(expectedId, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, active)
+            assertEquals(sorted(expectedCategories), sorted(categories))
+            assertEquals(aGenre.createdAt, createdAt)
+            assertEquals(aGenre.updatedAt, updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun givenAnInvalidGenreId_whenCallsFindById_shouldReturnNull() {
+        // given
+        val expectedId = GenreID.from("any")
+
+        assertEquals(0, genreRepository.count())
+
+        // when
+        val actualGenre = genreGateway.findById(expectedId)
+
+        // then
+        assertNull(actualGenre)
+    }
+
     private fun sorted(expectedCategories: Iterable<CategoryID>) =
         expectedCategories.sortedBy { it.value }.toMutableList()
 }
