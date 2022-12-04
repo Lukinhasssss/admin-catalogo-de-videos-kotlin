@@ -19,7 +19,8 @@ class GenrePostgresGateway(
     }
 
     override fun findById(anID: GenreID): Genre? {
-        TODO("Not yet implemented")
+        return repository.findById(anID.value)
+            .map { it.toAggregate() }.orElse(null)
     }
 
     override fun findAll(aQuery: SearchQuery): Pagination<Genre> {
