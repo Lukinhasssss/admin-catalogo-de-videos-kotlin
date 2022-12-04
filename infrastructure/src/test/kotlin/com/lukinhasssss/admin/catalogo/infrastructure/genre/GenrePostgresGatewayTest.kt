@@ -4,6 +4,7 @@ import com.lukinhasssss.admin.catalogo.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.infrastructure.category.CategoryPostgresGateway
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
@@ -323,6 +324,34 @@ class GenrePostgresGatewayTest {
             assertTrue(aGenre.updatedAt.isBefore(updatedAt))
             assertNotNull(deletedAt)
         }
+    }
+
+    @Test
+    fun givenAPrePersistedGenre_whenCallsDeleteById_shouldDeleteGenre() {
+        // given
+        val aGenre = Genre.newGenre("Ação", true)
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(aGenre))
+
+        assertEquals(1, genreRepository.count())
+
+        // when
+        genreGateway.deleteById(aGenre.id)
+
+        // then
+        assertEquals(0, genreRepository.count())
+    }
+
+    @Test
+    fun givenAnInvalidGenreId_whenCallsDeleteById_shouldDeleteGenre() {
+        // given
+        assertEquals(0, genreRepository.count())
+
+        // when
+        genreGateway.deleteById(GenreID.from("123"))
+
+        // then
+        assertEquals(0, genreRepository.count())
     }
 
     private fun sorted(expectedCategories: Iterable<CategoryID>) =
