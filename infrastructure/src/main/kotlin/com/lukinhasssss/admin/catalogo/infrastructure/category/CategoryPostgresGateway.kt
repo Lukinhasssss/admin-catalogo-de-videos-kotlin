@@ -54,9 +54,9 @@ class CategoryPostgresGateway(
         }
     }
 
-    override fun existsByIds(ids: Iterable<CategoryID>): List<CategoryID> {
-        // TODO: Implementar quando chegar na camada de infraestrutura de Genre.
-        return emptyList()
+    override fun existsByIds(categoryIDs: Iterable<CategoryID>): List<CategoryID> {
+        val ids = categoryIDs.map { it.value }
+        return repository.existsByIds(ids).map { CategoryID.from(it) }
     }
 
     private fun assembleSpecification(str: String): Specification<CategoryJpaEntity> {

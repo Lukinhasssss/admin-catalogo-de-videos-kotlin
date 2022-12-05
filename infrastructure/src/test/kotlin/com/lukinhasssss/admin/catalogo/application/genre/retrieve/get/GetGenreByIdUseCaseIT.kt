@@ -1,57 +1,67 @@
-package com.lukinhasssss.admin.catalogo.application.genre.retrive.get
+package com.lukinhasssss.admin.catalogo.application.genre.retrieve.get
 
-import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.IntegrationTest
+import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
+import com.lukinhasssss.admin.catalogo.domain.category.Category
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
-import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
+import org.springframework.beans.factory.annotation.Autowired
 
-class GetGenreByIdUseCaseTest : UseCaseTest() {
+@IntegrationTest
+class GetGenreByIdUseCaseIT {
 
-    @InjectMockKs
-    private lateinit var useCase: DefaultGetGenreByIdUseCase
+    @Autowired
+    private lateinit var useCase: GetGenreByIdUseCase
 
-    @MockK
+    @Autowired
+    private lateinit var categoryGateway: CategoryGateway
+
+    @Autowired
     private lateinit var genreGateway: GenreGateway
 
     @Test
     fun givenAValidId_whenCallsGetGenre_shouldReturnGenre() {
         // given
+        val filmes =
+            categoryGateway.create(Category.newCategory("Filmes", null, true))
+
+        val series =
+            categoryGateway.create(Category.newCategory("Series", null, true))
+
         val expectedName = "Ação"
         val expectedIsActive = true
-        val expectedCategories = listOf(
-            CategoryID.from("123"),
-            CategoryID.from("456")
+        val expectedCategories = listOf(filmes.id, series.id)
+
+        val aGenre = genreGateway.create(
+            Genre.newGenre(expectedName, expectedIsActive).addCategories(expectedCategories)
         )
 
-        val aGenre = Genre.newGenre(expectedName, expectedIsActive).addCategories(expectedCategories)
-
         val expectedId = aGenre.id
-
-        every { genreGateway.findById(any()) } returns aGenre
 
         // when
         val actualGenre = useCase.execute(expectedId.value)
 
+        // then
         with(actualGenre) {
             assertEquals(expectedId.value, id)
             assertEquals(expectedName, name)
             assertEquals(expectedIsActive, isActive)
-            assertEquals(expectedCategories.asString(), categories)
+            assertTrue(
+                expectedCategories.size == categories.size &&
+                    expectedCategories.asString().containsAll(categories)
+            )
             assertEquals(aGenre.createdAt, createdAt)
             assertEquals(aGenre.updatedAt, updatedAt)
             assertEquals(aGenre.deletedAt, deletedAt)
         }
-
-        verify(exactly = 1) { genreGateway.findById(expectedId) }
     }
 
     @Test
@@ -60,14 +70,10 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
         val expectedId = GenreID.from("123")
         val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
 
-        every { genreGateway.findById(expectedId) } returns null
-
         // when
         val actualException = assertThrows<NotFoundException> { useCase.execute(expectedId.value) }
 
         assertEquals(expectedErrorMessage, actualException.message)
-
-        verify(exactly = 1) { genreGateway.findById(expectedId) }
     }
 
     private fun Iterable<CategoryID>.asString() = map { it.value }
