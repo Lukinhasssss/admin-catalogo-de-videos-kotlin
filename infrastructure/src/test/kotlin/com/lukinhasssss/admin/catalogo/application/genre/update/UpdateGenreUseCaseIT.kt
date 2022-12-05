@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class UpdateGenreUseCaseIT {
 
     @Autowired
-    private lateinit var useCase: DefaultUpdateGenreUseCase
+    private lateinit var useCase: UpdateGenreUseCase
 
     @SpykBean
     private lateinit var categoryGateway: CategoryGateway
