@@ -49,6 +49,7 @@ class GetGenreByIdUseCaseIT {
         // when
         val actualGenre = useCase.execute(expectedId.value)
 
+        // then
         with(actualGenre) {
             assertEquals(expectedId.value, id)
             assertEquals(expectedName, name)
