@@ -6,6 +6,8 @@ import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreOutpu
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreOutput
+import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreUseCase
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
@@ -14,6 +16,7 @@ import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -26,6 +29,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.util.UUID
 
 @ControllerTest(controllers = [GenreAPI::class])
@@ -42,6 +46,9 @@ class GenreAPITest {
 
     @MockkBean
     private lateinit var getGenreByIdUseCase: GetGenreByIdUseCase
+
+    @MockkBean
+    private lateinit var updateGenreUseCase: UpdateGenreUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
@@ -85,7 +92,7 @@ class GenreAPITest {
     }
 
     @Test
-    fun givenAnInvalidCommand_whenCallsCreateGenre_shouldReturnNotification() {
+    fun givenAnInvalidName_whenCallsCreateGenre_shouldReturnNotification() {
         // given
         val expectedName = "   "
         val expectedIsActive = true
@@ -188,5 +195,91 @@ class GenreAPITest {
         }
 
         verify { getGenreByIdUseCase.execute(expectedId.value) }
+    }
+
+    @Test
+    fun givenAValidCommand_whenCallsUpdateGenre_shouldReturnGenreId() {
+        // given
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf("123", "456")
+
+        val aGenre = Genre.newGenre(expectedName, expectedIsActive)
+
+        val expectedId = aGenre.id.value
+
+        val aCommand = UpdateGenreRequest(expectedName, expectedIsActive, expectedCategories)
+
+        every { updateGenreUseCase.execute(any()) } returns UpdateGenreOutput.from(aGenre)
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/genres/$expectedId") {
+            contentType = APPLICATION_JSON
+            content = mapper.writeValueAsString(aCommand)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header { string(name = "Content-Type", value = APPLICATION_JSON_VALUE) }
+
+            jsonPath("$.id", equalTo(expectedId))
+        }
+
+        verify {
+            updateGenreUseCase.execute(
+                withArg {
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedIsActive, it.isActive)
+                    assertEquals(expectedCategories, it.categories)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidName_whenCallsUpdateGenre_shouldReturnNotification() {
+        // given
+        val expectedName = "   "
+        val expectedIsActive = true
+        val expectedCategories = listOf("123", "456")
+        val expectedErrorMessage = "'name' should not be empty"
+
+        val aGenre = Genre.newGenre("Ação", expectedIsActive)
+
+        val expectedId = aGenre.id.value
+
+        val aCommand = UpdateGenreRequest(expectedName, expectedIsActive, expectedCategories)
+
+        every {
+            updateGenreUseCase.execute(any())
+        } throws NotificationException("Error", Notification.create(Error(expectedErrorMessage)))
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/genres/$expectedId") {
+            contentType = APPLICATION_JSON
+            content = mapper.writeValueAsString(aCommand)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isUnprocessableEntity() }
+
+            header { string(name = "Content-Type", value = APPLICATION_JSON_VALUE) }
+
+            jsonPath("$.errors.size()", equalTo(1))
+            jsonPath("$.errors[0].message", equalTo(expectedErrorMessage))
+        }
+
+        verify {
+            updateGenreUseCase.execute(
+                withArg {
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedIsActive, it.isActive)
+                    assertEquals(expectedCategories, it.categories)
+                }
+            )
+        }
     }
 }
