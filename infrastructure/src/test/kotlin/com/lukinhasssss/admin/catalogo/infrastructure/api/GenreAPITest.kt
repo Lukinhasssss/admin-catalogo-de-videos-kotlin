@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.delete.DeleteGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreOutput
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
@@ -49,6 +51,9 @@ class GenreAPITest {
 
     @MockkBean
     private lateinit var updateGenreUseCase: UpdateGenreUseCase
+
+    @MockkBean
+    private lateinit var deleteGenreUseCase: DeleteGenreUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
@@ -281,5 +286,21 @@ class GenreAPITest {
                 }
             )
         }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsDeleteGenre_shouldBeOK() {
+        // given
+        val expectedId = "123"
+
+        every { deleteGenreUseCase.execute(any()) } returns Unit
+
+        // when
+        val aResponse = mvc.delete(urlTemplate = "/genres/$expectedId").andDo { print() }
+
+        // then
+        aResponse.andExpect { status { isNoContent() } }
+
+        verify { deleteGenreUseCase.execute(expectedId) }
     }
 }
