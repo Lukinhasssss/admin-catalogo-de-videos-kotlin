@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreCommand
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.delete.DeleteGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreCommand
 import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreUseCase
@@ -20,7 +21,8 @@ import java.net.URI
 class GenreController(
     private val createGenreUseCase: CreateGenreUseCase,
     private val getGenreByIdUseCase: GetGenreByIdUseCase,
-    private val updateGenreUseCase: UpdateGenreUseCase
+    private val updateGenreUseCase: UpdateGenreUseCase,
+    private val deleteGenreUseCase: DeleteGenreUseCase
 ) : GenreAPI {
 
     override fun create(request: CreateGenreRequest): ResponseEntity<Any> = with(request) {
@@ -51,7 +53,5 @@ class GenreController(
         return ResponseEntity.ok(output)
     }
 
-    override fun deleteById(id: String) {
-        TODO("Not yet implemented")
-    }
+    override fun deleteById(id: String) = deleteGenreUseCase.execute(id)
 }
