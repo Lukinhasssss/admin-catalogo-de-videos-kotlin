@@ -4,7 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GenreOutput
+import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
+import com.lukinhasssss.admin.catalogo.domain.genre.Genre
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
@@ -18,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import java.util.UUID
 
 @ControllerTest(controllers = [GenreAPI::class])
 class GenreAPITest {
@@ -31,6 +39,9 @@ class GenreAPITest {
 
     @MockkBean
     private lateinit var createGenreUseCase: CreateGenreUseCase
+
+    @MockkBean
+    private lateinit var getGenreByIdUseCase: GetGenreByIdUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
@@ -115,5 +126,67 @@ class GenreAPITest {
                 }
             )
         }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsGetGenreByIdGenre_shouldReturnGenre() {
+        // given
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = listOf("123", "456")
+
+        val aGenre = Genre.newGenre(expectedName, expectedIsActive)
+            .addCategories(expectedCategories.map { CategoryID.from(it) })
+
+        val expectedId = aGenre.id.value
+
+        every { getGenreByIdUseCase.execute(any()) } returns GenreOutput.from(aGenre)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/genres/$expectedId")
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.id", equalTo(expectedId))
+            jsonPath("$.name", equalTo(expectedName))
+            jsonPath("$.is_active", equalTo(expectedIsActive))
+            jsonPath("$.categories_id", equalTo(expectedCategories))
+            jsonPath("$.created_at", equalTo(aGenre.createdAt.toString()))
+            jsonPath("$.updated_at", equalTo(aGenre.updatedAt.toString()))
+            jsonPath("$.deleted_at", equalTo(aGenre.deletedAt.toString()))
+        }
+
+        verify { getGenreByIdUseCase.execute(expectedId) }
+    }
+
+    @Test
+    fun givenAnInvalidId_whenCallsGetGenreByIdGenre_shouldReturnNotFound() {
+        // given
+        val expectedId = GenreID.from(UUID.randomUUID().toString())
+        val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
+
+        every { getGenreByIdUseCase.execute(any()) } throws NotFoundException.with(expectedId, Genre::class)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/genres/${expectedId.value}")
+
+        // then
+        aResponse.andExpect {
+            status { isNotFound() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
+        }
+
+        verify { getGenreByIdUseCase.execute(expectedId.value) }
     }
 }
