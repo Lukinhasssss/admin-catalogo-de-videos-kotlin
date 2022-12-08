@@ -3,20 +3,24 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreCommand
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreCommand
+import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreUseCase
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.infrastructure.api.GenreAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.GenreListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.presenters.toGenreResponse
+import org.hibernate.engine.transaction.internal.jta.JtaStatusHelper.isActive
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
 class GenreController(
-    val createGenreUseCase: CreateGenreUseCase,
-    val getGenreByIdUseCase: GetGenreByIdUseCase
+    private val createGenreUseCase: CreateGenreUseCase,
+    private val getGenreByIdUseCase: GetGenreByIdUseCase,
+    private val updateGenreUseCase: UpdateGenreUseCase
 ) : GenreAPI {
 
     override fun create(request: CreateGenreRequest): ResponseEntity<Any> = with(request) {
@@ -24,7 +28,7 @@ class GenreController(
 
         val output = createGenreUseCase.execute(aCommand)
 
-        return ResponseEntity.created(URI.create("/genres/${output.id}")).body(output)
+        ResponseEntity.created(URI.create("/genres/${output.id}")).body(output)
     }
 
     override fun list(
@@ -39,8 +43,12 @@ class GenreController(
 
     override fun getById(id: String) = getGenreByIdUseCase.execute(id).toGenreResponse()
 
-    override fun updateById(id: String, request: UpdateGenreRequest): ResponseEntity<Any> {
-        TODO("Not yet implemented")
+    override fun updateById(id: String, request: UpdateGenreRequest): ResponseEntity<Any> = with(request) {
+        val aCommand = UpdateGenreCommand.with(id, name, isActive(), categories)
+
+        val output = updateGenreUseCase.execute(aCommand)
+
+        return ResponseEntity.ok(output)
     }
 
     override fun deleteById(id: String) {

@@ -8,8 +8,10 @@ data class UpdateGenreRequest(
     val name: String,
 
     @JsonProperty(value = "is_active")
-    val active: Boolean,
+    val active: Boolean?,
 
     @JsonProperty(value = "categories_id")
     val categories: List<String>
-)
+) {
+    fun isActive() = active ?: true
+}
