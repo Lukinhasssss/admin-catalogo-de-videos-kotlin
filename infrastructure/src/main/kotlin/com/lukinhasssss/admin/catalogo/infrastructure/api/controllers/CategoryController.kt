@@ -38,7 +38,7 @@ class CategoryController(
             CreateCategoryCommand.with(
                 aName = name,
                 aDescription = description,
-                isActive = active
+                isActive = isActive()
             )
         }
 
@@ -79,7 +79,7 @@ class CategoryController(
                 anId = id,
                 aName = name,
                 aDescription = description,
-                isActive = active
+                isActive = isActive()
             )
         }
 

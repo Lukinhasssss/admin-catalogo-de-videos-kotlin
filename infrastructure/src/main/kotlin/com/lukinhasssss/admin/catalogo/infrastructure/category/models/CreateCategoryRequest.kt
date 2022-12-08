@@ -11,5 +11,8 @@ data class CreateCategoryRequest(
     val description: String?,
 
     @JsonProperty(value = "is_active")
-    val active: Boolean
-)
+    val active: Boolean? = null
+) {
+
+    fun isActive() = active ?: true
+}
