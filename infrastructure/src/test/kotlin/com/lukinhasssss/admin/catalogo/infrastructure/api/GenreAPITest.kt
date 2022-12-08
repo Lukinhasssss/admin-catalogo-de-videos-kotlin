@@ -7,6 +7,8 @@ import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCa
 import com.lukinhasssss.admin.catalogo.application.genre.delete.DeleteGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.retrive.get.GetGenreByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.genre.retrive.list.GenreListOutput
+import com.lukinhasssss.admin.catalogo.application.genre.retrive.list.ListGenreUseCase
 import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.update.UpdateGenreUseCase
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
@@ -14,6 +16,7 @@ import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
@@ -24,7 +27,9 @@ import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.Conversions.string
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
@@ -32,6 +37,7 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
+import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.name
 import java.util.UUID
 
 @ControllerTest(controllers = [GenreAPI::class])
@@ -54,6 +60,9 @@ class GenreAPITest {
 
     @MockkBean
     private lateinit var deleteGenreUseCase: DeleteGenreUseCase
+
+    @MockkBean
+    private lateinit var listGenreUseCase: ListGenreUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
@@ -302,5 +311,60 @@ class GenreAPITest {
         aResponse.andExpect { status { isNoContent() } }
 
         verify { deleteGenreUseCase.execute(expectedId) }
+    }
+
+    @Test
+    fun givenValidParams_whenCallsListGenres_shouldReturnGenres() {
+        // given
+        val aGenre = Genre.newGenre("Ação", false)
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = "ac"
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(GenreListOutput.from(aGenre))
+
+        every {
+            listGenreUseCase.execute(any())
+        } returns Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/genres") {
+            param("page", expectedPage.toString())
+            param("perPage", expectedPerPage.toString())
+            param("sort", expectedSort)
+            param("dir", expectedDirection)
+            param("search", expectedTerms)
+            accept(APPLICATION_JSON)
+        }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+            jsonPath("$.current_page", equalTo(expectedPage))
+            jsonPath("$.per_page", equalTo(expectedPerPage))
+            jsonPath("$.total", equalTo(expectedTotal))
+            jsonPath("$.items.size()", equalTo(expectedItemsCount))
+            jsonPath("$.items[0].id", equalTo(aGenre.id.value))
+            jsonPath("$.items[0].name", equalTo(aGenre.name))
+            jsonPath("$.items[0].is_active", equalTo(aGenre.active))
+            jsonPath("$.items[0].created_at", equalTo(aGenre.createdAt.toString()))
+            jsonPath("$.items[0].deleted_at", equalTo(aGenre.deletedAt.toString()))
+        }
+
+        verify {
+            listGenreUseCase.execute(
+                withArg {
+                    assertEquals(expectedPage, it.page)
+                    assertEquals(expectedPerPage, it.perPage)
+                    assertEquals(expectedDirection, it.direction)
+                    assertEquals(expectedSort, it.sort)
+                    assertEquals(expectedTerms, it.terms)
+                }
+            )
+        }
     }
 }
