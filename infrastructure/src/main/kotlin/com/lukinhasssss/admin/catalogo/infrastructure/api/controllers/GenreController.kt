@@ -1,5 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
+import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreCommand
+import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.infrastructure.api.GenreAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
@@ -8,12 +10,19 @@ import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.GenreResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
-class GenreController : GenreAPI {
+class GenreController(
+    val createGenreUseCase: CreateGenreUseCase
+) : GenreAPI {
 
-    override fun create(request: CreateGenreRequest): ResponseEntity<Any> {
-        TODO("Not yet implemented")
+    override fun create(request: CreateGenreRequest): ResponseEntity<Any> = with(request) {
+        val aCommand = CreateGenreCommand.with(name, isActive(), categories)
+
+        val output = createGenreUseCase.execute(aCommand)
+
+        return ResponseEntity.created(URI.create("/genres/${output.id}")).body(output)
     }
 
     override fun list(
