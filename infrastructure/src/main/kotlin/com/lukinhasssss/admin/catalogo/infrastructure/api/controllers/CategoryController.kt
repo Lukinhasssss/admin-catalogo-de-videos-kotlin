@@ -79,7 +79,7 @@ class CategoryController(
                 anId = id,
                 aName = name,
                 aDescription = description,
-                isActive = active
+                isActive = isActive()
             )
         }
 
