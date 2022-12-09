@@ -1,4 +1,4 @@
-package com.lukinhasssss.admin.catalogo.e2e
+package com.lukinhasssss.admin.catalogo.e2e.category
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
