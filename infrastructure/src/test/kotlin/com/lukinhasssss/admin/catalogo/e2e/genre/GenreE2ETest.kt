@@ -2,24 +2,14 @@ package com.lukinhasssss.admin.catalogo.e2e.genre
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
-import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
-import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
-import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
-import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
+import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
-import io.restassured.http.ContentType
-import io.restassured.module.kotlin.extensions.Extract
-import io.restassured.module.kotlin.extensions.Given
-import io.restassured.module.kotlin.extensions.Then
-import io.restassured.module.kotlin.extensions.When
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -28,10 +18,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @E2ETest
 @Testcontainers
-class GenreE2ETest {
-
-    @Autowired
-    private lateinit var categoryRepository: CategoryRepository
+class GenreE2ETest : MockDsl {
 
     @Autowired
     private lateinit var genreRepository: GenreRepository
@@ -98,41 +85,6 @@ class GenreE2ETest {
             assertNull(deletedAt)
         }
     }
-
-    private fun givenACategory(aName: String, aDescription: String?, isActive: Boolean): CategoryID {
-        val requestBody = CreateCategoryRequest(aName, aDescription, isActive)
-
-        val actualId = Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(requestBody))
-        } When {
-            post("/api/categories")
-        } Then {
-            statusCode(HttpStatus.CREATED.value())
-        } Extract {
-            // header("Location").replace("/categories/", "") -> Essa é outra forma de recuperar o id
-            jsonPath().get<String>("id")
-        }
-
-        return CategoryID.from(actualId)
-    }
-
-    private fun givenAGenre(aName: String, isActive: Boolean, categories: List<CategoryID>): GenreID {
-        val aRequestBody = CreateGenreRequest(aName, isActive, mapTo(categories, CategoryID::value))
-
-        val actualId = Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(aRequestBody))
-        } When {
-            post("/api/genres")
-        } Then {
-            statusCode(HttpStatus.CREATED.value())
-        } Extract { jsonPath().get<String>("id") }
-
-        return GenreID.from(actualId)
-    }
-
-    private fun <A, D> mapTo(actual: List<A>, mapper: (A) -> D): List<D> = actual.stream().map(mapper).toList()
 
     private fun sorted(expectedCategories: Iterable<CategoryID>) = expectedCategories.sortedBy { it.value }
 }

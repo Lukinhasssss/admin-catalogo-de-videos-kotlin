@@ -1,9 +1,8 @@
 package com.lukinhasssss.admin.catalogo.e2e.category
 
 import com.lukinhasssss.admin.catalogo.E2ETest
-import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
-import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
@@ -31,7 +30,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @E2ETest
 @Testcontainers
-class CategoryE2ETest {
+class CategoryE2ETest : MockDsl {
 
     @Autowired
     private lateinit var categoryRepository: CategoryRepository
@@ -333,24 +332,6 @@ class CategoryE2ETest {
             param("sort", sort)
             param("dir", direction)
         } When { get("/api/categories") }
-    }
-
-    private fun givenACategory(aName: String, aDescription: String?, isActive: Boolean): CategoryID {
-        val requestBody = CreateCategoryRequest(aName, aDescription, isActive)
-
-        val actualId = Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(requestBody))
-        } When {
-            post("/api/categories")
-        } Then {
-            statusCode(HttpStatus.CREATED.value())
-        } Extract {
-            // header("Location").replace("/categories/", "") -> Essa é outra forma de recuperar o id
-            jsonPath().get<String>("id")
-        }
-
-        return CategoryID.from(actualId)
     }
 
     private fun retrieveACategory(anId: String): CategoryResponse {
