@@ -61,6 +61,20 @@ interface MockDsl {
         return GenreID.from(actualId)
     }
 
+    fun listGenres(page: Int, perPage: Int) =
+        listGenres(page = page, perPage = perPage, search = "", sort = "", direction = "")
+
+    fun listGenres(page: Int, perPage: Int, search: String) =
+        listGenres(page = page, perPage = perPage, search = search, sort = "", direction = "")
+
+    fun listGenres(
+        page: Int,
+        perPage: Int,
+        search: String,
+        sort: String,
+        direction: String
+    ) = list("/genres", page, perPage, search, sort, direction)
+
     /* END OF GENRE MOCKS */
 
     /* START OF AUXILIAR FUNCTIONS */
