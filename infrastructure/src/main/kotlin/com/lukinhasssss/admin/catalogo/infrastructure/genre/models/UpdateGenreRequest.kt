@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class UpdateGenreRequest(
 
     @JsonProperty(value = "name")
-    val name: String,
+    val name: String = "",
 
     @JsonProperty(value = "is_active")
     val active: Boolean?,
