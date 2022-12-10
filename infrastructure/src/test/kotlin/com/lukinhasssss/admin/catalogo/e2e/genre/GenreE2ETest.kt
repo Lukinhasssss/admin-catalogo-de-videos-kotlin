@@ -5,6 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
 import io.restassured.module.kotlin.extensions.Then
+import io.restassured.module.kotlin.extensions.When
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasKey
@@ -180,6 +181,46 @@ class GenreE2ETest : MockDsl {
             body("items.get(0).name", equalTo("Esportes"))
             body("items.get(1).name", equalTo("Drama"))
             body("items.get(2).name", equalTo("Ação"))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToGetAGenreByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val filmes = givenACategory("Filmes", null, true)
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(filmes)
+
+        val actualId = givenAGenre(expectedName, expectedIsActive, expectedCategories)
+
+        val actualGenre = retrieveAGenre(actualId)
+
+        with(actualGenre) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, active)
+            assertEquals(sorted(expectedCategories), sorted(categories.map { CategoryID.from(it) }))
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundGenre() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val expectedMessage = "Genre with ID 123 was not found"
+
+        When {
+            get("/api/genres/123")
+        } Then {
+            statusCode(HttpStatus.NOT_FOUND.value())
+            body("message", equalTo(expectedMessage))
         }
     }
 

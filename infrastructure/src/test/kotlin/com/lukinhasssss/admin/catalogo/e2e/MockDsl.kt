@@ -8,6 +8,7 @@ import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCate
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.GenreResponse
 import io.restassured.http.ContentType
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
@@ -74,6 +75,8 @@ interface MockDsl {
         sort: String,
         direction: String
     ) = list("/genres", page, perPage, search, sort, direction)
+
+    fun retrieveAGenre(anId: Identifier) = retrieve("/genres", anId, GenreResponse::class)
 
     /* END OF GENRE MOCKS */
 
