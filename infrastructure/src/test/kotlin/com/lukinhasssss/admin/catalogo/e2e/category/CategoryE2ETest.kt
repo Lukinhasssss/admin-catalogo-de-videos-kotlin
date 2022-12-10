@@ -2,16 +2,10 @@ package com.lukinhasssss.admin.catalogo.e2e.category
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
-import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
-import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
-import io.restassured.http.ContentType
-import io.restassured.module.kotlin.extensions.Extract
-import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
-import io.restassured.response.Response
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -177,7 +171,7 @@ class CategoryE2ETest : MockDsl {
 
         val actualId = givenACategory(expectedName, expectedDescription, expectedIsActive)
 
-        val actualCategory = retrieveACategory(actualId.value)
+        val actualCategory = retrieveACategory(actualId)
 
         with(actualCategory) {
             assertEquals(expectedName, name)
@@ -217,12 +211,7 @@ class CategoryE2ETest : MockDsl {
 
         val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
-        Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(requestBody))
-        } When {
-            put("/api/categories/${actualId.value}")
-        } Then { statusCode(HttpStatus.OK.value()) }
+        updateACategory(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
 
         val actualCategory = categoryRepository.findById(actualId.value).get()
 
@@ -249,12 +238,7 @@ class CategoryE2ETest : MockDsl {
 
         val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
-        Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(requestBody))
-        } When {
-            put("/api/categories/${actualId.value}")
-        } Then { statusCode(HttpStatus.OK.value()) }
+        updateACategory(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
 
         val actualCategory = categoryRepository.findById(actualId.value).get()
 
@@ -281,12 +265,7 @@ class CategoryE2ETest : MockDsl {
 
         val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
-        Given {
-            contentType(ContentType.JSON)
-            body(Json.writeValueAsString(requestBody))
-        } When {
-            put("/api/categories/${actualId.value}")
-        } Then { statusCode(HttpStatus.OK.value()) }
+        updateACategory(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
 
         val actualCategory = categoryRepository.findById(actualId.value).get()
 
@@ -307,40 +286,8 @@ class CategoryE2ETest : MockDsl {
 
         val actualId = givenACategory("Filmes", null, true)
 
-        When {
-            delete("/api/categories/${actualId.value}")
-        } Then {
-            statusCode(HttpStatus.NO_CONTENT.value())
-        }
+        deleteACategory(actualId) Then { statusCode(HttpStatus.NO_CONTENT.value()) }
 
         assertFalse(categoryRepository.existsById(actualId.value))
-    }
-
-    private fun listCategories(page: Int, perPage: Int): Response {
-        return listCategories(page = page, perPage = perPage, search = "", sort = "", direction = "")
-    }
-
-    private fun listCategories(page: Int, perPage: Int, search: String): Response {
-        return listCategories(page = page, perPage = perPage, search = search, sort = "", direction = "")
-    }
-
-    private fun listCategories(page: Int, perPage: Int, search: String, sort: String, direction: String): Response {
-        return Given {
-            param("page", page)
-            param("perPage", perPage)
-            param("search", search)
-            param("sort", sort)
-            param("dir", direction)
-        } When { get("/api/categories") }
-    }
-
-    private fun retrieveACategory(anId: String): CategoryResponse {
-        val json = When {
-            get("/api/categories/$anId")
-        } Then {
-            statusCode(HttpStatus.OK.value())
-        } Extract { body().asString() }
-
-        return Json.readValue(json, CategoryResponse::class.java)
     }
 }
