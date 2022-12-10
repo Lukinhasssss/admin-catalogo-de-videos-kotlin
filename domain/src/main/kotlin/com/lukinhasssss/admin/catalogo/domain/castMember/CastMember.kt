@@ -36,6 +36,18 @@ data class CastMember(
 
             return CastMember(id = anId, name = aName, type = aType, createdAt = now, updatedAt = now)
         }
+
+        fun with(
+            anId: String,
+            aName: String,
+            aType: CastMemberType,
+            aCreationDate: Instant,
+            anUpdateDate: Instant
+        ) = CastMember(CastMemberID.from(anId), aName, aType, aCreationDate, anUpdateDate)
+
+        fun with(aMember: CastMember) = with(aMember) {
+            CastMember(id, name, type, createdAt, updatedAt)
+        }
     }
 
     fun update(aName: String, type: CastMemberType) =
