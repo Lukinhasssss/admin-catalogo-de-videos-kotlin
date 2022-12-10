@@ -37,4 +37,7 @@ data class CastMember(
             return CastMember(id = anId, name = aName, type = aType, createdAt = now, updatedAt = now)
         }
     }
+
+    fun update(aName: String, type: CastMemberType) =
+        CastMember(id = id, name = aName, type = type, createdAt = createdAt, updatedAt = InstantUtils.now())
 }
