@@ -55,6 +55,8 @@ interface MockDsl {
 
     /* START OF GENRE MOCKS */
 
+    fun deleteAGenre(anId: Identifier) = delete("/genres", anId)
+
     fun givenAGenre(aName: String, isActive: Boolean, categories: List<CategoryID>): GenreID {
         val requestBody = CreateGenreRequest(aName, isActive, mapTo(categories, CategoryID::value))
 

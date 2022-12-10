@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.e2e.genre
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
@@ -11,6 +12,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasKey
 import org.hamcrest.Matchers.not
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -310,6 +312,32 @@ class GenreE2ETest : MockDsl {
             assertNotNull(updatedAt)
             assertNull(deletedAt)
         }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToDeleteAGenreByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val filmes = givenACategory("Filmes", null, true)
+
+        val actualId = givenAGenre("Ação", true, listOf(filmes))
+
+        deleteAGenre(actualId) Then { statusCode(HttpStatus.NO_CONTENT.value()) }
+
+        Assertions.assertFalse(genreRepository.existsById(actualId.value))
+    }
+
+    @Test
+    fun asACatalogAdminIShouldNotSeeAnErrorByDeletingAGenreThatNotExists() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        givenAGenre("Ação", true, listOf())
+
+        deleteAGenre(GenreID.from("123")) Then { statusCode(HttpStatus.NO_CONTENT.value()) }
+
+        assertEquals(1, genreRepository.count())
     }
 
     private fun sorted(expectedCategories: Iterable<CategoryID>) = expectedCategories.sortedBy { it.value }
