@@ -33,6 +33,18 @@
 - Nome não deve ser nulo ou em branco
 - Nome deve conter no máximo 255 caracteres
 
+## Entidade Cast Member (Elenco)
+
+### Campos
+- Nome
+- Tipo
+- Auditoria (data de criação e atualização)
+
+### Regras de Negócio
+- Nome não deve ser nulo ou em branco
+- Nome deve conter no mínimo 3 caracteres
+- Nome deve conter no máximo 255 caracteres
+
 ## Ferramentas necessárias
 
 - JDK 17
