@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.e2e.genre
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
+import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -221,6 +222,93 @@ class GenreE2ETest : MockDsl {
         } Then {
             statusCode(HttpStatus.NOT_FOUND.value())
             body("message", equalTo(expectedMessage))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToUpdateAGenreByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val filmes = givenACategory("Filmes", null, true)
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(filmes)
+
+        val actualId = givenAGenre("Action", expectedIsActive, expectedCategories)
+
+        val requestBody = UpdateGenreRequest(expectedName, expectedIsActive, mapTo(expectedCategories, CategoryID::value))
+
+        updateAGenre(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualGenre = genreRepository.findById(actualId.value).get()
+
+        with(actualGenre) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, active)
+            assertEquals(sorted(expectedCategories), sorted(getCategoryIDs()))
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToInactivateACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val filmes = givenACategory("Filmes", null, true)
+
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = listOf(filmes)
+
+        val actualId = givenAGenre(expectedName, true, expectedCategories)
+
+        val requestBody = UpdateGenreRequest(expectedName, expectedIsActive, mapTo(expectedCategories, CategoryID::value))
+
+        updateAGenre(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualGenre = genreRepository.findById(actualId.value).get()
+
+        with(actualGenre) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, active)
+            assertEquals(sorted(expectedCategories), sorted(getCategoryIDs()))
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNotNull(deletedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToActivateACategoryByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, genreRepository.count())
+
+        val filmes = givenACategory("Filmes", null, true)
+
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(filmes)
+
+        val actualId = givenAGenre(expectedName, false, expectedCategories)
+
+        val requestBody = UpdateGenreRequest(expectedName, expectedIsActive, mapTo(expectedCategories, CategoryID::value))
+
+        updateAGenre(actualId, requestBody) Then { statusCode(HttpStatus.OK.value()) }
+
+        val actualGenre = genreRepository.findById(actualId.value).get()
+
+        with(actualGenre) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedIsActive, active)
+            assertEquals(sorted(expectedCategories), sorted(getCategoryIDs()))
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertNull(deletedAt)
         }
     }
 

@@ -9,6 +9,7 @@ import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCate
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.GenreResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import io.restassured.http.ContentType
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
@@ -78,6 +79,8 @@ interface MockDsl {
 
     fun retrieveAGenre(anId: Identifier) = retrieve("/genres", anId, GenreResponse::class)
 
+    fun updateAGenre(anId: Identifier, requestBody: UpdateGenreRequest) = update("/genres", anId, requestBody)
+
     /* END OF GENRE MOCKS */
 
     /* START OF AUXILIAR FUNCTIONS */
@@ -137,7 +140,7 @@ interface MockDsl {
         return response
     }
 
-    private fun <A, D> mapTo(actual: List<A>, mapper: (A) -> D): List<D> = actual.stream().map(mapper).toList()
+    fun <A, D> mapTo(actual: List<A>, mapper: (A) -> D): List<D> = actual.stream().map(mapper).toList()
 
     /* END OF AUXILIAR FUNCTIONS */
 }
