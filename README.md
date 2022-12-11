@@ -18,7 +18,32 @@
 ### Regras de Negócio
 - Nome não deve ser nulo ou em branco
 - Nome deve conter no mínimo 3 caracteres
+- Nome deve conter no máximo 255 caracteres
 - Descrição pode ser nula ou em branco
+
+## Entidade Gênero
+
+### Campos
+- Nome
+- Relação N para N com Categorias
+- Ativar ou desativar
+- Auditoria (data de criação, atualização e deleção)
+
+### Regras de Negócio
+- Nome não deve ser nulo ou em branco
+- Nome deve conter no máximo 255 caracteres
+
+## Entidade Cast Member (Elenco)
+
+### Campos
+- Nome
+- Tipo
+- Auditoria (data de criação e atualização)
+
+### Regras de Negócio
+- Nome não deve ser nulo ou em branco
+- Nome deve conter no mínimo 3 caracteres
+- Nome deve conter no máximo 255 caracteres
 
 ## Ferramentas necessárias
 

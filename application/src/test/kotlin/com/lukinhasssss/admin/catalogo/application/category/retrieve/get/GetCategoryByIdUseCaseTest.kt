@@ -1,15 +1,14 @@
 package com.lukinhasssss.admin.catalogo.application.category.retrieve.get
 
+import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,16 +16,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 @ExtendWith(MockKExtension::class)
-class GetCategoryByIdUseCaseTest {
+class GetCategoryByIdUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
     private lateinit var useCase: DefaultGetCategoryByIdUseCase
 
     @MockK
     private lateinit var categoryGateway: CategoryGateway
-
-    @BeforeEach
-    fun cleanUp() { clearAllMocks() }
 
     @Test
     fun givenAValidId_whenCallsGetCategory_shouldReturnCategory() {

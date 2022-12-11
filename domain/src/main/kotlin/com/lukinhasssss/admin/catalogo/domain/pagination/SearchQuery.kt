@@ -1,6 +1,6 @@
-package com.lukinhasssss.admin.catalogo.domain.category
+package com.lukinhasssss.admin.catalogo.domain.pagination
 
-data class CategorySearchQuery(
+data class SearchQuery(
     val page: Int,
     val perPage: Int,
     val terms: String,

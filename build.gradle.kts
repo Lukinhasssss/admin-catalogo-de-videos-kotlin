@@ -18,10 +18,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
 // START OF DETEKT AND KTLINT CONFIGURATION
 detekt {
     toolVersion = "1.22.0-RC2"

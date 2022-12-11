@@ -5,7 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.validation.Validator
 
 class CategoryValidator(
-    val category: Category,
+    private val category: Category,
     validationHandler: ValidationHandler
 ) : Validator(validationHandler) {
 

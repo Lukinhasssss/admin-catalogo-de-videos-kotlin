@@ -8,9 +8,9 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Entity
+@Entity(name = "Category")
 @Table(name = "category")
-class CategoryJpaEntity(
+data class CategoryJpaEntity(
 
     @Id
     val id: String,
