@@ -10,6 +10,7 @@ import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.Cas
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -137,5 +138,50 @@ class CastMemberPostgresGatewayTest {
 
         // then
         assertEquals(1, castMemberRepository.count())
+    }
+
+    @Test
+    fun givenAPrePersistedCastMember_whenCallsFindById_shouldReturnIt() {
+        // given
+        val expectedName = Fixture.name()
+        val expectedType = Fixture.CastMember.type()
+
+        val aMember = CastMember.newMember(expectedName, expectedType)
+
+        val expectedId = aMember.id
+
+        castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
+
+        assertEquals(1, castMemberRepository.count())
+
+        // when
+        val actualCastMember = castMemberGateway.findById(expectedId)
+
+        // then
+        with(actualCastMember!!) {
+            assertEquals(expectedId, id)
+            assertEquals(expectedName, name)
+            assertEquals(expectedType, type)
+            assertEquals(aMember.createdAt, createdAt)
+            assertEquals(aMember.updatedAt, updatedAt)
+        }
+    }
+
+    @Test
+    fun givenAnInvalidCastMemberId_whenCallsFindById_shouldReturnNull() {
+        // given
+        val expectedId = CastMemberID.from("any")
+
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+
+        castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
+
+        assertEquals(1, castMemberRepository.count())
+
+        // when
+        val actualCastMember = castMemberGateway.findById(expectedId)
+
+        // then
+        assertNull(actualCastMember)
     }
 }
