@@ -4,6 +4,7 @@ import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.PostgresGatewayTest
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
@@ -104,5 +105,37 @@ class CastMemberPostgresGatewayTest {
             assertEquals(aMember.createdAt, createdAt)
             assertTrue(aMember.updatedAt.isBefore(updatedAt))
         }
+    }
+
+    @Test
+    fun givenAPrePersistedCastMember_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+
+        castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
+
+        assertEquals(1, castMemberRepository.count())
+
+        // when
+        castMemberGateway.deleteById(aMember.id)
+
+        // then
+        assertEquals(0, castMemberRepository.count())
+    }
+
+    @Test
+    fun givenAnInvalidCastMemberId_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+
+        castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
+
+        assertEquals(1, castMemberRepository.count())
+
+        // when
+        castMemberGateway.deleteById(CastMemberID.from("123"))
+
+        // then
+        assertEquals(1, castMemberRepository.count())
     }
 }
