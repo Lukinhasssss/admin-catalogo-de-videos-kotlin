@@ -5,17 +5,16 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import org.springframework.stereotype.Component
 
 @Component
 class CastMemberPostgresGateway(
-    private val castMemberRepository: CastMemberRepository
+    private val repository: CastMemberRepository
 ) : CastMemberGateway {
 
-    override fun create(aCastMember: CastMember): CastMember {
-        TODO("Not yet implemented")
-    }
+    override fun create(aCastMember: CastMember): CastMember = save(aCastMember)
 
     override fun findById(anID: CastMemberID): CastMember? {
         TODO("Not yet implemented")
@@ -32,4 +31,6 @@ class CastMemberPostgresGateway(
     override fun deleteById(anID: CastMemberID) {
         TODO("Not yet implemented")
     }
+
+    private fun save(aMember: CastMember) = repository.save(CastMemberJpaEntity.from(aMember)).toAggregate()
 }
