@@ -24,9 +24,7 @@ class CastMemberPostgresGateway(
         TODO("Not yet implemented")
     }
 
-    override fun update(aCastMember: CastMember): CastMember {
-        TODO("Not yet implemented")
-    }
+    override fun update(aCastMember: CastMember): CastMember = save(aCastMember)
 
     override fun deleteById(anID: CastMemberID) {
         TODO("Not yet implemented")
