@@ -9,14 +9,17 @@ import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastM
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.CastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.GetCastMemberByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.ListCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.UpdateCastMemberRequest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -29,6 +32,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.util.UUID
 
 @ControllerTest(controllers = [CastMemberAPI::class])
@@ -122,6 +126,7 @@ class CastMemberAPITest {
                 string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
             }
 
+            jsonPath("$.errors.size()", equalTo(1))
             jsonPath("$.errors[0].message", equalTo(expectedErrorMessage))
         }
 
@@ -193,5 +198,133 @@ class CastMemberAPITest {
         }
 
         verify { getCastMemberByIdUseCase.execute(expectedId.value) }
+    }
+
+    @Test
+    fun givenAValidCommand_whenCallsUpdateCastMember_shouldReturnItsIdentifier() {
+        // given
+        val aMember = CastMember.newMember("Any Name", CastMemberType.DIRECTOR)
+
+        val expectedId = aMember.id
+        val expectedName = Fixture.name()
+        val expectedType = Fixture.CastMember.type()
+
+        val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
+
+        every { updateCastMemberUseCase.execute(any()) } returns UpdateCastMemberOutput.from(expectedId)
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(aCommand)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.id", equalTo(expectedId.value))
+        }
+
+        verify {
+            updateCastMemberUseCase.execute(
+                withArg {
+                    assertEquals(expectedId.value, it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedType, it.type)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidName_whenCallsUpdateCastMember_shouldReturnNotification() {
+        // given
+        val aMember = CastMember.newMember("Any Name", CastMemberType.DIRECTOR)
+
+        val expectedId = aMember.id
+        val expectedName = "   "
+        val expectedType = Fixture.CastMember.type()
+        val expectedErrorMessage = "'name' should not be empty"
+
+        val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
+
+        every {
+            updateCastMemberUseCase.execute(any())
+        } throws NotificationException("", Notification.create(Error(expectedErrorMessage)))
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(aCommand)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isUnprocessableEntity() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.errors.size()", equalTo(1))
+            jsonPath("$.errors[0].message", equalTo(expectedErrorMessage))
+        }
+
+        verify {
+            updateCastMemberUseCase.execute(
+                withArg {
+                    assertEquals(expectedId.value, it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedType, it.type)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidId_whenCallsUpdateCastMemberAndCastMemberDoesntExists_shouldReturnNotFound() {
+        // given
+        val expectedId = CastMemberID.from("123")
+        val expectedName = Fixture.name()
+        val expectedType = Fixture.CastMember.type()
+        val expectedErrorMessage = "CastMember with ID 123 was not found"
+
+        val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
+
+        every {
+            updateCastMemberUseCase.execute(any())
+        } throws NotFoundException.with(id = expectedId, anAggregate = CastMember::class)
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(aCommand)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isNotFound() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
+        }
+
+        verify {
+            updateCastMemberUseCase.execute(
+                withArg {
+                    assertEquals(expectedId.value, it.id)
+                    assertEquals(expectedName, it.name)
+                    assertEquals(expectedType, it.type)
+                }
+            )
+        }
     }
 }
