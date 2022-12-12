@@ -56,6 +56,7 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.8.3")
 
+    testImplementation("io.github.serpro69:kotlin-faker:1.12.0")
     testImplementation("com.ninja-squad:springmockk:3.1.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
