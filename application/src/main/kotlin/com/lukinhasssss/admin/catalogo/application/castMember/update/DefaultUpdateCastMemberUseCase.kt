@@ -29,7 +29,7 @@ class DefaultUpdateCastMemberUseCase(
 
     private fun notify(notification: Notification) {
         throw NotificationException(
-            message = "Could not create Aggregate CastMember",
+            message = "Could not update Aggregate CastMember",
             notification = notification
         )
     }
