@@ -473,7 +473,7 @@ class GenrePostgresGatewayTest {
         "createdAt, asc, 0, 10, 5, 5, Comédia Romântica",
         "createdAt, desc, 0, 10, 5, 5, Ficção Científica"
     )
-    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnSorted(
         expectedSort: String,
         expectedDirection: String,
         expectedPage: Int,
@@ -508,7 +508,7 @@ class GenrePostgresGatewayTest {
         "1, 2, 2, 5, Drama;Ficção Científica",
         "2, 2, 1, 5, Terror"
     )
-    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+    fun givenAValidPagination_whenCallsFindAll_shouldReturnPaginated(
         expectedPage: Int,
         expectedPerPage: Int,
         expectedItemsCount: Int,
