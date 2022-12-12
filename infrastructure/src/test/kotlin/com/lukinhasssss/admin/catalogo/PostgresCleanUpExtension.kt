@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo
 
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -13,6 +14,7 @@ class PostgresCleanUpExtension : BeforeEachCallback {
 
         cleanUp(
             listOf(
+                appContext.getBean(CastMemberRepository::class.java),
                 appContext.getBean(GenreRepository::class.java),
                 appContext.getBean(CategoryRepository::class.java)
             )
