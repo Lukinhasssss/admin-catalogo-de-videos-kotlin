@@ -6,10 +6,13 @@ import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.CastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.GetCastMemberByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.ListCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
@@ -24,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.util.UUID
 
@@ -129,5 +133,65 @@ class CastMemberAPITest {
                 }
             )
         }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsGetById_shouldReturnIt() {
+        // given
+        val expectedName = Fixture.name()
+        val expectedType = Fixture.CastMember.type()
+
+        val aMember = CastMember.newMember(expectedName, expectedType)
+
+        val expectedId = aMember.id.value
+
+        every { getCastMemberByIdUseCase.execute(any()) } returns CastMemberOutput.from(aMember)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.id", equalTo(expectedId))
+            jsonPath("$.name", equalTo(expectedName))
+            jsonPath("$.type", equalTo(expectedType.name))
+            jsonPath("$.created_at", equalTo(aMember.createdAt.toString()))
+            jsonPath("$.updated_at", equalTo(aMember.updatedAt.toString()))
+        }
+
+        verify { getCastMemberByIdUseCase.execute(expectedId) }
+    }
+
+    @Test
+    fun givenAnInvalidId_whenCallsGetByIdAndCastMemberDoesntExists_shouldReturnNotFound() {
+        // given
+        val expectedId = CastMemberID.from("123")
+        val expectedErrorMessage = "CastMember with ID 123 was not found"
+
+        every {
+            getCastMemberByIdUseCase.execute(any())
+        } throws NotFoundException.with(id = expectedId, anAggregate = CastMember::class)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/cast_members/${expectedId.value}").andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isNotFound() }
+
+            header {
+                string(name = "Content-Type", value = APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
+        }
+
+        verify { getCastMemberByIdUseCase.execute(expectedId.value) }
     }
 }
