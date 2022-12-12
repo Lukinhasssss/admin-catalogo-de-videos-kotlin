@@ -32,13 +32,11 @@ data class CastMemberJpaEntity(
 ) {
 
     companion object {
-        fun from(aMember: CastMember): CastMemberJpaEntity {
-            val (anId, aName, aType, createdAt, updatedAt) = aMember
-
-            return CastMemberJpaEntity(
-                id = anId.value,
-                name = aName,
-                type = aType,
+        fun from(aMember: CastMember): CastMemberJpaEntity = with(aMember) {
+            CastMemberJpaEntity(
+                id = id.value,
+                name = name,
+                type = type,
                 createdAt = createdAt,
                 updatedAt = updatedAt
             )
