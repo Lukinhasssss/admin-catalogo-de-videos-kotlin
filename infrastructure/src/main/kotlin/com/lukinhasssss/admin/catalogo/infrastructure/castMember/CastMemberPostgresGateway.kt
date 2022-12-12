@@ -26,8 +26,8 @@ class CastMemberPostgresGateway(
 
     override fun update(aCastMember: CastMember): CastMember = save(aCastMember)
 
-    override fun deleteById(anID: CastMemberID) {
-        TODO("Not yet implemented")
+    override fun deleteById(anID: CastMemberID) = with(anID.value) {
+        if (repository.existsById(this)) repository.deleteById(this)
     }
 
     private fun save(aMember: CastMember) = repository.save(CastMemberJpaEntity.from(aMember)).toAggregate()
