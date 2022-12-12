@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface CastMemberRepository : JpaRepository<CastMemberJpaEntity, String> {
 
     fun findAll(
-        page: Pageable,
-        specification: Specification<CastMemberJpaEntity>
+        specification: Specification<CastMemberJpaEntity>,
+        page: Pageable
     ): Page<CastMemberJpaEntity>
 }
