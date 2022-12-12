@@ -16,9 +16,8 @@ class CastMemberPostgresGateway(
 
     override fun create(aCastMember: CastMember): CastMember = save(aCastMember)
 
-    override fun findById(anID: CastMemberID): CastMember? {
-        TODO("Not yet implemented")
-    }
+    override fun findById(anID: CastMemberID): CastMember? =
+        repository.findById(anID.value).map { it.toAggregate() }.orElse(null)
 
     override fun findAll(aQuery: SearchQuery): Pagination<CastMember> {
         TODO("Not yet implemented")
