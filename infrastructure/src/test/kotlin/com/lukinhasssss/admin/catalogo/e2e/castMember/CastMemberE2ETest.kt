@@ -2,16 +2,21 @@ package com.lukinhasssss.admin.catalogo.e2e.castMember
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.Fixture
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.ACTOR
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.DIRECTOR
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import io.restassured.module.kotlin.extensions.Then
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -80,6 +85,97 @@ class CastMemberE2ETest : MockDsl {
             header("Content-Type", APPLICATION_JSON_VALUE)
             body("errors.size()", equalTo(1))
             body("errors[0].message", equalTo(expectedErrorMessage))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToNavigateThroughAllMembers() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = OK.value()
+
+        givenACastMember("Vin Diesel", ACTOR)
+        givenACastMember("Quentin Tarantino", DIRECTOR)
+        givenACastMember("Jason Momoa", ACTOR)
+
+        listCastMembers(page = 0, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Jason Momoa"))
+        }
+
+        listCastMembers(page = 1, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(1))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Quentin Tarantino"))
+        }
+
+        listCastMembers(page = 2, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(2))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Vin Diesel"))
+        }
+
+        listCastMembers(page = 3, perPage = 1) Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(3))
+            body("per_page", equalTo(1))
+            body("total", equalTo(3))
+            body("$", Matchers.not(Matchers.hasKey("items")))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSearchThroughAllMembers() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = OK.value()
+
+        givenACastMember("Vin Diesel", ACTOR)
+        givenACastMember("Quentin Tarantino", DIRECTOR)
+        givenACastMember("Jason Momoa", ACTOR)
+
+        listCastMembers(page = 0, perPage = 1, search = "vin") Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(1))
+            body("total", equalTo(1))
+            body("items.size()", equalTo(1))
+            body("items.name", hasItem("Vin Diesel"))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeToSortAllMembersByNameDesc() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = OK.value()
+
+        givenACastMember("Vin Diesel", ACTOR)
+        givenACastMember("Quentin Tarantino", DIRECTOR)
+        givenACastMember("Jason Momoa", ACTOR)
+
+        listCastMembers(page = 0, perPage = 3, search = "", sort = "name", direction = "desc") Then {
+            statusCode(expectedStatusCode)
+            body("current_page", equalTo(0))
+            body("per_page", equalTo(3))
+            body("total", equalTo(3))
+            body("items.size()", equalTo(3))
+            body("items.get(0).name", equalTo("Vin Diesel"))
+            body("items.get(1).name", equalTo("Quentin Tarantino"))
+            body("items.get(2).name", equalTo("Jason Momoa"))
         }
     }
 }

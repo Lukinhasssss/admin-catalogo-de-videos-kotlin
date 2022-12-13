@@ -40,6 +40,20 @@ interface MockDsl {
         return givenResult("/cast_members", requestBody)
     }
 
+    fun listCastMembers(page: Int, perPage: Int) =
+        listCastMembers(page = page, perPage = perPage, search = "", sort = "", direction = "")
+
+    fun listCastMembers(page: Int, perPage: Int, search: String) =
+        listCastMembers(page = page, perPage = perPage, search = search, sort = "", direction = "")
+
+    fun listCastMembers(
+        page: Int,
+        perPage: Int,
+        search: String,
+        sort: String,
+        direction: String
+    ) = list("/cast_members", page, perPage, search, sort, direction)
+
     /* END OF CAST MEMBER MOCKS */
 
     /* START OF CATEGORY MOCKS */
