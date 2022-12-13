@@ -10,6 +10,16 @@ jobs:
     name: Publicar Imagem no Docker Hub
     runs-on: ubuntu-latest
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Run build with gradle
+        run: ./gradlew build -x test
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
