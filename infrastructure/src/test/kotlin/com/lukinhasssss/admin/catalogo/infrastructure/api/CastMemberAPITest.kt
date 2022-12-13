@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
@@ -326,5 +327,21 @@ class CastMemberAPITest {
                 }
             )
         }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        val expectedId = "123"
+
+        every { deleteCastMemberUseCase.execute(any()) } returns Unit
+
+        // when
+        val aResponse = mvc.delete(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+
+        // then
+        aResponse.andExpect { status { isNoContent() } }
+
+        verify { deleteCastMemberUseCase.execute(expectedId) }
     }
 }
