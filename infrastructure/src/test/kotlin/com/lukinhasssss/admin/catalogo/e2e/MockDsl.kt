@@ -28,6 +28,8 @@ interface MockDsl {
 
     /* START OF CAST MEMBER MOCKS */
 
+    fun deleteACastMember(anId: CastMemberID) = delete("/cast_members", anId)
+
     fun givenACastMember(aName: String, aType: CastMemberType): CastMemberID {
         val requestBody = CreateCastMemberRequest(aName, aType)
 

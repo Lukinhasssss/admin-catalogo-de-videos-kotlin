@@ -13,11 +13,13 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -268,5 +270,41 @@ class CastMemberE2ETest : MockDsl {
             body("errors.size()", equalTo(1))
             body("errors[0].message", equalTo(expectedErrorMessage))
         }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToDeleteACastMemberByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = NO_CONTENT.value()
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        val actualId = givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        assertEquals(2, castMemberRepository.count())
+
+        deleteACastMember(actualId) Then { statusCode(expectedStatusCode) }
+
+        assertEquals(1, castMemberRepository.count())
+        assertFalse(castMemberRepository.existsById(actualId.value))
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToDeleteACastMemberWithInvalidIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = NO_CONTENT.value()
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        assertEquals(2, castMemberRepository.count())
+
+        deleteACastMember(CastMemberID.from("123")) Then { statusCode(expectedStatusCode) }
+
+        assertEquals(2, castMemberRepository.count())
     }
 }
