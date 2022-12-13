@@ -49,11 +49,10 @@ interface CategoryAPI {
     fun getById(@PathVariable id: String): CategoryResponse
 
     @GetMapping(produces = [APPLICATION_JSON_VALUE])
-    @Operation(summary = "Create a new category")
+    @Operation(summary = "List all categories")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Listed successfully"),
-            ApiResponse(responseCode = "422", description = "An invalid parameter was received"),
+            ApiResponse(responseCode = "200", description = "Categories retrieved successfully"),
             ApiResponse(responseCode = "500", description = "An internal server error was thrown")
         ]
     )
