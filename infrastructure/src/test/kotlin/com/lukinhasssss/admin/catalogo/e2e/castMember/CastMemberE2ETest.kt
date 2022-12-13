@@ -221,4 +221,52 @@ class CastMemberE2ETest : MockDsl {
             body("message", equalTo(expectedMessage))
         }
     }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToUpdateACastMemberByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedName = "Vin Diesel"
+        val expectedType = ACTOR
+        val expectedStatusCode = OK.value()
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        val actualId = givenACastMember("A Pedra", DIRECTOR)
+
+        updateACastMember(actualId, expectedName, expectedType) Then {
+            statusCode(expectedStatusCode)
+        }
+
+        val actualMember = retrieveACastMember(actualId)
+
+        with(actualMember) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedType.name, type)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSeeATreatedErrorByUpdatingANewCastMemberWithInvalidValues() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedName = "  "
+        val expectedType = Fixture.CastMember.type()
+        val expectedStatusCode = UNPROCESSABLE_ENTITY.value()
+        val expectedErrorMessage = "'name' should not be empty"
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        val actualId = givenACastMember("A Pedra", DIRECTOR)
+
+        updateACastMember(actualId, expectedName, expectedType) Then {
+            statusCode(expectedStatusCode)
+            body("errors.size()", equalTo(1))
+            body("errors[0].message", equalTo(expectedErrorMessage))
+        }
+    }
 }

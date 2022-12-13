@@ -7,6 +7,7 @@ import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CastMemberResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.UpdateCastMemberRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
@@ -58,6 +59,9 @@ interface MockDsl {
     fun retrieveACastMember(anId: CastMemberID) = retrieve("/cast_members", anId, CastMemberResponse::class)
 
     fun retrieveACastMemberResponse(anId: CastMemberID) = retrieveResult("/cast_members", anId)
+
+    fun updateACastMember(anId: CastMemberID, aName: String, aType: CastMemberType): Response =
+        update("/cast_members", anId, UpdateCastMemberRequest(aName, aType))
 
     /* END OF CAST MEMBER MOCKS */
 
