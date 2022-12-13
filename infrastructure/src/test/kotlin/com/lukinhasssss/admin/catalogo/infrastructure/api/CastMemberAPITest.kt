@@ -8,6 +8,7 @@ import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastM
 import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.CastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.GetCastMemberByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.CastMemberListOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.ListCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
@@ -16,6 +17,7 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
@@ -27,7 +29,7 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -73,7 +75,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
-            contentType = MediaType.APPLICATION_JSON
+            contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
 
@@ -114,7 +116,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
-            contentType = MediaType.APPLICATION_JSON
+            contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
 
@@ -216,7 +218,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
-            contentType = MediaType.APPLICATION_JSON
+            contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
 
@@ -260,7 +262,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
-            contentType = MediaType.APPLICATION_JSON
+            contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
 
@@ -303,7 +305,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
-            contentType = MediaType.APPLICATION_JSON
+            contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
 
@@ -343,5 +345,105 @@ class CastMemberAPITest {
         aResponse.andExpect { status { isNoContent() } }
 
         verify { deleteCastMemberUseCase.execute(expectedId) }
+    }
+
+    @Test
+    fun givenValidParams_whenCallsListCastMembers_shouldReturnIt() {
+        // given
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+
+        val expectedPage = 0
+        val expectedPerPage = 20
+        val expectedTerms = "Alg"
+        val expectedSort = "type"
+        val expectedDirection = "desc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(CastMemberListOutput.from(aMember))
+
+        every {
+            listCastMemberUseCase.execute(any())
+        } returns Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/cast_members") {
+            param("page", expectedPage.toString())
+            param("perPage", expectedPerPage.toString())
+            param("sort", expectedSort)
+            param("dir", expectedDirection)
+            param("search", expectedTerms)
+        }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+            jsonPath("$.current_page", equalTo(expectedPage))
+            jsonPath("$.per_page", equalTo(expectedPerPage))
+            jsonPath("$.total", equalTo(expectedTotal))
+            jsonPath("$.items.size()", equalTo(expectedItemsCount))
+            jsonPath("$.items[0].id", equalTo(aMember.id.value))
+            jsonPath("$.items[0].name", equalTo(aMember.name))
+            jsonPath("$.items[0].type", equalTo(aMember.type.toString()))
+            jsonPath("$.items[0].created_at", equalTo(aMember.createdAt.toString()))
+        }
+
+        verify {
+            listCastMemberUseCase.execute(
+                withArg {
+                    assertEquals(expectedPage, it.page)
+                    assertEquals(expectedPerPage, it.perPage)
+                    assertEquals(expectedDirection, it.direction)
+                    assertEquals(expectedSort, it.sort)
+                    assertEquals(expectedTerms, it.terms)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenEmptyParams_whenCallsListCastMembers_shouldUseDefaultsAndReturnIt() {
+        // given
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(CastMemberListOutput.from(aMember))
+
+        every {
+            listCastMemberUseCase.execute(any())
+        } returns Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/cast_members")
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+            jsonPath("$.current_page", equalTo(expectedPage))
+            jsonPath("$.per_page", equalTo(expectedPerPage))
+            jsonPath("$.total", equalTo(expectedTotal))
+            jsonPath("$.items.size()", equalTo(expectedItemsCount))
+            jsonPath("$.items[0].id", equalTo(aMember.id.value))
+            jsonPath("$.items[0].name", equalTo(aMember.name))
+            jsonPath("$.items[0].type", equalTo(aMember.type.toString()))
+            jsonPath("$.items[0].created_at", equalTo(aMember.createdAt.toString()))
+        }
+
+        verify {
+            listCastMemberUseCase.execute(
+                withArg {
+                    assertEquals(expectedPage, it.page)
+                    assertEquals(expectedPerPage, it.perPage)
+                    assertEquals(expectedDirection, it.direction)
+                    assertEquals(expectedSort, it.sort)
+                    assertEquals(expectedTerms, it.terms)
+                }
+            )
+        }
     }
 }
