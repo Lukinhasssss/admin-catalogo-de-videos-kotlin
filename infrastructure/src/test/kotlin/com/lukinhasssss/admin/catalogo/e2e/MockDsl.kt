@@ -1,8 +1,11 @@
 package com.lukinhasssss.admin.catalogo.e2e
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
@@ -20,6 +23,24 @@ import org.springframework.http.HttpStatus
 import kotlin.reflect.KClass
 
 interface MockDsl {
+
+    /* START OF CAST MEMBER MOCKS */
+
+    fun givenACastMember(aName: String, aType: CastMemberType): CastMemberID {
+        val requestBody = CreateCastMemberRequest(aName, aType)
+
+        val actualId = given("/cast_members", requestBody)
+
+        return CastMemberID.from(actualId)
+    }
+
+    fun givenACastMemberResponse(aName: String, aType: CastMemberType): Response {
+        val requestBody = CreateCastMemberRequest(aName, aType)
+
+        return givenResult("/cast_members", requestBody)
+    }
+
+    /* END OF CAST MEMBER MOCKS */
 
     /* START OF CATEGORY MOCKS */
 
@@ -102,6 +123,13 @@ interface MockDsl {
         } Extract { jsonPath().get<String>("id") }
 
         return actualId
+    }
+
+    private fun givenResult(url: String, requestBody: Any): Response {
+        return Given {
+            contentType(ContentType.JSON)
+            body(Json.writeValueAsString(requestBody))
+        } When { post("/api$url") }
     }
 
     private fun list(
