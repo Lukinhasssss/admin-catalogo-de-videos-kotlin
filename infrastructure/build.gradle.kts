@@ -20,7 +20,7 @@ version = "1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 tasks.withType<BootJar> {
-    archiveBaseName.set("application.jar")
+    archiveBaseName.set("application")
     destinationDirectory.set(file("${rootProject.buildDir}/libs"))
 }
 
