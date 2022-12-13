@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.e2e.castMember
 
 import com.lukinhasssss.admin.catalogo.E2ETest
 import com.lukinhasssss.admin.catalogo.Fixture
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.ACTOR
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.DIRECTOR
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -176,6 +178,47 @@ class CastMemberE2ETest : MockDsl {
             body("items.get(0).name", equalTo("Vin Diesel"))
             body("items.get(1).name", equalTo("Quentin Tarantino"))
             body("items.get(2).name", equalTo("Jason Momoa"))
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToGetACastMemberByItsIdentifier() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedName = Fixture.name()
+        val expectedType = Fixture.CastMember.type()
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        val actualId = givenACastMember(expectedName, expectedType)
+
+        val actualMember = retrieveACastMember(actualId)
+
+        with(actualMember) {
+            assertEquals(expectedName, name)
+            assertEquals(expectedType.name, type)
+            assertNotNull(createdAt)
+            assertNotNull(updatedAt)
+            assertEquals(createdAt, updatedAt)
+        }
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCastMember() {
+        assertTrue(POSTGRESQL_CONTAINER.isRunning)
+        assertEquals(0, castMemberRepository.count())
+
+        val expectedStatusCode = NOT_FOUND.value()
+        val expectedMessage = "CastMember with ID 123 was not found"
+
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+
+        retrieveACastMemberResponse(CastMemberID.from("123")) Then {
+            statusCode(expectedStatusCode)
+            body("message", equalTo(expectedMessage))
         }
     }
 }

@@ -5,6 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CastMemberResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CategoryResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCategoryRequest
@@ -54,11 +55,15 @@ interface MockDsl {
         direction: String
     ) = list("/cast_members", page, perPage, search, sort, direction)
 
+    fun retrieveACastMember(anId: CastMemberID) = retrieve("/cast_members", anId, CastMemberResponse::class)
+
+    fun retrieveACastMemberResponse(anId: CastMemberID) = retrieveResult("/cast_members", anId)
+
     /* END OF CAST MEMBER MOCKS */
 
     /* START OF CATEGORY MOCKS */
 
-    fun deleteACategory(anId: Identifier) = delete("/categories", anId)
+    fun deleteACategory(anId: CategoryID) = delete("/categories", anId)
 
     fun givenACategory(aName: String, aDescription: String?, isActive: Boolean): CategoryID {
         val requestBody = CreateCategoryRequest(aName, aDescription, isActive)
@@ -82,15 +87,15 @@ interface MockDsl {
         direction: String
     ) = list("/categories", page, perPage, search, sort, direction)
 
-    fun retrieveACategory(anId: Identifier) = retrieve("/categories", anId, CategoryResponse::class)
+    fun retrieveACategory(anId: CategoryID) = retrieve("/categories", anId, CategoryResponse::class)
 
-    fun updateACategory(anId: Identifier, requestBody: UpdateCategoryRequest) = update("/categories", anId, requestBody)
+    fun updateACategory(anId: CategoryID, requestBody: UpdateCategoryRequest) = update("/categories", anId, requestBody)
 
     /* END OF CATEGORY MOCKS */
 
     /* START OF GENRE MOCKS */
 
-    fun deleteAGenre(anId: Identifier) = delete("/genres", anId)
+    fun deleteAGenre(anId: GenreID) = delete("/genres", anId)
 
     fun givenAGenre(aName: String, isActive: Boolean, categories: List<CategoryID>): GenreID {
         val requestBody = CreateGenreRequest(aName, isActive, mapTo(categories, CategoryID::value))
@@ -114,9 +119,9 @@ interface MockDsl {
         direction: String
     ) = list("/genres", page, perPage, search, sort, direction)
 
-    fun retrieveAGenre(anId: Identifier) = retrieve("/genres", anId, GenreResponse::class)
+    fun retrieveAGenre(anId: GenreID) = retrieve("/genres", anId, GenreResponse::class)
 
-    fun updateAGenre(anId: Identifier, requestBody: UpdateGenreRequest) = update("/genres", anId, requestBody)
+    fun updateAGenre(anId: GenreID, requestBody: UpdateGenreRequest) = update("/genres", anId, requestBody)
 
     /* END OF GENRE MOCKS */
 
@@ -172,6 +177,9 @@ interface MockDsl {
 
         return Json.readValue(json, kclass.java)
     }
+
+    private fun retrieveResult(url: String, anId: Identifier): Response =
+        When { get("/api$url/${anId.value}") }
 
     private fun update(url: String, anId: Identifier, requestBody: Any): Response {
         val response = Given {
