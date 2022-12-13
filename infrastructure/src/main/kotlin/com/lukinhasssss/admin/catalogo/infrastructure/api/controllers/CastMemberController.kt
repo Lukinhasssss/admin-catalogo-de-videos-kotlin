@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberCommand
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.GetCastMemberByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberCommand
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
@@ -10,7 +11,6 @@ import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CastMemb
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.UpdateCastMemberRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.presenters.toCastMemberResponse
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
@@ -19,7 +19,8 @@ import java.net.URI
 class CastMemberController(
     private val createCastMemberUseCase: CreateCastMemberUseCase,
     private val getCastMemberByIdUseCase: GetCastMemberByIdUseCase,
-    private val updateCastMemberUseCase: UpdateCastMemberUseCase
+    private val updateCastMemberUseCase: UpdateCastMemberUseCase,
+    private val deleteCastMemberUseCase: DeleteCastMemberUseCase
 ) : CastMemberAPI {
 
     override fun create(request: CreateCastMemberRequest): ResponseEntity<Any> = with(request) {
@@ -38,4 +39,6 @@ class CastMemberController(
 
         return ResponseEntity.ok(updateCastMemberUseCase.execute(aCommand))
     }
+
+    override fun deleteById(id: String) = deleteCastMemberUseCase.execute(id)
 }
