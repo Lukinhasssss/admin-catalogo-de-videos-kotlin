@@ -38,11 +38,10 @@ interface GenreAPI {
     fun create(@RequestBody request: CreateGenreRequest): ResponseEntity<Any>
 
     @GetMapping(produces = [APPLICATION_JSON_VALUE])
-    @Operation(summary = "Create a new genre")
+    @Operation(summary = "List all genres")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Listed successfully"),
-            ApiResponse(responseCode = "422", description = "An invalid parameter was received"),
+            ApiResponse(responseCode = "200", description = "Genres retrieved successfully"),
             ApiResponse(responseCode = "500", description = "An internal server error was thrown")
         ]
     )
