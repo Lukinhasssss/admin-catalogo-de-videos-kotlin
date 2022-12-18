@@ -18,7 +18,7 @@ class CastMemberValidator(
 
     private fun checkNameConstraints() {
         with(castMember.name) {
-            if (isBlank()) {
+            if (isNullOrBlank()) {
                 validationHandler.append(Error(message = "'name' should not be empty"))
                 return
             }
