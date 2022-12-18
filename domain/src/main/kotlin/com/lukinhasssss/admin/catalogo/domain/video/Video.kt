@@ -23,12 +23,12 @@ data class Video(
     val createdAt: Instant,
     var updatedAt: Instant,
 
-    val banner: ImageMedia? = null,
-    val thumbnail: ImageMedia? = null,
-    val thumbnailHalf: ImageMedia? = null,
+    var banner: ImageMedia? = null,
+    var thumbnail: ImageMedia? = null,
+    var thumbnailHalf: ImageMedia? = null,
 
-    val trailer: AudioVideoMedia? = null,
-    val video: AudioVideoMedia? = null,
+    var trailer: AudioVideoMedia? = null,
+    var video: AudioVideoMedia? = null,
 
     val categories: Set<CategoryID>,
     val genres: Set<GenreID>,
@@ -71,4 +71,136 @@ data class Video(
             )
         }
     }
+
+    fun update(
+        aTitle: String,
+        aDescription: String?,
+        aLaunchYear: Year,
+        aDuration: Double,
+        wasOpened: Boolean,
+        wasPublished: Boolean,
+        aRating: Rating,
+        categories: Set<CategoryID>,
+        genres: Set<GenreID>,
+        members: Set<CastMemberID>
+    ) = Video(
+        id = id,
+        title = aTitle,
+        description = aDescription,
+        launchedAt = aLaunchYear,
+        duration = aDuration,
+        opened = wasOpened,
+        published = wasPublished,
+        rating = aRating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = members
+    )
+
+    fun setVideo(aVideoMedia: AudioVideoMedia) = Video(
+        id = id,
+        title = title,
+        description = description,
+        launchedAt = launchedAt,
+        duration = duration,
+        opened = opened,
+        published = published,
+        rating = rating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = castMembers,
+        video = aVideoMedia,
+        trailer = trailer,
+        banner = banner,
+        thumbnail = thumbnail,
+        thumbnailHalf = thumbnailHalf
+    )
+
+    fun setTrailer(aTrailerMedia: AudioVideoMedia) = Video(
+        id = id,
+        title = title,
+        description = description,
+        launchedAt = launchedAt,
+        duration = duration,
+        opened = opened,
+        published = published,
+        rating = rating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = castMembers,
+        video = video,
+        trailer = aTrailerMedia,
+        banner = banner,
+        thumbnail = thumbnail,
+        thumbnailHalf = thumbnailHalf
+    )
+
+    fun setBanner(aBannerMedia: ImageMedia) = Video(
+        id = id,
+        title = title,
+        description = description,
+        launchedAt = launchedAt,
+        duration = duration,
+        opened = opened,
+        published = published,
+        rating = rating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = castMembers,
+        video = video,
+        trailer = trailer,
+        banner = aBannerMedia,
+        thumbnail = thumbnail,
+        thumbnailHalf = thumbnailHalf
+    )
+
+    fun setThumbnail(aThumbMedia: ImageMedia) = Video(
+        id = id,
+        title = title,
+        description = description,
+        launchedAt = launchedAt,
+        duration = duration,
+        opened = opened,
+        published = published,
+        rating = rating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = castMembers,
+        video = video,
+        trailer = trailer,
+        banner = banner,
+        thumbnail = aThumbMedia,
+        thumbnailHalf = thumbnailHalf
+    )
+
+    fun setThumbnailHalf(aThumbMedia: ImageMedia) = Video(
+        id = id,
+        title = title,
+        description = description,
+        launchedAt = launchedAt,
+        duration = duration,
+        opened = opened,
+        published = published,
+        rating = rating,
+        createdAt = createdAt,
+        updatedAt = InstantUtils.now(),
+        categories = categories,
+        genres = genres,
+        castMembers = castMembers,
+        video = video,
+        trailer = trailer,
+        banner = banner,
+        thumbnail = thumbnail,
+        thumbnailHalf = aThumbMedia
+    )
 }
