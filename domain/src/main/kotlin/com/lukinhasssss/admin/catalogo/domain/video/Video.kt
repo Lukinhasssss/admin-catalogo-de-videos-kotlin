@@ -35,7 +35,8 @@ data class Video(
     val castMembers: Set<CastMemberID>
 ) : AggregateRoot<VideoID>(id) {
 
-    override fun validate(handler: ValidationHandler) {}
+    override fun validate(handler: ValidationHandler) =
+        VideoValidator(aVideo = this, validationHandler = handler).validate()
 
     companion object {
         fun newVideo(
