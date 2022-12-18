@@ -20,7 +20,7 @@ class CategoryValidator(
 
     private fun checkNameConstraints() {
         with(category.name) {
-            if (isBlank()) {
+            if (isNullOrBlank()) {
                 validationHandler.append(Error(message = "'name' should not be empty"))
                 return
             }
