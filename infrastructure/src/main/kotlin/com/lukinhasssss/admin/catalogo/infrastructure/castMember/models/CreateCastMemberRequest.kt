@@ -6,8 +6,8 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 data class CreateCastMemberRequest(
 
     @JsonProperty(value = "name")
-    val name: String = "",
+    val name: String,
 
     @JsonProperty(value = "type")
-    val type: CastMemberType = CastMemberType.ACTOR
+    val type: CastMemberType
 )
