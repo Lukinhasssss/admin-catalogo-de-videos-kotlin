@@ -20,7 +20,7 @@ class GenreValidator(
 
     private fun checkNameConstraints() {
         with(genre.name) {
-            if (isBlank()) {
+            if (isNullOrBlank()) {
                 validationHandler.append(Error(message = "'name' should not be empty"))
                 return
             }
