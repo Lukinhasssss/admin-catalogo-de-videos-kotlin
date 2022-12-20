@@ -33,7 +33,7 @@
 - Nome não deve ser nulo ou em branco
 - Nome deve conter no máximo 255 caracteres
 
-## Entidade Cast Member (Elenco)
+## Entidade Cast Member (Membro de Elenco)
 
 ### Campos
 - Nome
@@ -44,6 +44,33 @@
 - Nome não deve ser nulo ou em branco
 - Nome deve conter no mínimo 3 caracteres
 - Nome deve conter no máximo 255 caracteres
+
+## Entidade Video
+
+### Campos
+- Título
+- Descrição
+- Ano de lançamento
+- Já estreou?
+- Duração
+- Publicado
+- Auditoria (data de criação e atualização)
+- Rating (classificação de idade)
+- Thumb (imagem)
+- Meia thumb (imagem)
+- Banner (imagem)
+- Trailer (midia)
+- Midia (url original, url encodada, controle de status)
+- Relacionamento com Categorias (várias)
+- Relacionamento com Gêneros (vários)
+- Relacionamento com Membros de Elenco (vários)
+
+### Regras de Negócio
+- Título não deve ser nulo ou em branco
+- Título deve conter no máximo 255 caracteres
+- Descrição não pode ser vazia
+- Ano de lançamento é obrigatório
+- Rating é obrigatório
 
 ## Ferramentas necessárias
 
