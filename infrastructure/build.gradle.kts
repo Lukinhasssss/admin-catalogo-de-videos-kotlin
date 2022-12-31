@@ -48,11 +48,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
