@@ -46,6 +46,10 @@ class CastMemberPostgresGateway(
         if (repository.existsById(this)) repository.deleteById(this)
     }
 
+    override fun existsByIds(castMemberIDs: Iterable<CastMemberID>): List<CastMemberID> {
+        throw UnsupportedOperationException()
+    }
+
     private fun assembleSpecification(term: String) = SpecificationUtils.like<CastMemberJpaEntity>("name", term)
 
     private fun save(aMember: CastMember) = repository.save(CastMemberJpaEntity.from(aMember)).toAggregate()

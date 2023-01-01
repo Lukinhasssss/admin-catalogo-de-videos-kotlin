@@ -14,4 +14,6 @@ interface GenreGateway {
     fun update(aGenre: Genre): Genre
 
     fun deleteById(anID: GenreID)
+
+    fun existsByIds(genreIDs: Iterable<GenreID>): List<GenreID>
 }

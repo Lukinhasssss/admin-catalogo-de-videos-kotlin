@@ -46,6 +46,10 @@ class GenrePostgresGateway(
         if (repository.existsById(this)) repository.deleteById(this)
     }
 
+    override fun existsByIds(genreIDs: Iterable<GenreID>): List<GenreID> {
+        throw UnsupportedOperationException()
+    }
+
     private fun assembleSpecification(terms: String) = SpecificationUtils.like<GenreJpaEntity>("name", terms)
 
     private fun save(aGenre: Genre) = repository.save(GenreJpaEntity.from(aGenre)).toAggregate()
