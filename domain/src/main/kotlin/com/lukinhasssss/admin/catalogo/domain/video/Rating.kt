@@ -10,7 +10,7 @@ enum class Rating(name: String) {
     AGE_18(name = "18");
 
     companion object {
-        fun of(label: String) = values().first {
+        fun of(label: String) = values().firstOrNull {
             it.name.equals(label, ignoreCase = true)
         }
     }
