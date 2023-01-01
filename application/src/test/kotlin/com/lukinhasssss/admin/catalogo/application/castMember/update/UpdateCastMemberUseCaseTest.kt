@@ -69,7 +69,7 @@ class UpdateCastMemberUseCaseTest : UseCaseTest() {
 
         val expectedId = aMember.id
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be empty"
 
@@ -95,7 +95,7 @@ class UpdateCastMemberUseCaseTest : UseCaseTest() {
         // given
         val expectedId = CastMemberID.from("123")
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "CastMember with ID 123 was not found"
 
         val aCommand = UpdateCastMemberCommand.with(expectedId.value, expectedName, expectedType)

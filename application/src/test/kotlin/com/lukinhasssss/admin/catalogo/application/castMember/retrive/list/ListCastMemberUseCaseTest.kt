@@ -26,8 +26,8 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
     fun givenAValidQuery_whenCallsListCastMembers_shouldReturnAll() {
         // given
         val members = listOf(
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
         )
 
         val expectedPage = 0

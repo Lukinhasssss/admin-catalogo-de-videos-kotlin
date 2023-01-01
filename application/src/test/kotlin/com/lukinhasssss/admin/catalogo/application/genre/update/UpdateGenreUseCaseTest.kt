@@ -229,6 +229,4 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         verify(exactly = 1) { categoryGateway.existsByIds(expectedCategories) }
         verify(exactly = 0) { genreGateway.update(any()) }
     }
-
-    private fun Iterable<CategoryID>.asString() = map { it.value }
 }

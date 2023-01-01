@@ -26,7 +26,7 @@ class GetCastMemberByIdUseCaseTest : UseCaseTest() {
     fun givenAValidId_whenCallsGetCastMember_shouldReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 

@@ -235,6 +235,4 @@ class CreateGenreUseCaseTest : UseCaseTest() {
             )
         }
     }
-
-    private fun Iterable<CategoryID>.asString() = map { it.value }
 }

@@ -24,7 +24,7 @@ class DeleteCastMemberUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidId_whenCallsDeleteCastMember_shouldDeleteIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedId = aMember.id
 
@@ -52,7 +52,7 @@ class DeleteCastMemberUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidId_whenCallsDeleteCastMemberAndGatewayThrowsException_shouldReceiveException() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedId = aMember.id
 
