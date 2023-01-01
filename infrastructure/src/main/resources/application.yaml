@@ -34,3 +34,25 @@ spring:
       "[hibernate.connection.provider_disables_autocommit]": true
       # Para aumentar a performance ao máximo, desabilitamos o auto-commit e o open-in-view.
       # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
+
+management:
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+
+info:
+  app:
+    name: Admin do Catálogo de Vídeos
+    description: Projeto para a adiministração do catálogo de vídeos
+    version: 1.0
+    java:
+      version: ${java.version}
