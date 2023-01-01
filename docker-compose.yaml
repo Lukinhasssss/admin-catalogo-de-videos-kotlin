@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  app:
+  admin-do-catalogo:
     container_name: admin-do-catalogo
     build:
       context: .
@@ -39,5 +39,55 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
       POSTGRES_DB: ${POSTGRES_DB-adm_videos}
 
+  prometheus-admin-do-catalogo:
+    container_name: prometheus-admin-do-catalogo
+    image: prom/prometheus
+    volumes:
+      - ./infrastructure/src/main/resources/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - adm_videos_network
+    restart: always
+
+#  grafana:
+#    image: grafana/grafana
+#    user: "472"
+#    depends_on:
+#      - prometheus
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - adm_videos_network
+#    volumes:
+#      - ./infrastructure/src/main/resources/grafana/provisioning/:/etc/grafana/provisioning/
+#      - grafana_data:/var/lib/grafana
+##    env_file:
+##      - ./grafana/config.monitoring
+#    restart: always
+
+#  nginx-admin-do-catalogo:
+#    container_name: nginx-admin-do-catalogo
+#    image: nginx
+#    build:
+#      context: ./infrastructure/src/main/resources/nginx
+#    ports:
+#      - '80:80'
+#    depends_on:
+#      - admin-do-catalogo
+#    networks:
+#      - adm_videos_network
+#    restart: always
+
 networks:
   adm_videos_network:
+
+volumes:
+  prometheus_data: {}
+#  grafana_data: {}
