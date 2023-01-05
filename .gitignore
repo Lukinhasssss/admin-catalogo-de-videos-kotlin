@@ -44,4 +44,3 @@ bin/
 
 ### Other files and folders ###
 .env
-/infrastructure/src/main/resources/prometheus/data/

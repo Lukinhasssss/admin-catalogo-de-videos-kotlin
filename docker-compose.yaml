@@ -42,8 +42,10 @@ services:
   prometheus-admin-do-catalogo:
     container_name: prometheus-admin-do-catalogo
     image: prom/prometheus
+#    user: "1000" # use command 'id -u' for get user id
     volumes:
-      - ./infrastructure/src/main/resources/prometheus/data:/prometheus
+      - prometheus_data:/prometheus
+#      - ./infrastructure/src/main/resources/prometheus/data:/prometheus
       - ./infrastructure/src/main/resources/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -56,21 +58,23 @@ services:
       - adm_videos_network
     restart: always
 
-#  grafana:
-#    image: grafana/grafana
-#    user: "472"
-#    depends_on:
-#      - prometheus
-#    ports:
-#      - "3000:3000"
-#    networks:
-#      - adm_videos_network
-#    volumes:
+  grafana:
+    container_name: grafana-admin-do-catalogo
+    image: grafana/grafana
+#    user: "1000" # use command 'id -u' for get user id
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    networks:
+      - adm_videos_network
+    volumes:
+      - grafana_data:/var/lib/grafana
+#      - ./infrastructure/src/main/resources/grafana:/var/lib/grafana
 #      - ./infrastructure/src/main/resources/grafana/provisioning/:/etc/grafana/provisioning/
-#      - grafana_data:/var/lib/grafana
-##    env_file:
-##      - ./grafana/config.monitoring
-#    restart: always
+#    env_file:
+#      - ./grafana/config.monitoring
+    restart: always
 
 #  nginx-admin-do-catalogo:
 #    container_name: nginx-admin-do-catalogo
@@ -87,3 +91,7 @@ services:
 
 networks:
   adm_videos_network:
+
+volumes:
+  prometheus_data:
+  grafana_data:
