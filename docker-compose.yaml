@@ -43,8 +43,8 @@ services:
     container_name: prometheus-admin-do-catalogo
     image: prom/prometheus
     volumes:
+      - ./infrastructure/src/main/resources/prometheus/data:/prometheus
       - ./infrastructure/src/main/resources/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/etc/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -87,7 +87,3 @@ services:
 
 networks:
   adm_videos_network:
-
-volumes:
-  prometheus_data: {}
-#  grafana_data: {}
