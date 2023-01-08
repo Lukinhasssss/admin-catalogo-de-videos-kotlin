@@ -1,14 +1,34 @@
+<!-- LOG NO FORMATO JSON -->
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} %M - %msg %rEx{short} %n</pattern>
-        </encoder>
+    <contextName>production</contextName>
+
+    <appender name="json-stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <prettyPrint>true</prettyPrint>
+            </jsonFormatter>
+
+            <timestampFormat>dd-MM-yyyy' 'HH:mm:ss.SSS</timestampFormat>
+        </layout>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT" />
+    <root level="info">
+        <appender-ref ref="json-stdout" />
     </root>
 </configuration>
+
+<!-- FORMATO PADRÃO DE LOGS -->
+<!--<configuration>-->
+<!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} %M - %msg %rEx{short} %n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+<!--    -->
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </root>-->
+<!--</configuration>-->
 
 <!-- LOGGAR EM ARQUIVO -->
 <!--<configuration>-->
