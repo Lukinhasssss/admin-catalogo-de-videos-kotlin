@@ -1,8 +1,8 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence
 
+import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 import java.io.Serializable
-import javax.persistence.Column
-import javax.persistence.Embeddable
 
 @Embeddable
 data class GenreCategoryID(

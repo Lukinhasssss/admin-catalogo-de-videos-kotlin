@@ -2,17 +2,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.spring") version "1.7.21"
-    kotlin("plugin.jpa") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.spring") version "1.8.0"
+    kotlin("plugin.jpa") version "1.8.0"
     id("application")
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
-    id("org.springframework.boot") version "2.7.5"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.flywaydb.flyway") version "9.8.3"
+    id("org.springframework.boot") version "3.0.1"
+    id("io.spring.dependency-management") version "1.1.0"
+    id("org.flywaydb.flyway") version "9.10.2"
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -37,8 +37,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
 
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.13")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.14")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
 
     implementation("io.vavr:vavr-kotlin:0.10.2")
 
@@ -48,16 +48,20 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
+    implementation("org.hibernate:hibernate-validator:8.0.0.Final")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
-    testImplementation("org.flywaydb:flyway-core:9.8.3")
+    testImplementation("org.flywaydb:flyway-core:9.10.2")
 
-    testImplementation("io.github.serpro69:kotlin-faker:1.12.0")
-    testImplementation("com.ninja-squad:springmockk:3.1.2")
+    testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
+    testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 

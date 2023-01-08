@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
@@ -22,7 +22,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.2")
-    testImplementation("io.github.serpro69:kotlin-faker:1.12.0")
+    testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     // testImplementation("com.github.javafaker:javafaker:1.0.2")
 }
 
