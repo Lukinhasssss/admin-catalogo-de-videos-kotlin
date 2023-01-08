@@ -46,6 +46,7 @@ services:
     volumes:
       - prometheus_data:/prometheus
       - ./infrastructure/src/main/resources/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/src/main/resources/prometheus/alert_rules.yaml:/etc/prometheus/alert_rules.yaml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -57,12 +58,28 @@ services:
       - adm_videos_network
     restart: always
 
+  alertmanager-admin-do-catalogo:
+    container_name: alertmanager-admin-do-catalogo
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./infrastructure/src/main/resources/alertmanager/:/etc/alertmanager/:ro
+    networks:
+      - adm_videos_network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yaml'
+      - '--storage.path=/alertmanager'
+    depends_on:
+      - prometheus-admin-do-catalogo
+
   grafana-admin-do-catalogo:
     container_name: grafana-admin-do-catalogo
     image: grafana/grafana
 #    user: "1000" # use command 'id -u' for get user id
     depends_on:
-      - prometheus-admin-do-catalogo
+      - alertmanager-admin-do-catalogo
     ports:
       - "3000:3000"
     networks:
