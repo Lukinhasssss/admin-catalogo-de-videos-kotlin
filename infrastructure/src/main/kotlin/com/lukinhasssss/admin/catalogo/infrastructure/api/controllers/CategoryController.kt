@@ -19,6 +19,7 @@ import com.lukinhasssss.admin.catalogo.infrastructure.category.models.CreateCate
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.presenters.toCategoryListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.category.presenters.toCategoryResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
@@ -33,7 +34,13 @@ class CategoryController(
     private val deleteCategoryUseCase: DeleteCategoryUseCase
 ) : CategoryAPI {
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(CategoryController::class.java)
+    }
+
     override fun createCategory(request: CreateCategoryRequest): ResponseEntity<Any> {
+        logger.info("Iniciando processo de criação de categoria...")
+
         val aCommand = with(request) {
             CreateCategoryCommand.with(
                 aName = name,
@@ -43,10 +50,12 @@ class CategoryController(
         }
 
         val onError = Function<Notification, ResponseEntity<Any>> {
+            logger.warn("Não foi possível criar a categoria!")
             ResponseEntity.unprocessableEntity().body(it)
         }
 
         val onSuccess = Function<CreateCategoryOutput, ResponseEntity<Any>> {
+            logger.info("Finalizado processo de criação de categoria!")
             ResponseEntity.created(URI.create("/categories/${it.id}")).body(it)
         }
 
@@ -54,8 +63,11 @@ class CategoryController(
     }
 
     override fun getById(id: String): CategoryResponse {
+        logger.info("Iniciando processo de busca de categoria...")
+
         val categoryOutput = getCategoryByIdUseCase.execute(id)
 
+        logger.info("Finalizado processo de busca de categoria!")
         return categoryOutput.toCategoryResponse()
     }
 
@@ -66,14 +78,19 @@ class CategoryController(
         sort: String,
         direction: String
     ): Pagination<CategoryListResponse> {
+        logger.info("Iniciando processo de listagem de categorias...")
+
         val aQuery = SearchQuery(page, perPage, search, sort, direction)
 
         val categoryListOutputPagination = listCategoriesUseCase.execute(aQuery)
 
+        logger.info("Finalizado processo de listagem de categorias")
         return categoryListOutputPagination.map { it.toCategoryListResponse() }
     }
 
     override fun updateById(id: String, request: UpdateCategoryRequest): ResponseEntity<Any> {
+        logger.info("Iniciando processo de atualização de categoria...")
+
         val aCommand = with(request) {
             UpdateCategoryCommand.with(
                 anId = id,
@@ -84,13 +101,23 @@ class CategoryController(
         }
 
         val onError = Function<Notification, ResponseEntity<Any>> {
+            logger.warn("Não foi possível atualizar a categoria!")
             ResponseEntity.unprocessableEntity().body(it)
         }
 
-        val onSuccess = Function<UpdateCategoryOutput, ResponseEntity<Any>> { ResponseEntity.ok(it) }
+        val onSuccess = Function<UpdateCategoryOutput, ResponseEntity<Any>> {
+            logger.info("Finalizado processo de atualização de categoria!")
+            ResponseEntity.ok(it)
+        }
 
         return updateCategoryUseCase.execute(aCommand).fold(onError, onSuccess)
     }
 
-    override fun deleteById(id: String) = deleteCategoryUseCase.execute(id)
+    override fun deleteById(id: String) {
+        logger.info("Iniciando processo de deleção de categoria...")
+
+        deleteCategoryUseCase.execute(id).also {
+            logger.info("Finalizado processo de deleção de categoria!")
+        }
+    }
 }

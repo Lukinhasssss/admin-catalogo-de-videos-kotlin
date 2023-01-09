@@ -8,6 +8,7 @@ import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.SpecificationUtils
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
@@ -19,13 +20,22 @@ import java.util.Optional
 class CategoryPostgresGateway(
     private val repository: CategoryRepository
 ) : CategoryGateway {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(CategoryPostgresGateway::class.java)
+    }
+
     override fun create(aCategory: Category): Category {
         return save(aCategory)
     }
 
     override fun findById(anID: CategoryID): Category? {
+        logger.info("Iniciando busca de categoria no banco...")
+
         return repository.findById(anID.value)
-            .map { it.toAggregate() }.orElse(null)
+            .map { it.toAggregate() }
+            .orElse(null)
+            .also { logger.info("Finalizada busca de categoria no banco!") }
     }
 
     override fun findAll(aQuery: SearchQuery): Pagination<Category> = with(aQuery) {
@@ -37,7 +47,11 @@ class CategoryPostgresGateway(
             .filter { it.isNotBlank() }
             .map { assembleSpecification(it) }.orElse(null)
 
+        logger.info("Iniciando busca paginada de todas as categorias no banco...")
+
         val pageResult = repository.findAll(Specification.where(specifications), page)
+
+        logger.info("Finalizada busca paginada de todas as categorias no banco!")
 
         with(pageResult) {
             Pagination(number, size, totalElements, map { it.toAggregate() }.toList())
@@ -50,13 +64,22 @@ class CategoryPostgresGateway(
 
     override fun deleteById(anID: CategoryID) {
         with(anID.value) {
-            if (repository.existsById(this)) repository.deleteById(this)
+            logger.info("Iniciando deleção de categoria salva no banco...")
+
+            if (repository.existsById(this)) repository.deleteById(this).also {
+                logger.info("Categoria deletada do banco com sucesso!")
+            }
         }
     }
 
     override fun existsByIds(categoryIDs: Iterable<CategoryID>): List<CategoryID> {
+        logger.info("Verificando se a(s) categoria(s) existe(m) no banco...")
+
         val ids = categoryIDs.map { it.value }
-        return repository.existsByIds(ids).map { CategoryID.from(it) }
+
+        return repository.existsByIds(ids).map { CategoryID.from(it) }.also {
+            logger.info("Finalizada verificação se a(s) categoria(s) existe(m) no banco!")
+        }
     }
 
     private fun assembleSpecification(str: String): Specification<CategoryJpaEntity> {
@@ -65,5 +88,11 @@ class CategoryPostgresGateway(
         return nameLike.or(descriptionLike)
     }
 
-    private fun save(aCategory: Category) = repository.save(CategoryJpaEntity.from(aCategory)).toAggregate()
+    private fun save(aCategory: Category): Category {
+        logger.info("Iniciando inserção da categoria no banco...")
+
+        return repository.save(CategoryJpaEntity.from(aCategory)).toAggregate().also {
+            logger.info("Categoria inserida no banco com sucesso!")
+        }
+    }
 }
