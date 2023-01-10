@@ -6,12 +6,14 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
+import com.lukinhasssss.admin.catalogo.domain.exception.InternalErrorException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
+import com.lukinhasssss.admin.catalogo.domain.video.MediaResourceGateway
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
@@ -21,7 +23,8 @@ class DefaultCreateVideoUseCase(
     private val categoryGateway: CategoryGateway,
     private val genreGateway: GenreGateway,
     private val castMemberGateway: CastMemberGateway,
-    private val videoGateway: VideoGateway
+    private val mediaResourceGateway: MediaResourceGateway,
+    private val videoGateway: VideoGateway,
 ) : CreateVideoUseCase() {
 
     override fun execute(anIn: CreateVideoCommand) = with(anIn) {
@@ -62,8 +65,47 @@ class DefaultCreateVideoUseCase(
         CreateVideoOutput.from(create(aCommand = this, aVideo = aVideo))
     }
 
-    private fun create(aCommand: CreateVideoCommand, aVideo: Video): Video {
-        return videoGateway.create(aVideo)
+    private fun create(aCommand: CreateVideoCommand, aVideo: Video): Video = with(aCommand) {
+        val anId = aVideo.id
+
+        try {
+            val aVideoMedia = if (video != null) {
+                mediaResourceGateway.storeAudioVideo(anId = anId, aResource = video)
+            } else null
+
+            val aTrailerMedia = if (trailer != null) {
+                mediaResourceGateway.storeAudioVideo(anId = anId, aResource = trailer)
+            } else null
+
+            val aBannerMedia = if (banner != null) {
+                mediaResourceGateway.storeImage(anId = anId, aResource = banner)
+            } else null
+
+            val aThumbnailMedia = if (thumbnail != null) {
+                mediaResourceGateway.storeImage(anId = anId, aResource = thumbnail)
+            } else null
+
+            val aThumbnailHalfMedia = if (thumbnailHalf != null) {
+                mediaResourceGateway.storeImage(anId = anId, aResource = thumbnailHalf)
+            } else null
+
+            videoGateway.create(
+                aVideo.copy(
+                    video = aVideoMedia,
+                    trailer = aTrailerMedia,
+                    banner = aBannerMedia,
+                    thumbnail = aThumbnailMedia,
+                    thumbnailHalf = aThumbnailHalfMedia
+                )
+            )
+        } catch (throwable: Throwable) {
+            mediaResourceGateway.clearResources(anId = anId)
+
+            throw InternalErrorException.with(
+                message = "An error on create video was observed [videoID: $anId]",
+                throwable = throwable
+            )
+        }
     }
 
     private fun validateCategories(ids: Set<CategoryID>): ValidationHandler =
