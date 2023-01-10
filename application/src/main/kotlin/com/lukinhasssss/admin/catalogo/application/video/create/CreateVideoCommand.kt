@@ -13,11 +13,11 @@ data class CreateVideoCommand(
     val categories: Set<String>,
     val genres: Set<String>,
     val members: Set<String>,
-    val video: Resource? = null,
-    val trailer: Resource? = null,
-    val banner: Resource? = null,
-    val thumbnail: Resource? = null,
-    val thumbnailHalf: Resource? = null
+    val video: Resource?,
+    val trailer: Resource?,
+    val banner: Resource?,
+    val thumbnail: Resource?,
+    val thumbnailHalf: Resource?
 ) {
     companion object {
         fun with(
@@ -31,11 +31,11 @@ data class CreateVideoCommand(
             categories: Set<String>,
             genres: Set<String>,
             members: Set<String>,
-            aVideo: Resource,
-            aTrailer: Resource,
-            aBanner: Resource,
-            aThumbnail: Resource,
-            aThumbnailHalf: Resource
+            aVideo: Resource? = null,
+            aTrailer: Resource? = null,
+            aBanner: Resource? = null,
+            aThumbnail: Resource? = null,
+            aThumbnailHalf: Resource? = null
         ) = CreateVideoCommand(
             aTitle, aDescription, aLaunchYear, aDuration, wasOpened,
             wasPublished, aRating, categories, genres, members,
