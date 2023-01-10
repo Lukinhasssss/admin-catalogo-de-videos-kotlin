@@ -5,6 +5,11 @@ import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
+import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
+import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
+import com.lukinhasssss.admin.catalogo.domain.video.MediaResourceGateway
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
+import com.lukinhasssss.admin.catalogo.domain.video.Resource
 import com.lukinhasssss.admin.catalogo.domain.video.Resource.Type
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import io.mockk.every
@@ -13,6 +18,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import java.time.Year
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -32,6 +38,9 @@ class CreateVideoUseCaseTest : UseCaseTest() {
 
     @MockK
     private lateinit var genreGateway: GenreGateway
+
+    @MockK
+    private lateinit var mediaResourceGateway: MediaResourceGateway
 
     @Test
     fun givenAValidCommand_whenCallsCreateVideo_shouldReturnVideoId() {
@@ -74,6 +83,8 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         every { castMemberGateway.existsByIds(any()) } returns expectedMembers.toList()
         every { genreGateway.existsByIds(any()) } returns expectedGenres.toList()
         every { videoGateway.create(any()) } answers { firstArg() }
+        mockImageMedia()
+        mockAudioVideoMedia()
 
         // when
         val actualResult = useCase.execute(aCommand)
@@ -95,13 +106,37 @@ class CreateVideoUseCaseTest : UseCaseTest() {
                     assertEquals(expectedCategories, it.categories)
                     assertEquals(expectedGenres, it.genres)
                     assertEquals(expectedMembers, it.castMembers)
-                    // assertEquals(expectedVideo.name, it.video?.name)
-                    // assertEquals(expectedTrailer.name, it.trailer?.name)
-                    // assertEquals(expectedBanner.name, it.banner?.name)
-                    // assertEquals(expectedThumb.name, it.thumbnail?.name)
-                    // assertEquals(expectedThumbHalf.name, it.thumbnailHalf?.name)
+                    assertEquals(expectedVideo.name, it.video?.name)
+                    assertEquals(expectedTrailer.name, it.trailer?.name)
+                    assertEquals(expectedBanner.name, it.banner?.name)
+                    assertEquals(expectedThumb.name, it.thumbnail?.name)
+                    assertEquals(expectedThumbHalf.name, it.thumbnailHalf?.name)
                 }
             )
         }
     }
+
+    private fun mockImageMedia() =
+        every { mediaResourceGateway.storeImage(any(), any()) } answers {
+            val resource = this.secondArg<Resource>()
+
+            ImageMedia.with(
+                checksum = UUID.randomUUID().toString(),
+                name = resource.name,
+                location = "/img"
+            )
+        }
+
+    private fun mockAudioVideoMedia() =
+        every { mediaResourceGateway.storeAudioVideo(any(), any()) } answers {
+            val resource = this.secondArg<Resource>()
+
+            AudioVideoMedia.with(
+                checksum = UUID.randomUUID().toString(),
+                name = resource.name,
+                rawLocation = "/img",
+                encodedLocation = "",
+                status = PENDING
+            )
+        }
 }
