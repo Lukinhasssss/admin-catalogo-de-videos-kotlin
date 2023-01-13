@@ -12,7 +12,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
     id("org.springframework.boot") version "3.0.1"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.flywaydb.flyway") version "9.10.2"
+    id("org.flywaydb.flyway") version "9.11.0"
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -54,13 +54,15 @@ dependencies {
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.10.2")
-    implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
-    implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
+    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+    // implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
+    // implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
-    testImplementation("org.flywaydb:flyway-core:9.10.2")
+    testImplementation("org.flywaydb:flyway-core:9.11.0")
 
     testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
