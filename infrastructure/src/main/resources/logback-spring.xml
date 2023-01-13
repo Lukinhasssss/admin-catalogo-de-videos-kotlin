@@ -1,0 +1,141 @@
+<!-- LOG NO FORMATO JSON UTILIZANDO LOGSTASH -->
+<configuration>
+    <appender name="json-stdout-info" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+
+                    <pattern>
+                        {
+                          "timestamp": "%d{dd-MM-yyyy HH:mm:ss.SSS}",
+                          "level": "%-5level",
+                          "logger": "%logger{36}",
+                          "message": "#tryJson{%msg%n}",
+                        }
+                    </pattern>
+                </pattern>
+
+                <stackTrace>
+                    <fieldName>exception</fieldName>
+
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <exclude>^org\.</exclude>
+                        <exclude>^com\.</exclude>
+                        <exclude>^net\.</exclude>
+                        <exclude>^jdk\.internal</exclude>
+                        <exclude>^sun\.</exclude>
+                        <exclude>^com\.sun</exclude>
+                        <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
+                        <exclude>^javax\.servlet\.http\.HttpServlet\.service</exclude>
+                        <exclude>^software\.amazon\.awssdk\.core\.internal</exclude>
+                        <exclude>BySpringCGLIB</exclude>
+                        <shortenedClassNameLength>1</shortenedClassNameLength>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="json-stdout-warning" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+
+                    <pattern>
+                        {
+                          "timestamp": "%d{dd-MM-yyyy HH:mm:ss.SSS}",
+                          "level": "%-5level",
+                          "logger": "%logger{36}",
+                          "message": "#tryJson{%msg%n}"
+                        }
+                    </pattern>
+                </pattern>
+
+                <stackTrace>
+                    <fieldName>exception</fieldName>
+
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <exclude>^org\.</exclude>
+                        <exclude>^com\.</exclude>
+                        <exclude>^net\.</exclude>
+                        <exclude>^jdk\.internal</exclude>
+                        <exclude>^sun\.</exclude>
+                        <exclude>^com\.sun</exclude>
+                        <exclude>^java\.lang\.reflect\.Method\.invoke</exclude>
+                        <exclude>^javax\.servlet\.http\.HttpServlet\.service</exclude>
+                        <exclude>^software\.amazon\.awssdk\.core\.internal</exclude>
+                        <exclude>BySpringCGLIB</exclude>
+                        <shortenedClassNameLength>1</shortenedClassNameLength>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="json-stdout-warning"/>
+    </root>
+
+    <logger level="info" name="com.lukinhasssss" additivity="false">
+        <appender-ref ref="json-stdout-info"/>
+    </logger>
+</configuration>
+
+<!-- LOG NO FORMATO JSON -->
+<!--<configuration>-->
+<!--    <contextName>production</contextName>-->
+
+<!--    <appender name="json-stdout" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">-->
+<!--            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">-->
+<!--                <prettyPrint>true</prettyPrint>-->
+<!--            </jsonFormatter>-->
+
+<!--            <timestampFormat>dd-MM-yyyy' 'HH:mm:ss.SSS</timestampFormat>-->
+<!--        </layout>-->
+<!--    </appender>-->
+
+<!--    <root level="info">-->
+<!--        <appender-ref ref="json-stdout" />-->
+<!--    </root>-->
+<!--</configuration>-->
+
+<!-- FORMATO PADRÃO DE LOGS -->
+<!--<configuration>-->
+<!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} %M - %msg %rEx{short} %n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+<!--    -->
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </root>-->
+<!--</configuration>-->
+
+<!-- LOGGAR EM ARQUIVO -->
+<!--<configuration>-->
+<!--    <property name="LOG_PATH" value="logs/admin-do-catalogo.log" />-->
+<!--    -->
+<!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>${LOG_PATH}</file>-->
+<!--        <append>true</append>-->
+<!--    -->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+<!--    -->
+<!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+<!--    -->
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="FILE" />-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </root>-->
+<!--</configuration>-->
