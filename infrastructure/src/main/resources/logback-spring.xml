@@ -3,6 +3,7 @@
     <appender name="json-stdout-info" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
+                <mdc />
                 <pattern>
                     <omitEmptyFields>true</omitEmptyFields>
 
@@ -10,8 +11,8 @@
                         {
                           "timestamp": "%d{dd-MM-yyyy HH:mm:ss.SSS}",
                           "level": "%-5level",
-                          "logger": "%logger{36}",
-                          "message": "#tryJson{%msg%n}",
+                          "logger": "%logger{0}",
+                          "message": "#tryJson{%msg}"
                         }
                     </pattern>
                 </pattern>
@@ -47,8 +48,8 @@
                         {
                           "timestamp": "%d{dd-MM-yyyy HH:mm:ss.SSS}",
                           "level": "%-5level",
-                          "logger": "%logger{36}",
-                          "message": "#tryJson{%msg%n}"
+                          "logger": "%logger{0}",
+                          "message": "#tryJson{%msg}"
                         }
                     </pattern>
                 </pattern>
