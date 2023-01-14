@@ -127,6 +127,40 @@ services:
     networks:
       - adm_videos_network
 
+  metricbeat-admin-do-catalogo:
+    container_name: metricbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/metricbeat:8.6.0
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infrastructure/src/main/resources/elasticstack/beats/metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+    command:
+      - '-strict.perms=false'
+    restart: on-failure
+    networks:
+      - adm_videos_network
+
+#  heartbeat-admin-do-catalogo:
+#    container_name: heartbeat-admin-do-catalogo
+#    image: docker.elastic.co/beats/heartbeat:8.6.0
+#    volumes:
+#      - ./beats/heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+#    environment:
+#      - setup.kibana.host=kibana:5601
+#    networks:
+#      - adm_videos_network
+#
+#  apm-admin-do-catalogo:
+#    container_name: apm-admin-do-catalogo
+#    image: docker.elastic.co/apm/apm-server-oss:8.6.0
+#    volumes:
+#      - ./apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
+#    ports:
+#      - "8200:8200"
+#    restart: on-failure
+#    networks:
+#      - adm_videos_network
+
   ### END OF ELASTIC STACK CONTAINERS ###
 
 #  nginx-admin-do-catalogo:

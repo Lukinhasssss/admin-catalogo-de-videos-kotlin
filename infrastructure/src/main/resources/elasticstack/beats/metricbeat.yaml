@@ -1,0 +1,31 @@
+metricbeat.modules:
+  - module: docker
+    metricsets: [ "container", "cpu", "diskio", "event", "healthcheck", "image", "info", "memory", "network" ]
+    hosts: [ "unix:///var/run/docker.sock" ]
+    period: 10s
+
+  - module: elasticsearch
+    metricsets: [ "node", "node_stats", "cluster_stats", "index" ]
+    period: 10s
+    hosts: ["elasticsearch-admin-do-catalogo:9200"]
+
+  - module: postgresql
+    metricsets: [ "database", "bgwriter", "activity" ]
+    period: 10s
+    hosts: [ "postgres://postgres-admin-do-catalogo:5432/adm_videos" ]
+    username: "lukinhasssss"
+    password: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
+
+  - module: prometheus
+    period: 10s
+    metricsets: [ "collector" ]
+    hosts: [ "prometheus-admin-do-catalogo:9090" ]
+    metrics_path: /metrics
+
+output.elasticsearch:
+  hosts: ["elasticsearch-admin-do-catalogo:9200"]
+
+setup.kibana:
+  host: "kibana-admin-do-catalogo:5601"
+
+setup.dashboards.enabled: true
