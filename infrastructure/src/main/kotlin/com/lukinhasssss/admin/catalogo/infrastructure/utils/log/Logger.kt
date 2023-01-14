@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory
 
 object Logger {
 
+    private const val STACK_TRACE_LEVEL = 3
+
     fun info(
         logCode: String = "",
         message: String,
         payload: Any? = null
     ) {
-        val callerName = Thread.currentThread().stackTrace[3].className
+        val callerName = Thread.currentThread().stackTrace[STACK_TRACE_LEVEL].className
 
         val logger = LoggerFactory.getLogger(callerName)
 
@@ -24,7 +26,7 @@ object Logger {
         message: String,
         payload: Any? = null
     ) {
-        val callerName = Thread.currentThread().stackTrace[3].className
+        val callerName = Thread.currentThread().stackTrace[STACK_TRACE_LEVEL].className
 
         val logger = LoggerFactory.getLogger(callerName)
 
@@ -38,7 +40,7 @@ object Logger {
         message: String,
         payload: Any? = null
     ) {
-        val callerName = Thread.currentThread().stackTrace[3].className
+        val callerName = Thread.currentThread().stackTrace[STACK_TRACE_LEVEL].className
 
         val logger = LoggerFactory.getLogger(callerName)
 
