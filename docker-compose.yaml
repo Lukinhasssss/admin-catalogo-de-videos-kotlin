@@ -91,6 +91,44 @@ services:
 #      - ./grafana/config.monitoring
     restart: always
 
+  ### START OF ELASTIC STACK CONTAINERS ###
+
+  elasticsearch-admin-do-catalogo:
+    container_name: elasticsearch-admin-do-catalogo
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    environment:
+      - node.name=elasticsearch-admin-do-catalogo
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - adm_videos_network
+
+  kibana-admin-do-catalogo:
+    container_name: kibana-admin-do-catalogo
+    image: docker.elastic.co/kibana/kibana:8.6.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-admin-do-catalogo:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-admin-do-catalogo:9200"]'
+    networks:
+      - adm_videos_network
+
+  ### END OF ELASTIC STACK CONTAINERS ###
+
 #  nginx-admin-do-catalogo:
 #    container_name: nginx-admin-do-catalogo
 #    image: nginx
@@ -110,3 +148,4 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  elasticsearch_data:
