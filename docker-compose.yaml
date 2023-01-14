@@ -137,19 +137,25 @@ services:
     command:
       - '-strict.perms=false'
     restart: on-failure
+    depends_on:
+      - kibana-admin-do-catalogo
     networks:
       - adm_videos_network
 
-#  heartbeat-admin-do-catalogo:
-#    container_name: heartbeat-admin-do-catalogo
-#    image: docker.elastic.co/beats/heartbeat:8.6.0
-#    volumes:
-#      - ./beats/heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
-#    environment:
-#      - setup.kibana.host=kibana:5601
-#    networks:
-#      - adm_videos_network
-#
+  heartbeat-admin-do-catalogo:
+    container_name: heartbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/heartbeat:8.6.0
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
+    command:
+      - '-strict.perms=false'
+    environment:
+      - setup.kibana.host=kibana-admin-do-catalogo:5601
+    depends_on:
+      - kibana-admin-do-catalogo
+    networks:
+      - adm_videos_network
+
 #  apm-admin-do-catalogo:
 #    container_name: apm-admin-do-catalogo
 #    image: docker.elastic.co/apm/apm-server-oss:8.6.0
