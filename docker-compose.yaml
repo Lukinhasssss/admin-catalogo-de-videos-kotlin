@@ -183,18 +183,15 @@ services:
 
   ### END OF ELASTIC STACK CONTAINERS ###
 
-#  nginx-admin-do-catalogo:
-#    container_name: nginx-admin-do-catalogo
-#    image: nginx
-#    build:
-#      context: ./infrastructure/src/main/resources/nginx
-#    ports:
-#      - '80:80'
-#    depends_on:
-#      - admin-do-catalogo
-#    networks:
-#      - adm_videos_network
-#    restart: always
+  nginx-admin-do-catalogo:
+    container_name: nginx-admin-do-catalogo
+    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
+    ports:
+      - '80:80'
+    depends_on:
+      - admin-do-catalogo
+    networks:
+      - adm_videos_network
 
 networks:
   adm_videos_network:
