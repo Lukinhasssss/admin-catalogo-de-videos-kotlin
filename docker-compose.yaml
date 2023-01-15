@@ -156,14 +156,28 @@ services:
     networks:
       - adm_videos_network
 
-#  apm-admin-do-catalogo:
-#    container_name: apm-admin-do-catalogo
-#    image: docker.elastic.co/apm/apm-server-oss:8.6.0
+  apm-admin-do-catalogo:
+    container_name: apm-admin-do-catalogo
+    image: docker.elastic.co/apm/apm-server:7.17.8
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
+    command:
+      - '-strict.perms=false'
+    ports:
+      - "8200:8200"
+    restart: on-failure
+    networks:
+      - adm_videos_network
+
+#  logstash-admin-do-catalogo:
+#    container_name: logstash-admin-do-catalogo
+#    image: docker.elastic.co/logstash/logstash:8.6.0
 #    volumes:
-#      - ./apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
-#    ports:
-#      - "8200:8200"
-#    restart: on-failure
+#      - ./logstash/logstash.conf:/etc/logstash/conf.d
+#    environment:
+#      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+#    depends_on:
+#      - kibana-admin-do-catalogo
 #    networks:
 #      - adm_videos_network
 

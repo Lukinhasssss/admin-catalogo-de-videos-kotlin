@@ -12,9 +12,7 @@ metricbeat.modules:
   - module: postgresql
     metricsets: [ "database", "bgwriter", "activity" ]
     period: 10s
-    hosts: [ "postgres://postgres-admin-do-catalogo:5432/adm_videos" ]
-    username: "lukinhasssss"
-    password: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
+    hosts: [ "postgres:////localhost:5432", "postgres://postgres-admin-do-catalogo:5432", "postgres://postgres-admin-do-catalogo:5432/adm_videos" ]
 
   - module: prometheus
     period: 10s
