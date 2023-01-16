@@ -83,7 +83,7 @@ class CastMemberController(
         Logger.info(message = "Iniciando processo de deleção de membro de elenco...")
 
         deleteCastMemberUseCase.execute(id).also {
-            Logger.info(message = "Finalizado processo de deleção de membro de elenco...")
+            Logger.info(message = "Finalizado processo de deleção de membro de elenco!")
         }
     }
 }
