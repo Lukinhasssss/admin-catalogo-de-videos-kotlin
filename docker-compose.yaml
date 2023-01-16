@@ -169,15 +169,33 @@ services:
     networks:
       - adm_videos_network
 
+  filebeat-admin-do-catalogo:
+    container_name: filebeat-admin-do-catalogo
+    image: docker.elastic.co/beats/filebeat:8.6.0
+    user: root
+    networks:
+      - adm_videos_network
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/etc/filebeat/filebeat.yml
+#      - ./infrastructure/src/main/resources/logs:/var/log
+#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/application.log
+#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/app_logs/application.log
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
+    command:
+      - '-strict.perms=false'
+
 #  logstash-admin-do-catalogo:
 #    container_name: logstash-admin-do-catalogo
 #    image: docker.elastic.co/logstash/logstash:8.6.0
-#    volumes:
-#      - ./logstash/logstash.conf:/etc/logstash/conf.d
+##    volumes:
+##      - ./logstash/logstash.conf:/etc/logstash/conf.d
 #    environment:
 #      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
 #    depends_on:
-#      - kibana-admin-do-catalogo
+#      - elasticsearch-admin-do-catalogo
 #    networks:
 #      - adm_videos_network
 
@@ -200,3 +218,4 @@ volumes:
   prometheus_data:
   grafana_data:
   elasticsearch_data:
+  filebeat_data:
