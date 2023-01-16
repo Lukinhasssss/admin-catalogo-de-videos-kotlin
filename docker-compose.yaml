@@ -91,18 +91,125 @@ services:
 #      - ./grafana/config.monitoring
     restart: always
 
-#  nginx-admin-do-catalogo:
-#    container_name: nginx-admin-do-catalogo
-#    image: nginx
-#    build:
-#      context: ./infrastructure/src/main/resources/nginx
-#    ports:
-#      - '80:80'
+  ### START OF ELASTIC STACK CONTAINERS ###
+
+  elasticsearch-admin-do-catalogo:
+    container_name: elasticsearch-admin-do-catalogo
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    environment:
+      - node.name=elasticsearch-admin-do-catalogo
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - adm_videos_network
+
+  kibana-admin-do-catalogo:
+    container_name: kibana-admin-do-catalogo
+    image: docker.elastic.co/kibana/kibana:8.6.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-admin-do-catalogo:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-admin-do-catalogo:9200"]'
+    networks:
+      - adm_videos_network
+
+  metricbeat-admin-do-catalogo:
+    container_name: metricbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/metricbeat:8.6.0
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infrastructure/src/main/resources/elasticstack/beats/metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+    command:
+      - '-strict.perms=false'
+    restart: on-failure
+    depends_on:
+      - kibana-admin-do-catalogo
+    networks:
+      - adm_videos_network
+
+  heartbeat-admin-do-catalogo:
+    container_name: heartbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/heartbeat:8.6.0
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
+    command:
+      - '-strict.perms=false'
+    environment:
+      - setup.kibana.host=kibana-admin-do-catalogo:5601
+    depends_on:
+      - kibana-admin-do-catalogo
+    networks:
+      - adm_videos_network
+
+  apm-admin-do-catalogo:
+    container_name: apm-admin-do-catalogo
+    image: docker.elastic.co/apm/apm-server:7.17.8
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
+    command:
+      - '-strict.perms=false'
+    ports:
+      - "8200:8200"
+    restart: on-failure
+    networks:
+      - adm_videos_network
+
+  filebeat-admin-do-catalogo:
+    container_name: filebeat-admin-do-catalogo
+    image: docker.elastic.co/beats/filebeat:8.6.0
+    user: root
+    networks:
+      - adm_videos_network
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/etc/filebeat/filebeat.yml
+#      - ./infrastructure/src/main/resources/logs:/var/log
+#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/application.log
+#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/app_logs/application.log
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
+    command:
+      - '-strict.perms=false'
+
+#  logstash-admin-do-catalogo:
+#    container_name: logstash-admin-do-catalogo
+#    image: docker.elastic.co/logstash/logstash:8.6.0
+##    volumes:
+##      - ./logstash/logstash.conf:/etc/logstash/conf.d
+#    environment:
+#      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
 #    depends_on:
-#      - admin-do-catalogo
+#      - elasticsearch-admin-do-catalogo
 #    networks:
 #      - adm_videos_network
-#    restart: always
+
+  ### END OF ELASTIC STACK CONTAINERS ###
+
+  nginx-admin-do-catalogo:
+    container_name: nginx-admin-do-catalogo
+    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
+    ports:
+      - '80:80'
+    depends_on:
+      - admin-do-catalogo
+    networks:
+      - adm_videos_network
 
 networks:
   adm_videos_network:
@@ -110,3 +217,5 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  elasticsearch_data:
+  filebeat_data:
