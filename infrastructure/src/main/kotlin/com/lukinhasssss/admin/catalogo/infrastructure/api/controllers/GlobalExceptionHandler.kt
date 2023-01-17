@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    // @ExceptionHandler(value = [CannotCreateTransactionException::class])
+    // fun handleCannotCreateTransactionException(ex: CannotCreateTransactionException) =
+    //     ResponseEntity.badRequest().body(ApiError.from(ex))
+
     @ExceptionHandler(value = [MissingKotlinParameterException::class])
     fun handleMissingKotlinParameterException(ex: MissingKotlinParameterException) =
         ResponseEntity.badRequest().body(ApiError.from(ex))

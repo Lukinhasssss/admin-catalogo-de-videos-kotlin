@@ -44,3 +44,5 @@ bin/
 
 ### Other files and folders ###
 .env
+/logs/
+/infrastructure/src/main/resources/logs/
