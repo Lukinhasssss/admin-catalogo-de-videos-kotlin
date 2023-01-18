@@ -46,3 +46,4 @@ bin/
 .env
 /logs/
 /infrastructure/src/main/resources/logs/
+/opentelemetry-javaagent.jar
