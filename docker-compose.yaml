@@ -91,6 +91,30 @@ services:
 #      - ./grafana/config.monitoring
     restart: always
 
+  ### START OF OPEN TELEMETRY CONTAINERS ###
+
+  collector-admin-do-catalogo:
+    container_name: collector-admin-do-catalogo
+    image: otel/opentelemetry-collector
+    volumes:
+      - ./infrastructure/src/main/resources/collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command:
+      - "--config=/etc/otel-collector-config.yaml"
+    networks:
+      - adm_videos_network
+
+  jaeger-admin-do-catalogo:
+    container_name: jaeger-admin-do-catalogo
+    image: jaegertracing/opentelemetry-all-in-one
+    ports:
+      - "16686:16686"
+    networks:
+      - adm_videos_network
+    depends_on:
+      - collector-admin-do-catalogo
+
+  ### END OF OPEN TELEMETRY CONTAINERS ###
+
   ### START OF ELASTIC STACK CONTAINERS ###
 
   elasticsearch-admin-do-catalogo:
