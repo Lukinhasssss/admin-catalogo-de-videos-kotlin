@@ -12,19 +12,11 @@ class DefaultGetGenreByIdUseCase(
     override fun execute(anIn: String): GenreOutput {
         val anId = GenreID.from(anIn)
 
-        return genreGateway.findById(anId)?.map() ?: throw notFound(anId)
+        return genreGateway.findById(anId)?.map()
+            ?: throw notFound(anId)
     }
 
-    private fun Genre.map() =
-        GenreOutput(
-            id = id.value,
-            name = name,
-            isActive = isActive(),
-            categories = categories.map { it.value },
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            deletedAt = deletedAt
-        )
+    private fun Genre.map() = GenreOutput.from(this)
 
     private fun notFound(anGenreID: GenreID) =
         NotFoundException.with(

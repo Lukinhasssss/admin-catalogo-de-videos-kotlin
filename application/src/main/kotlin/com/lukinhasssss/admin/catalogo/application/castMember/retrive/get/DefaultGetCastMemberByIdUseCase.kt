@@ -12,17 +12,11 @@ class DefaultGetCastMemberByIdUseCase(
     override fun execute(anIn: String): CastMemberOutput {
         val anId = CastMemberID.from(anIn)
 
-        return castMemberGateway.findById(anId)?.map() ?: throw notFound(anId)
+        return castMemberGateway.findById(anId)?.map()
+            ?: throw notFound(anId)
     }
 
-    private fun CastMember.map() =
-        CastMemberOutput(
-            id = id.value,
-            name = name,
-            type = type,
-            createdAt = createdAt,
-            updatedAt = updatedAt
-        )
+    private fun CastMember.map() = CastMemberOutput.from(this)
 
     private fun notFound(anCastMemberID: CastMemberID) =
         NotFoundException.with(
