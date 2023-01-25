@@ -5,7 +5,6 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
-import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
 import com.lukinhasssss.admin.catalogo.domain.exception.InternalErrorException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
@@ -24,12 +23,12 @@ class DefaultCreateVideoUseCase(
     private val genreGateway: GenreGateway,
     private val castMemberGateway: CastMemberGateway,
     private val mediaResourceGateway: MediaResourceGateway,
-    private val videoGateway: VideoGateway,
+    private val videoGateway: VideoGateway
 ) : CreateVideoUseCase() {
 
     override fun execute(anIn: CreateVideoCommand) = with(anIn) {
         val aLaunchYear = Year.of(launchedAt)
-        val aRating = Rating.of(rating) ?: throw invalidRating(rating)
+        val aRating = Rating.of(rating)
 
         val categories = toIdentifier(categories, CategoryID::from)
         val genres = toIdentifier(genres, GenreID::from)
@@ -138,11 +137,6 @@ class DefaultCreateVideoUseCase(
         }
 
         return notification
-    }
-
-    private fun invalidRating(rating: String): DomainException {
-        val error = Error(message = "Rating not found $rating")
-        throw DomainException.with(error)
     }
 
     private fun <T> toIdentifier(ids: Set<String>, mapper: (String) -> T): Set<T> {

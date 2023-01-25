@@ -8,7 +8,9 @@ import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Resource
 import com.lukinhasssss.admin.catalogo.domain.video.Resource.Type
+import com.lukinhasssss.admin.catalogo.domain.video.Video
 import io.github.serpro69.kfaker.Faker
+import java.time.Year
 
 class Fixture {
 
@@ -44,6 +46,19 @@ class Fixture {
     }
 
     object Videos {
+        fun systemDesign() = Video.newVideo(
+            aTitle = title(),
+            aDescription = description(),
+            aLaunchYear = Year.of(year()),
+            aDuration = duration(),
+            wasOpened = bool(),
+            wasPublished = bool(),
+            aRating = rating(),
+            categories = setOf(Categories.animes().id),
+            genres = setOf(Genres.shonen().id),
+            members = setOf(CastMembers.zoro().id)
+        )
+
         fun description() = FAKER.movie.quote()
 
         fun rating() = FAKER.random.nextEnum(Rating.values())
