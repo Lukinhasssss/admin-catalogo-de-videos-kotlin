@@ -16,8 +16,7 @@ class DefaultGetCategoryByIdUseCase(
             ?: throw notFound(anCategoryID)
     }
 
-    private fun Category.map() =
-        CategoryOutput(id, name, description, isActive, createdAt, updatedAt, deletedAt)
+    private fun Category.map() = CategoryOutput.from(this)
 
     private fun notFound(anCategoryID: CategoryID) =
         NotFoundException.with(

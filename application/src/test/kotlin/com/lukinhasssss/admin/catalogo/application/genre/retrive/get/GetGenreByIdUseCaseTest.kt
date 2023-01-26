@@ -69,6 +69,4 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
 
         verify(exactly = 1) { genreGateway.findById(expectedId) }
     }
-
-    private fun Iterable<CategoryID>.asString() = map { it.value }
 }

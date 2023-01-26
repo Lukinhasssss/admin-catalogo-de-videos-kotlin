@@ -69,5 +69,9 @@ class GenrePostgresGateway(
         }
     }
 
+    override fun existsByIds(genreIDs: Iterable<GenreID>): List<GenreID> {
+        throw UnsupportedOperationException()
+    }
+
     private fun assembleSpecification(terms: String) = SpecificationUtils.like<GenreJpaEntity>("name", terms)
 }

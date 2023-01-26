@@ -69,5 +69,9 @@ class CastMemberPostgresGateway(
         }
     }
 
+    override fun existsByIds(castMemberIDs: Iterable<CastMemberID>): List<CastMemberID> {
+        throw UnsupportedOperationException()
+    }
+
     private fun assembleSpecification(term: String) = SpecificationUtils.like<CastMemberJpaEntity>("name", term)
 }

@@ -1,11 +1,11 @@
-package com.lukinhasssss.admin.catalogo.application.castMember.retrive.list
+package com.lukinhasssss.admin.catalogo.application.video.retrieve.list
 
 import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
-import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
-import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
-import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
+import com.lukinhasssss.admin.catalogo.domain.video.Video
+import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
+import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -14,35 +14,32 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
-class ListCastMemberUseCaseTest : UseCaseTest() {
+class ListVideoUseCaseTest : UseCaseTest() {
 
     @InjectMockKs
-    private lateinit var useCase: DefaultListCastMemberUseCase
+    private lateinit var useCase: DefaultListVideosUseCase
 
     @MockK
-    private lateinit var castMemberGateway: CastMemberGateway
+    private lateinit var videoGateway: VideoGateway
 
     @Test
-    fun givenAValidQuery_whenCallsListCastMembers_shouldReturnAll() {
+    fun givenAValidQuery_whenCallsListVideos_shouldReturnVideos() {
         // given
-        val members = listOf(
-            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
-        )
+        val videos = listOf(Fixture.video(), Fixture.video())
 
         val expectedPage = 0
         val expectedPerPage = 10
         val expectedTerms = ""
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
-        val expectedTotal = members.size.toLong()
-        val expectedItems = members.map { CastMemberListOutput.from(it) }
+        val expectedTotal = videos.size.toLong()
+        val expectedItems = videos.map { VideoListOutput.from(it) }
 
-        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = VideoSearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, members)
+        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, videos)
 
-        every { castMemberGateway.findAll(aQuery) } returns expectedPagination
+        every { videoGateway.findAll(aQuery) } returns expectedPagination
 
         // when
         val actualResult = useCase.execute(aQuery)
@@ -55,13 +52,13 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
             assertEquals(expectedItems, items)
         }
 
-        verify(exactly = 1) { castMemberGateway.findAll(aQuery) }
+        verify(exactly = 1) { videoGateway.findAll(aQuery) }
     }
 
     @Test
-    fun givenAValidQuery_whenCallsListCastMemberAndResultIsEmpty_shouldReturnAll() {
+    fun givenAValidQuery_whenCallsListVideoAndResultIsEmpty_shouldReturnVideos() {
         // given
-        val members = listOf<CastMember>()
+        val videos = listOf<Video>()
 
         val expectedPage = 0
         val expectedPerPage = 10
@@ -69,13 +66,13 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
         val expectedTotal = 0L
-        val expectedItems = listOf<CastMemberListOutput>()
+        val expectedItems = listOf<VideoListOutput>()
 
-        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = VideoSearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, members)
+        val expectedPagination = Pagination(expectedPage, expectedPerPage, expectedTotal, videos)
 
-        every { castMemberGateway.findAll(aQuery) } returns expectedPagination
+        every { videoGateway.findAll(aQuery) } returns expectedPagination
 
         // when
         val actualResult = useCase.execute(aQuery)
@@ -88,7 +85,7 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
             assertEquals(expectedItems, items)
         }
 
-        verify(exactly = 1) { castMemberGateway.findAll(aQuery) }
+        verify(exactly = 1) { videoGateway.findAll(aQuery) }
     }
 
     @Test
@@ -101,9 +98,9 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
         val expectedDirection = "asc"
         val expectedErrorMessage = "Gateway error"
 
-        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = VideoSearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
-        every { castMemberGateway.findAll(aQuery) } throws IllegalStateException(expectedErrorMessage)
+        every { videoGateway.findAll(aQuery) } throws IllegalStateException(expectedErrorMessage)
 
         // when
         val actualException = assertThrows<IllegalStateException> { useCase.execute(aQuery) }
@@ -111,6 +108,6 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
         // then
         assertEquals(expectedErrorMessage, actualException.message)
 
-        verify(exactly = 1) { castMemberGateway.findAll(aQuery) }
+        verify(exactly = 1) { videoGateway.findAll(aQuery) }
     }
 }
