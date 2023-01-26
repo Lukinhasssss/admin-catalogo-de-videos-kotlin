@@ -22,6 +22,19 @@ class Fixture {
         fun title() = FAKER.movie.title()
         fun bool() = FAKER.random.nextBoolean()
         fun duration() = FAKER.random.randomValue(listOf(120.0, 15.5, 35.5, 10.0, 2.0))
+
+        fun video() = Video.newVideo(
+            aTitle = title(),
+            aDescription = Videos.description(),
+            aLaunchYear = Year.of(year()),
+            aDuration = duration(),
+            wasOpened = bool(),
+            wasPublished = bool(),
+            aRating = Videos.rating(),
+            categories = setOf(Categories.animes().id),
+            genres = setOf(Genres.shonen().id),
+            members = setOf(CastMembers.zoro().id)
+        )
     }
 
     object Categories {
