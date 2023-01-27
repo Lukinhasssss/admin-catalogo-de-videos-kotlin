@@ -22,9 +22,9 @@ data class VideoGenreJpaEntity(
 ) {
 
     companion object {
-        fun from(video: VideoJpaEntity, genre: GenreID) = with(video) {
+        fun from(video: VideoJpaEntity, genreId: GenreID) = with(video) {
             VideoGenreJpaEntity(
-                id = VideoGenreId.from(id, UUID.fromString(genre.value)),
+                id = VideoGenreId.from(id, UUID.fromString(genreId.value)),
                 video = this
             )
         }

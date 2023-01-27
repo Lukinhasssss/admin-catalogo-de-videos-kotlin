@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
@@ -79,7 +80,10 @@ data class VideoJpaEntity(
     val categories: MutableSet<VideoCategoryJpaEntity> = mutableSetOf(),
 
     @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
-    val genres: MutableSet<VideoGenreJpaEntity> = mutableSetOf()
+    val genres: MutableSet<VideoGenreJpaEntity> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
+    val castMembers: MutableSet<VideoCastMemberJpaEntity> = mutableSetOf()
 ) {
 
     companion object {
@@ -104,6 +108,7 @@ data class VideoJpaEntity(
 
             categories.forEach { entity.addCategory(it) }
             genres.forEach { entity.addGenre(it) }
+            castMembers.forEach { entity.addCastMember(it) }
 
             entity
         }
@@ -114,6 +119,9 @@ data class VideoJpaEntity(
 
     fun addGenre(anId: GenreID) =
         genres.add(VideoGenreJpaEntity.from(this, anId))
+
+    fun addCastMember(anId: CastMemberID) =
+        castMembers.add(VideoCastMemberJpaEntity.from(this, anId))
 
     fun toAggregate() = Video.with(
         anId = VideoID.from(id),
@@ -132,6 +140,7 @@ data class VideoJpaEntity(
         aThumbnail = thumbnail?.toDomain(),
         aThumbnailHalf = thumbnailHalf?.toDomain(),
         categories = categories.map { CategoryID.from(it.id.categoryId) }.toSet(),
-        genres = genres.map { GenreID.from(it.id.genreId) }.toSet()
+        genres = genres.map { GenreID.from(it.id.genreId) }.toSet(),
+        members = castMembers.map { CastMemberID.from(it.id.castMemberId) }.toSet()
     )
 }
