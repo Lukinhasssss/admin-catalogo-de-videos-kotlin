@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
@@ -11,6 +12,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType.EAGER
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.Instant
@@ -70,12 +72,15 @@ data class VideoJpaEntity(
 
     @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
     @JoinColumn(name = "thumbnail_half_id")
-    val thumbnailHalf: ImageMediaJpaEntity?
+    val thumbnailHalf: ImageMediaJpaEntity?,
+
+    @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
+    val categories: MutableSet<VideoCategoryJpaEntity> = mutableSetOf()
 ) {
 
     companion object {
         fun from(aVideo: Video) = with(aVideo) {
-            VideoJpaEntity(
+            val entity = VideoJpaEntity(
                 id = UUID.fromString(id.value),
                 title = title,
                 description = description,
@@ -92,8 +97,15 @@ data class VideoJpaEntity(
                 thumbnail = ImageMediaJpaEntity.from(thumbnail),
                 thumbnailHalf = ImageMediaJpaEntity.from(thumbnailHalf)
             )
+
+            categories.forEach { entity.addCategory(it) }
+
+            entity
         }
     }
+
+    fun addCategory(anId: CategoryID) =
+        categories.add(VideoCategoryJpaEntity.from(this, anId))
 
     fun toAggregate() = Video.with(
         anId = VideoID.from(id),
@@ -110,6 +122,7 @@ data class VideoJpaEntity(
         aVideo = video?.toDomain(),
         aBanner = banner?.toDomain(),
         aThumbnail = thumbnail?.toDomain(),
-        aThumbnailHalf = thumbnailHalf?.toDomain()
+        aThumbnailHalf = thumbnailHalf?.toDomain(),
+        categories = categories.map { CategoryID.from(it.id.categoryId) }.toSet()
     )
 }
