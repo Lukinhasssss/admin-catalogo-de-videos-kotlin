@@ -53,12 +53,24 @@ data class VideoJpaEntity(
     val updatedAt: Instant,
 
     @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
-    @JoinColumn(name = "video_id")
+    @JoinColumn(name = "trailer_id")
     val trailer: AudioVideoMediaJpaEntity?,
 
     @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
-    @JoinColumn(name = "trailer_id")
-    val video: AudioVideoMediaJpaEntity?
+    @JoinColumn(name = "video_id")
+    val video: AudioVideoMediaJpaEntity?,
+
+    @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
+    @JoinColumn(name = "banner_id")
+    val banner: ImageMediaJpaEntity?,
+
+    @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_id")
+    val thumbnail: ImageMediaJpaEntity?,
+
+    @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_half_id")
+    val thumbnailHalf: ImageMediaJpaEntity?
 ) {
 
     companion object {
@@ -75,7 +87,10 @@ data class VideoJpaEntity(
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 trailer = AudioVideoMediaJpaEntity.from(trailer),
-                video = AudioVideoMediaJpaEntity.from(video)
+                video = AudioVideoMediaJpaEntity.from(video),
+                banner = ImageMediaJpaEntity.from(banner),
+                thumbnail = ImageMediaJpaEntity.from(thumbnail),
+                thumbnailHalf = ImageMediaJpaEntity.from(thumbnailHalf)
             )
         }
     }
@@ -92,6 +107,9 @@ data class VideoJpaEntity(
         aCreationDate = createdAt,
         anUpdateDate = updatedAt,
         aTrailer = trailer?.toDomain(),
-        aVideo = video?.toDomain()
+        aVideo = video?.toDomain(),
+        aBanner = banner?.toDomain(),
+        aThumbnail = thumbnail?.toDomain(),
+        aThumbnailHalf = thumbnailHalf?.toDomain()
     )
 }
