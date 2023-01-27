@@ -19,14 +19,13 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.Instant
 import java.time.Year
-import java.util.UUID
 
 @Table(name = "videos")
 @Entity(name = "Video")
 data class VideoJpaEntity(
 
     @Id
-    val id: UUID,
+    val id: String,
 
     @Column(name = "title", nullable = false)
     val title: String,
@@ -89,7 +88,7 @@ data class VideoJpaEntity(
     companion object {
         fun from(aVideo: Video) = with(aVideo) {
             val entity = VideoJpaEntity(
-                id = UUID.fromString(id.value),
+                id = id.value,
                 title = title,
                 description = description,
                 yearLaunched = launchedAt.value,

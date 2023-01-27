@@ -18,6 +18,7 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
@@ -36,7 +37,6 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.util.UUID
 
 @ControllerTest(controllers = [CastMemberAPI::class])
 class CastMemberAPITest {
@@ -65,7 +65,7 @@ class CastMemberAPITest {
     @Test
     fun givenAValidCommand_whenCallsCreateCastMember_shouldReturnItsIdentifier() {
         // given
-        val expectedId = CastMemberID.from(UUID.randomUUID())
+        val expectedId = CastMemberID.from(IdUtils.uuid())
         val expectedName = Fixture.name()
         val expectedType = Fixture.CastMember.type()
 

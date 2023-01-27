@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.application.video.retrieve.get
 import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
@@ -16,7 +17,6 @@ import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Year
-import java.util.UUID
 import kotlin.test.assertEquals
 
 class GetVideoByIdUseCaseTest : UseCaseTest() {
@@ -112,7 +112,7 @@ class GetVideoByIdUseCaseTest : UseCaseTest() {
     }
 
     private fun audioVideo(type: Resource.Type): AudioVideoMedia {
-        val checksum = UUID.randomUUID().toString()
+        val checksum = IdUtils.uuid()
 
         return AudioVideoMedia.with(
             checksum = checksum,
@@ -124,7 +124,7 @@ class GetVideoByIdUseCaseTest : UseCaseTest() {
     }
 
     private fun image(type: Resource.Type): ImageMedia {
-        val checksum = UUID.randomUUID().toString()
+        val checksum = IdUtils.uuid()
 
         return ImageMedia.with(
             checksum = checksum,

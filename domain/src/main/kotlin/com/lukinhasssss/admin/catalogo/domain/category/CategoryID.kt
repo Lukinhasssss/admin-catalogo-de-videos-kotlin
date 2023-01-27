@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.domain.category
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
-import java.util.UUID
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 
 data class CategoryID(
     override val value: String
@@ -9,15 +9,11 @@ data class CategoryID(
 
     companion object {
         fun unique(): CategoryID {
-            return from(anId = UUID.randomUUID())
+            return from(anId = IdUtils.uuid())
         }
 
         fun from(anId: String): CategoryID {
             return CategoryID(value = anId)
-        }
-
-        fun from(anId: UUID): CategoryID {
-            return CategoryID(value = anId.toString().lowercase())
         }
     }
 }

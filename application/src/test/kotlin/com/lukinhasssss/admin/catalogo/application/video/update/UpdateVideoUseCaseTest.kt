@@ -10,6 +10,7 @@ import com.lukinhasssss.admin.catalogo.domain.exception.InternalErrorException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.MediaResourceGateway
@@ -23,7 +24,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Year
-import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -908,7 +908,7 @@ class UpdateVideoUseCaseTest : UseCaseTest() {
             val resource = this.secondArg<Resource>()
 
             ImageMedia.with(
-                checksum = UUID.randomUUID().toString(),
+                checksum = IdUtils.uuid(),
                 name = resource.name,
                 location = "/img"
             )
@@ -919,7 +919,7 @@ class UpdateVideoUseCaseTest : UseCaseTest() {
             val resource = this.secondArg<Resource>()
 
             AudioVideoMedia.with(
-                checksum = UUID.randomUUID().toString(),
+                checksum = IdUtils.uuid(),
                 name = resource.name,
                 rawLocation = "/img",
                 encodedLocation = "",

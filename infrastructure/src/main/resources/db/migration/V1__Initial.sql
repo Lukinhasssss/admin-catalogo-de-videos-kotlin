@@ -1,5 +1,5 @@
 create table category(
-    id varchar(36) not null primary key,
+    id char(32) not null primary key,
     name varchar(255) not null,
     description varchar(4000),
     active boolean not null default true,

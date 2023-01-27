@@ -3,20 +3,19 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 import java.io.Serializable
-import java.util.UUID
 
 @Embeddable
 data class VideoGenreId(
 
     @Column(name = "video_id", nullable = false)
-    val videoId: UUID,
+    val videoId: String,
 
     @Column(name = "genre_id", nullable = false)
-    val genreId: UUID
+    val genreId: String
 ) : Serializable {
 
     companion object {
-        fun from(videoId: UUID, genreId: UUID) =
+        fun from(videoId: String, genreId: String) =
             VideoGenreId(videoId, genreId)
     }
 }

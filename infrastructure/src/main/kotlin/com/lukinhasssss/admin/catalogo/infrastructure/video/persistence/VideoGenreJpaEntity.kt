@@ -7,7 +7,6 @@ import jakarta.persistence.FetchType.LAZY
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
 import jakarta.persistence.Table
-import java.util.UUID
 
 @Entity(name = "VideoGenre")
 @Table(name = "videos_genres")
@@ -24,7 +23,7 @@ data class VideoGenreJpaEntity(
     companion object {
         fun from(video: VideoJpaEntity, genreId: GenreID) = with(video) {
             VideoGenreJpaEntity(
-                id = VideoGenreId.from(id, UUID.fromString(genreId.value)),
+                id = VideoGenreId.from(id, genreId.value),
                 video = this
             )
         }
