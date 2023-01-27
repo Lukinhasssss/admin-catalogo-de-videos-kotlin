@@ -1,4 +1,4 @@
-create table category(
+create table categories(
     id char(32) not null primary key,
     name varchar(255) not null,
     description varchar(4000),

@@ -13,5 +13,5 @@ create table genres_categories(
 
     constraint idx_genre_category unique (genre_id, category_id),
     constraint fk_genre_id foreign key (genre_id) references genres (id) on delete cascade,
-    constraint fk_category_id foreign key (category_id) references category (id) on delete cascade
+    constraint fk_category_id foreign key (category_id) references categories (id) on delete cascade
 )

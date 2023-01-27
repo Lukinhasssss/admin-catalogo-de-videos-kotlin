@@ -44,7 +44,7 @@ create table videos_categories(
 
     constraint idx_vcs_video_category unique (video_id, category_id),
     constraint fk_vcs_video_id foreign key (video_id) references videos (id),
-    constraint fk_vcs_category_id foreign key (category_id) references category (id)
+    constraint fk_vcs_category_id foreign key (category_id) references categories (id)
 );
 
 create table videos_genres(
