@@ -3,11 +3,15 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
+import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType.EAGER
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.Instant
 import java.time.Year
@@ -46,7 +50,15 @@ data class VideoJpaEntity(
     val createdAt: Instant,
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
-    val updatedAt: Instant
+    val updatedAt: Instant,
+
+    @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
+    @JoinColumn(name = "video_id")
+    val trailer: AudioVideoMediaJpaEntity?,
+
+    @OneToOne(cascade = [ALL], fetch = EAGER, orphanRemoval = true)
+    @JoinColumn(name = "trailer_id")
+    val video: AudioVideoMediaJpaEntity?
 ) {
 
     companion object {
@@ -61,7 +73,9 @@ data class VideoJpaEntity(
                 rating = rating,
                 duration = duration,
                 createdAt = createdAt,
-                updatedAt = updatedAt
+                updatedAt = updatedAt,
+                trailer = AudioVideoMediaJpaEntity.from(trailer),
+                video = AudioVideoMediaJpaEntity.from(video)
             )
         }
     }
@@ -76,6 +90,8 @@ data class VideoJpaEntity(
         wasOpened = opened,
         wasPublished = published,
         aCreationDate = createdAt,
-        anUpdateDate = updatedAt
+        anUpdateDate = updatedAt,
+        aTrailer = trailer?.toDomain(),
+        aVideo = video?.toDomain()
     )
 }
