@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.utils
 
+import com.lukinhasssss.admin.catalogo.infrastructure.utils.SqlUtils.like
 import org.springframework.data.jpa.domain.Specification
 import java.util.Locale
 
@@ -16,9 +17,5 @@ object SpecificationUtils {
                 like(term.uppercase(Locale.getDefault()))
             )
         }
-    }
-
-    private fun like(term: String): String {
-        return "%$term%"
     }
 }
