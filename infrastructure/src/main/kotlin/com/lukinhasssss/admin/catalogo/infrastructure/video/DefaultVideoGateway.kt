@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
@@ -35,9 +36,9 @@ class DefaultVideoGateway(
 
         val actualPage = videoRepository.findAll(
             terms = SqlUtils.like(term = terms),
-            castMembers = castMembers.mapToString(),
-            categories = categories.mapToString(),
-            genres = genres.mapToString(),
+            castMembers = castMembers.mapTo(Identifier::value),
+            categories = categories.mapTo(Identifier::value),
+            genres = genres.mapTo(Identifier::value),
             page = page
         )
 
@@ -59,6 +60,4 @@ class DefaultVideoGateway(
 
     private fun save(aVideo: Video) =
         videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
-
-    private fun <T : Identifier> Set<T>.mapToString() = map { it.value }.toSet()
 }
