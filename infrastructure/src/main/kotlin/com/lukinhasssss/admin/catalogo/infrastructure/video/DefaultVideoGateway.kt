@@ -30,7 +30,8 @@ class DefaultVideoGateway(
         TODO("Not yet implemented")
     }
 
-    override fun deleteById(anID: VideoID) {
-        TODO("Not yet implemented")
+    override fun deleteById(anID: VideoID) = with(anID) {
+        if (videoRepository.existsById(value))
+            videoRepository.deleteById(value)
     }
 }
