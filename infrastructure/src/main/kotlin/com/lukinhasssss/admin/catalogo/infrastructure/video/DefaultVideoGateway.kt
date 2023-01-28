@@ -14,9 +14,7 @@ class DefaultVideoGateway(
 ) : VideoGateway {
 
     @Transactional
-    override fun create(aVideo: Video): Video {
-        return videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
-    }
+    override fun create(aVideo: Video): Video = save(aVideo)
 
     override fun findById(anID: VideoID): Video? {
         TODO("Not yet implemented")
@@ -26,12 +24,14 @@ class DefaultVideoGateway(
         TODO("Not yet implemented")
     }
 
-    override fun update(aVideo: Video): Video {
-        TODO("Not yet implemented")
-    }
+    @Transactional
+    override fun update(aVideo: Video): Video = save(aVideo)
 
     override fun deleteById(anID: VideoID) = with(anID) {
         if (videoRepository.existsById(value))
             videoRepository.deleteById(value)
     }
+
+    private fun save(aVideo: Video) =
+        videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
 }
