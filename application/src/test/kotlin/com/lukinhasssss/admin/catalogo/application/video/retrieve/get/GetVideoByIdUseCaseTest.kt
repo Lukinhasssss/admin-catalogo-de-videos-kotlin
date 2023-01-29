@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.video.retrieve.get
 
-import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia

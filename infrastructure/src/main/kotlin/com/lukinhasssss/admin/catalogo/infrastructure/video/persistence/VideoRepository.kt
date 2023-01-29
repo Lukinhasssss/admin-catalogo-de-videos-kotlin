@@ -10,26 +10,26 @@ import org.springframework.data.repository.query.Param
 interface VideoRepository : JpaRepository<VideoJpaEntity, String> {
 
     @Query(
-        value = """
+        """
         select new com.lukinhasssss.admin.catalogo.domain.video.VideoPreview(
-            video.id as id,
-            video.title as title,
-            video.description as description,
-            video.createdAt as createdAt,
-            video.updatedAt as updatedAt
+            video.id,
+            video.title,
+            video.description,
+            video.createdAt,
+            video.updatedAt
         )
         from Video video
             join video.castMembers members
             join video.categories categories
             join video.genres genres
         where
-            ( :terms is empty or upper(video.title) like :terms)
+            ( upper(video.title) like :terms)
         and
-            ( :castMembers is empty or members.id.castMemberId in :castMembers )
+            ( members.id.castMemberId in :castMembers )
         and
-            ( :categories is empty or categories.id.categoryId in :categories )
+            ( categories.id.categoryId in :categories )
         and
-            ( :genres is empty or genres.id.genreId in :genres )
+            ( genres.id.genreId in :genres )
     """
     )
     fun findAll(
@@ -40,3 +40,14 @@ interface VideoRepository : JpaRepository<VideoJpaEntity, String> {
         page: Pageable
     ): Page<VideoPreview>
 }
+
+/** TODO: Verificar essas queries depois pq pode dar merda
+ * where
+ *   ( :terms is null or upper(video.title) like :terms)
+ * and
+ *   ( :castMembers is null or members.id.castMemberId in :castMembers )
+ * and
+ *   ( :categories is null or categories.id.categoryId in :categories )
+ * and
+ *   ( :genres is null or genres.id.genreId in :genres )
+ */

@@ -12,7 +12,7 @@ import java.time.Year
 data class Video(
     override val id: VideoID,
     val title: String,
-    val description: String? = null,
+    val description: String,
     val launchedAt: Year,
     val duration: Double,
     val rating: Rating,
@@ -41,7 +41,7 @@ data class Video(
     companion object {
         fun newVideo(
             aTitle: String,
-            aDescription: String?,
+            aDescription: String,
             aLaunchYear: Year,
             aDuration: Double,
             wasOpened: Boolean,
@@ -74,7 +74,7 @@ data class Video(
         fun with(
             anId: VideoID,
             aTitle: String,
-            aDescription: String?,
+            aDescription: String,
             aLaunchYear: Year,
             aDuration: Double,
             aRating: Rating,
@@ -114,7 +114,7 @@ data class Video(
 
     fun update(
         aTitle: String,
-        aDescription: String?,
+        aDescription: String,
         aLaunchYear: Year,
         aDuration: Double,
         wasOpened: Boolean,

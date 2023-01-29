@@ -1,4 +1,4 @@
-package com.lukinhasssss.admin.catalogo.application
+package com.lukinhasssss.admin.catalogo.domain
 
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType

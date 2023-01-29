@@ -31,7 +31,7 @@ data class VideoJpaEntity(
     val title: String,
 
     @Column(name = "description", length = 4000)
-    val description: String?,
+    val description: String,
 
     @Column(name = "year_launched", nullable = false)
     val yearLaunched: Int,

@@ -20,9 +20,11 @@ dependencies {
 
     implementation("io.vavr:vavr-kotlin:0.10.2")
 
+    testImplementation(project(path = ":domain", configuration = "testClasses"))
+
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.2")
-    testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
+    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     // testImplementation("com.github.javafaker:javafaker:1.0.2")
 }
 

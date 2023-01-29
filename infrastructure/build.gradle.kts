@@ -60,11 +60,13 @@ dependencies {
     // implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
     // implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
 
+    testImplementation(project(path = ":domain", configuration = "testClasses"))
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.11.0")
 
-    testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
+    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")

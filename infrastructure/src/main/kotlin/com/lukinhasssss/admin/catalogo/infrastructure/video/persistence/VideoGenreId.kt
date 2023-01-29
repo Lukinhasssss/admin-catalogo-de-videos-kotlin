@@ -2,7 +2,6 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
-import java.io.Serializable
 
 @Embeddable
 data class VideoGenreId(
@@ -12,7 +11,7 @@ data class VideoGenreId(
 
     @Column(name = "genre_id", nullable = false)
     val genreId: String
-) : Serializable {
+) {
 
     companion object {
         fun from(videoId: String, genreId: String) =

@@ -8,4 +8,13 @@ data class VideoPreview(
     val description: String,
     val createdAt: Instant,
     val updatedAt: Instant
-)
+) {
+
+    constructor(aVideo: Video) : this(
+        id = aVideo.id.value,
+        title = aVideo.title,
+        description = aVideo.description,
+        createdAt = aVideo.createdAt,
+        updatedAt = aVideo.updatedAt
+    )
+}

@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.video.update
 
-import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway

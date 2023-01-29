@@ -2,7 +2,6 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastMemberUseCase
@@ -12,6 +11,7 @@ import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.CastM
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.ListCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
@@ -67,7 +67,7 @@ class CastMemberAPITest {
         // given
         val expectedId = CastMemberID.from(IdUtils.uuid())
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aCommand = CreateCastMemberRequest(expectedName, expectedType)
 
@@ -105,7 +105,7 @@ class CastMemberAPITest {
     fun givenAnInvalidName_whenCallsCreateCastMember_shouldReturnNotification() {
         // given
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "'name' should not be empty"
 
         val aCommand = CreateCastMemberRequest(expectedName, expectedType)
@@ -147,7 +147,7 @@ class CastMemberAPITest {
     fun givenAValidId_whenCallsGetById_shouldReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 
@@ -210,7 +210,7 @@ class CastMemberAPITest {
 
         val expectedId = aMember.id
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
 
@@ -251,7 +251,7 @@ class CastMemberAPITest {
 
         val expectedId = aMember.id
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "'name' should not be empty"
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
@@ -294,7 +294,7 @@ class CastMemberAPITest {
         // given
         val expectedId = CastMemberID.from("123")
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "CastMember with ID 123 was not found"
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
@@ -350,7 +350,7 @@ class CastMemberAPITest {
     @Test
     fun givenValidParams_whenCallsListCastMembers_shouldReturnIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedPage = 0
         val expectedPerPage = 20
@@ -403,7 +403,7 @@ class CastMemberAPITest {
     @Test
     fun givenEmptyParams_whenCallsListCastMembers_shouldUseDefaultsAndReturnIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedPage = 0
         val expectedPerPage = 10

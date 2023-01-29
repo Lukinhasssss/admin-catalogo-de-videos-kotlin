@@ -13,10 +13,8 @@ import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoJpa
 import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-@Component
 class DefaultVideoGateway(
     private val videoRepository: VideoRepository
 ) : VideoGateway {

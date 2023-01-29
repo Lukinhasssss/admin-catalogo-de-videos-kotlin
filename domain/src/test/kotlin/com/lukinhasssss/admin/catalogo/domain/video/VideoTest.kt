@@ -70,7 +70,7 @@ class VideoTest {
     }
 
     @Test
-    fun givenValidVideo_whenCallsUpdates_houldReturnUpdated() {
+    fun givenValidVideo_whenCallsUpdates_shouldReturnUpdated() {
         // given
         val expectedTitle = "Video Title"
         val expectedDescription = "Video Description"

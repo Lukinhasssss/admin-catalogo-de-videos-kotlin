@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.castMember
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.PostgresGatewayTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
@@ -37,7 +37,7 @@ class CastMemberPostgresGatewayTest {
     fun givenAValidCastMember_whenCallsCreate_shouldPersistIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 
@@ -114,7 +114,7 @@ class CastMemberPostgresGatewayTest {
     @Test
     fun givenAPrePersistedCastMember_whenCallsDeleteById_shouldDeleteIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
 
@@ -130,7 +130,7 @@ class CastMemberPostgresGatewayTest {
     @Test
     fun givenAnInvalidCastMemberId_whenCallsDeleteById_shouldDeleteIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
 
@@ -147,7 +147,7 @@ class CastMemberPostgresGatewayTest {
     fun givenAPrePersistedCastMember_whenCallsFindById_shouldReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 
@@ -175,7 +175,7 @@ class CastMemberPostgresGatewayTest {
         // given
         val expectedId = CastMemberID.from("any")
 
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
 
