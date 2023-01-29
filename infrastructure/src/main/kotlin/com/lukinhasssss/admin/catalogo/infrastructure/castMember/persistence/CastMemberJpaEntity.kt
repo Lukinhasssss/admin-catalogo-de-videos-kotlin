@@ -12,7 +12,7 @@ import java.time.Instant
 
 @Entity(name = "CastMember")
 @Table(name = "cast_members")
-data class CastMemberJpaEntity(
+class CastMemberJpaEntity(
 
     @Id
     val id: String,

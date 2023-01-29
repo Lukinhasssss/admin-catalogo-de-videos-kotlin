@@ -10,7 +10,7 @@ import java.time.Instant
 
 @Entity(name = "Category")
 @Table(name = "categories")
-data class CategoryJpaEntity(
+class CategoryJpaEntity(
 
     @Id
     val id: String,

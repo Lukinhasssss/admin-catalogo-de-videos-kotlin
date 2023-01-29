@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable
 import java.io.Serializable
 
 @Embeddable
-data class GenreCategoryID(
+class GenreCategoryID(
 
     @Column(name = "genre_id", nullable = false)
     val genreId: String,
@@ -15,8 +15,6 @@ data class GenreCategoryID(
 ) : Serializable {
 
     companion object {
-        private const val serialVersionUID = 6770797286514298466L
-
         fun from(aGenreId: String, aCategoryId: String) =
             GenreCategoryID(genreId = aGenreId, categoryId = aCategoryId)
     }

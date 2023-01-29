@@ -14,7 +14,7 @@ import java.time.Instant
 
 @Entity
 @Table(name = "genres")
-data class GenreJpaEntity(
+class GenreJpaEntity(
 
     @Id
     val id: String,
