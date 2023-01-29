@@ -11,6 +11,7 @@ import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.Video
+import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -322,5 +323,63 @@ class DefaultVideoGatewayTest {
             assertNotNull(createdAt)
             assertTrue(aVideo.updatedAt.isBefore(updatedAt))
         }
+    }
+
+    @Test
+    fun givenAValidVideoId_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        val aVideo = videoGateway.create(
+            Video.newVideo(
+                aTitle = Fixture.title(),
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = emptySet(),
+                genres = emptySet(),
+                members = emptySet()
+            )
+        )
+
+        assertEquals(1, videoRepository.count())
+
+        val anId = aVideo.id
+
+        // when
+        videoGateway.deleteById(anId)
+
+        // then
+        assertEquals(0, videoRepository.count())
+    }
+
+    @Test
+    fun givenAnInvalidVideoId_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = Fixture.title(),
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = emptySet(),
+                genres = emptySet(),
+                members = emptySet()
+            )
+        )
+
+        assertEquals(1, videoRepository.count())
+
+        val anId = VideoID.unique()
+
+        // when
+        videoGateway.deleteById(anId)
+
+        // then
+        assertEquals(1, videoRepository.count())
     }
 }
