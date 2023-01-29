@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video.persistence
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
@@ -20,9 +21,9 @@ import jakarta.persistence.Table
 import java.time.Instant
 import java.time.Year
 
-@Table(name = "videos")
 @Entity(name = "Video")
-data class VideoJpaEntity(
+@Table(name = "videos")
+class VideoJpaEntity(
 
     @Id
     val id: String,
@@ -30,7 +31,7 @@ data class VideoJpaEntity(
     @Column(name = "title", nullable = false)
     val title: String,
 
-    @Column(name = "description", length = 4000)
+    @Column(name = "description", length = 4000, nullable = false)
     val description: String,
 
     @Column(name = "year_launched", nullable = false)
@@ -76,13 +77,13 @@ data class VideoJpaEntity(
     val thumbnailHalf: ImageMediaJpaEntity?,
 
     @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
+    val castMembers: MutableSet<VideoCastMemberJpaEntity> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
     val categories: MutableSet<VideoCategoryJpaEntity> = mutableSetOf(),
 
     @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
-    val genres: MutableSet<VideoGenreJpaEntity> = mutableSetOf(),
-
-    @OneToMany(mappedBy = "video", cascade = [ALL], orphanRemoval = true)
-    val castMembers: MutableSet<VideoCastMemberJpaEntity> = mutableSetOf()
+    val genres: MutableSet<VideoGenreJpaEntity> = mutableSetOf()
 ) {
 
     companion object {
@@ -105,22 +106,22 @@ data class VideoJpaEntity(
                 thumbnailHalf = ImageMediaJpaEntity.from(thumbnailHalf)
             )
 
+            castMembers.forEach { entity.addCastMember(it) }
             categories.forEach { entity.addCategory(it) }
             genres.forEach { entity.addGenre(it) }
-            castMembers.forEach { entity.addCastMember(it) }
 
             entity
         }
     }
+
+    fun addCastMember(anId: CastMemberID) =
+        castMembers.add(VideoCastMemberJpaEntity.from(this, anId))
 
     fun addCategory(anId: CategoryID) =
         categories.add(VideoCategoryJpaEntity.from(this, anId))
 
     fun addGenre(anId: GenreID) =
         genres.add(VideoGenreJpaEntity.from(this, anId))
-
-    fun addCastMember(anId: CastMemberID) =
-        castMembers.add(VideoCastMemberJpaEntity.from(this, anId))
 
     fun toAggregate() = Video.with(
         anId = VideoID.from(id),
@@ -142,4 +143,10 @@ data class VideoJpaEntity(
         genres = genres.map { GenreID.from(it.id.genreId) }.toSet(),
         members = castMembers.map { CastMemberID.from(it.id.castMemberId) }.toSet()
     )
+
+    fun getCastMembersID(): Set<CastMemberID> = castMembers.mapTo { CastMemberID.from(it.id.castMemberId) }
+
+    fun getCategoriesID(): Set<CategoryID> = categories.mapTo { CategoryID.from(it.id.categoryId) }
+
+    fun getGenresID(): Set<GenreID> = genres.mapTo { GenreID.from(it.id.genreId) }
 }

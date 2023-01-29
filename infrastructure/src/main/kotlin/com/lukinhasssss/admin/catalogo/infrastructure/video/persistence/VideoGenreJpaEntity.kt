@@ -10,7 +10,7 @@ import jakarta.persistence.Table
 
 @Entity(name = "VideoGenre")
 @Table(name = "videos_genres")
-data class VideoGenreJpaEntity(
+class VideoGenreJpaEntity(
 
     @EmbeddedId
     val id: VideoGenreId,
@@ -20,12 +20,13 @@ data class VideoGenreJpaEntity(
     val video: VideoJpaEntity
 ) {
 
+    constructor(genreId: GenreID, video: VideoJpaEntity) : this(
+        id = VideoGenreId.from(genreId = genreId.value, videoId = video.id),
+        video = video
+    )
+
     companion object {
-        fun from(video: VideoJpaEntity, genreId: GenreID) = with(video) {
-            VideoGenreJpaEntity(
-                id = VideoGenreId.from(id, genreId.value),
-                video = this
-            )
-        }
+        fun from(video: VideoJpaEntity, genreId: GenreID) =
+            VideoGenreJpaEntity(genreId = genreId, video = video)
     }
 }

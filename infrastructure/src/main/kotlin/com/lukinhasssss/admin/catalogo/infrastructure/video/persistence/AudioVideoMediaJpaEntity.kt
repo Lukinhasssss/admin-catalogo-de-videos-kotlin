@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 
 @Entity(name = "AudioVideoMedia")
 @Table(name = "videos_video_media")
-data class AudioVideoMediaJpaEntity(
+class AudioVideoMediaJpaEntity(
 
     @Id
     val id: String,
@@ -19,13 +19,16 @@ data class AudioVideoMediaJpaEntity(
     @Column(name = "name", nullable = false)
     val name: String,
 
+    @Column(name = "checksum", nullable = false)
+    val checksum: String,
+
     @Column(name = "file_path", nullable = false)
     val filePath: String,
 
     @Column(name = "encoded_path", nullable = false)
     val encodedPath: String,
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "media_status", nullable = false)
     @Enumerated(value = STRING)
     val status: MediaStatus
 ) {
@@ -34,8 +37,9 @@ data class AudioVideoMediaJpaEntity(
         fun from(media: AudioVideoMedia?) = with(media) {
             if (this != null)
                 AudioVideoMediaJpaEntity(
-                    id = checksum,
+                    id = id,
                     name = name,
+                    checksum = checksum,
                     filePath = rawLocation,
                     encodedPath = encodedLocation,
                     status = status
@@ -45,6 +49,7 @@ data class AudioVideoMediaJpaEntity(
     }
 
     fun toDomain() = AudioVideoMedia.with(
+        id = id,
         checksum = id,
         name = name,
         rawLocation = filePath,

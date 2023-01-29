@@ -8,13 +8,16 @@ import jakarta.persistence.Table
 
 @Entity(name = "ImageMedia")
 @Table(name = "videos_image_media")
-data class ImageMediaJpaEntity(
+class ImageMediaJpaEntity(
 
     @Id
     val id: String,
 
     @Column(name = "name", nullable = false)
     val name: String,
+
+    @Column(name = "checksum", nullable = false)
+    val checksum: String,
 
     @Column(name = "file_path", nullable = false)
     val filePath: String
@@ -24,8 +27,9 @@ data class ImageMediaJpaEntity(
         fun from(media: ImageMedia?) = with(media) {
             if (this != null)
                 ImageMediaJpaEntity(
-                    id = checksum,
+                    id = id,
                     name = name,
+                    checksum = checksum,
                     filePath = location
                 )
             else null
@@ -33,7 +37,8 @@ data class ImageMediaJpaEntity(
     }
 
     fun toDomain() = ImageMedia.with(
-        checksum = id,
+        id = id,
+        checksum = checksum,
         name = name,
         location = filePath
     )
