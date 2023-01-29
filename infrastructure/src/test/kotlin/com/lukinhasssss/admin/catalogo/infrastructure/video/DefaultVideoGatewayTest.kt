@@ -382,4 +382,159 @@ class DefaultVideoGatewayTest {
         // then
         assertEquals(1, videoRepository.count())
     }
+
+    @Test
+    fun givenAValidVideo_whenCallsFindById_shouldReturnIt() {
+        // given
+        val zoro = castMemberGateway.create(Fixture.CastMembers.zoro())
+        val animes = categoryGateway.create(Fixture.Categories.animes())
+        val shonen = genreGateway.create(Fixture.Genres.shonen())
+
+        val expectedTitle = Fixture.title()
+        val expectedDescription = Fixture.Videos.description()
+        val expectedLaunchYear = Year.of(Fixture.year())
+        val expectedDuration = Fixture.duration()
+        val expectedOpened = Fixture.bool()
+        val expectedPublished = Fixture.bool()
+        val expectedRating = Fixture.Videos.rating()
+        val expectedCategories = setOf(animes.id)
+        val expectedGenres = setOf(shonen.id)
+        val expectedMembers = setOf(zoro.id)
+
+        val expectedVideo = AudioVideoMedia.with(checksum = "123", name = "video", rawLocation = "/media/video")
+        val expectedTrailer = AudioVideoMedia.with(checksum = "123", name = "trailer", rawLocation = "/media/trailer")
+        val expectedBanner = ImageMedia.with(checksum = "123", name = "banner", location = "/media/banner")
+        val expectedThumb = ImageMedia.with(checksum = "123", name = "thumb", location = "/media/thumb")
+        val expectedThumbHalf = ImageMedia.with(checksum = "123", name = "thumbHalf", location = "/media/thumbHalf")
+
+        val aVideo = videoGateway.create(
+            Video.newVideo(
+                aTitle = expectedTitle,
+                aDescription = expectedDescription,
+                aLaunchYear = expectedLaunchYear,
+                aDuration = expectedDuration,
+                wasOpened = expectedOpened,
+                wasPublished = expectedPublished,
+                aRating = expectedRating,
+                categories = expectedCategories,
+                genres = expectedGenres,
+                members = expectedMembers
+            ).copy(
+                video = expectedVideo,
+                trailer = expectedTrailer,
+                banner = expectedBanner,
+                thumbnail = expectedThumb,
+                thumbnailHalf = expectedThumbHalf
+            )
+        )
+
+        // when
+        val actualVideo = videoGateway.findById(aVideo.id)!!
+
+        // then
+        with(actualVideo) {
+            assertNotNull(this)
+            assertNotNull(id)
+            assertEquals(expectedTitle, title)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedLaunchYear, launchedAt)
+            assertEquals(expectedDuration, duration)
+            assertEquals(expectedOpened, opened)
+            assertEquals(expectedPublished, published)
+            assertEquals(expectedRating, rating)
+            assertEquals(expectedCategories, categories)
+            assertEquals(expectedGenres, genres)
+            assertEquals(expectedMembers, castMembers)
+            assertEquals(expectedVideo.name, video?.name)
+            assertEquals(expectedTrailer.name, trailer?.name)
+            assertEquals(expectedBanner.name, banner?.name)
+            assertEquals(expectedThumb.name, thumbnail?.name)
+            assertEquals(expectedThumbHalf.name, thumbnailHalf?.name)
+        }
+    }
+
+    @Test
+    fun givenAValidVideoWithouRelations_whenCallsFindById_shouldReturnIt() {
+        // given
+        val expectedTitle = Fixture.title()
+        val expectedDescription = Fixture.Videos.description()
+        val expectedLaunchYear = Year.of(Fixture.year())
+        val expectedDuration = Fixture.duration()
+        val expectedOpened = Fixture.bool()
+        val expectedPublished = Fixture.bool()
+        val expectedRating = Fixture.Videos.rating()
+        val expectedCategories = setOf<CategoryID>()
+        val expectedGenres = setOf<GenreID>()
+        val expectedMembers = setOf<CastMemberID>()
+
+        val aVideo = videoGateway.create(
+            Video.newVideo(
+                aTitle = expectedTitle,
+                aDescription = expectedDescription,
+                aLaunchYear = expectedLaunchYear,
+                aDuration = expectedDuration,
+                wasOpened = expectedOpened,
+                wasPublished = expectedPublished,
+                aRating = expectedRating,
+                categories = expectedCategories,
+                genres = expectedGenres,
+                members = expectedMembers
+            )
+        )
+
+        // when
+        val actualVideo = videoGateway.findById(aVideo.id)!!
+
+        // then
+        with(actualVideo) {
+            assertNotNull(this)
+            assertNotNull(id)
+            assertEquals(expectedTitle, title)
+            assertEquals(expectedDescription, description)
+            assertEquals(expectedLaunchYear, launchedAt)
+            assertEquals(expectedDuration, duration)
+            assertEquals(expectedOpened, opened)
+            assertEquals(expectedPublished, published)
+            assertEquals(expectedRating, rating)
+            assertEquals(expectedCategories, categories)
+            assertEquals(expectedGenres, genres)
+            assertEquals(expectedMembers, castMembers)
+            assertNull(video)
+            assertNull(trailer)
+            assertNull(banner)
+            assertNull(thumbnail)
+            assertNull(thumbnailHalf)
+        }
+    }
+
+    @Test
+    fun givenAnInvalidVideoId_whenCallsFindById_shouldReturnNull() {
+        // given
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = Fixture.title(),
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = emptySet(),
+                genres = emptySet(),
+                members = emptySet()
+            )
+        )
+
+        assertEquals(1, videoRepository.count())
+
+        val anId = VideoID.unique()
+
+        // when
+        val actualVideo = videoGateway.findById(anId)
+
+        // then
+        assertNull(actualVideo)
+
+        assertEquals(1, videoRepository.count())
+    }
 }
