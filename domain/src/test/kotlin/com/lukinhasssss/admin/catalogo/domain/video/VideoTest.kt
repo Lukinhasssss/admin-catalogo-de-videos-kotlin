@@ -4,6 +4,7 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.ThrowsValidationHandler
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.Year
@@ -164,7 +165,11 @@ class VideoTest {
         )
 
         val aVideoMedia = AudioVideoMedia.with(
-            "abc", "Video.mp4", "/123/videos", "", MediaStatus.PENDING
+            checksum = "abc",
+            name = "Video.mp4",
+            rawLocation = "/123/videos",
+            encodedLocation = "",
+            status = PENDING
         )
 
         // when
@@ -224,7 +229,11 @@ class VideoTest {
         )
 
         val aTrailerMedia = AudioVideoMedia.with(
-            "abc", "Trailer.mp4", "/123/videos", "", MediaStatus.PENDING
+            checksum = "abc",
+            name = "Trailer.mp4",
+            rawLocation = "/123/videos",
+            encodedLocation = "",
+            status = PENDING
         )
 
         // when
@@ -283,7 +292,11 @@ class VideoTest {
             members = expectedMembers
         )
 
-        val aBannerMedia = ImageMedia.with("abc", "Banner.mp4", "/123/videos")
+        val aBannerMedia = ImageMedia.with(
+            checksum = "abc",
+            name = "Banner.mp4",
+            location = "/123/videos"
+        )
 
         // when
         val actualVideo = aVideo.setBanner(aBannerMedia)
@@ -341,7 +354,11 @@ class VideoTest {
             members = expectedMembers
         )
 
-        val aThumbMedia = ImageMedia.with("abc", "Thumb.mp4", "/123/videos")
+        val aThumbMedia = ImageMedia.with(
+            checksum = "abc",
+            name = "Thumb.mp4",
+            location = "/123/videos"
+        )
 
         // when
         val actualVideo = aVideo.setThumbnail(aThumbMedia)
@@ -399,7 +416,11 @@ class VideoTest {
             members = expectedMembers
         )
 
-        val aThumbMedia = ImageMedia.with("abc", "ThumbHalf.mp4", "/123/videos")
+        val aThumbMedia = ImageMedia.with(
+            checksum = "abc",
+            name = "ThumbHalf.mp4",
+            location = "/123/videos"
+        )
 
         // when
         val actualVideo = aVideo.setThumbnailHalf(aThumbMedia)

@@ -7,3 +7,7 @@ postgres:
   password: password
   schema: adm_videos
   url: localhost:${postgres.port}
+
+spring:
+  jpa:
+    show-sql: true

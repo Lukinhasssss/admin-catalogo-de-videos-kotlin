@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
+import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoRepository
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.springframework.data.repository.CrudRepository
@@ -14,6 +15,7 @@ class PostgresCleanUpExtension : BeforeEachCallback {
 
         cleanUp(
             listOf(
+                appContext.getBean(VideoRepository::class.java),
                 appContext.getBean(CastMemberRepository::class.java),
                 appContext.getBean(GenreRepository::class.java),
                 appContext.getBean(CategoryRepository::class.java)
