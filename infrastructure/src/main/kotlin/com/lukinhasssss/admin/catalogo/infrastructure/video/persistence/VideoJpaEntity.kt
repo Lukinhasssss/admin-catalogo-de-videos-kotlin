@@ -10,8 +10,6 @@ import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType.STRING
-import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType.EAGER
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
@@ -44,7 +42,6 @@ class VideoJpaEntity(
     val published: Boolean,
 
     @Column(name = "rating", nullable = false)
-    @Enumerated(value = STRING)
     val rating: Rating,
 
     @Column(name = "duration", precision = 2, nullable = false)
