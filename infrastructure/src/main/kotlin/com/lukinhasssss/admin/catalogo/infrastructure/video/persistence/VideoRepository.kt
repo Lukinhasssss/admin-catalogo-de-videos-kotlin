@@ -11,43 +11,32 @@ interface VideoRepository : JpaRepository<VideoJpaEntity, String> {
 
     @Query(
         """
-        select new com.lukinhasssss.admin.catalogo.domain.video.VideoPreview(
-            video.id,
-            video.title,
-            video.description,
-            video.createdAt,
-            video.updatedAt
+        select distinct new com.lukinhasssss.admin.catalogo.domain.video.VideoPreview(
+            video.id as id,
+            video.title as title,
+            video.description as description,
+            video.createdAt as createdAt,
+            video.updatedAt as updatedAt
         )
         from Video video
-            join video.castMembers members
-            join video.categories categories
-            join video.genres genres
+            left join video.castMembers members
+            left join video.categories categories
+            left join video.genres genres
         where
-            ( upper(video.title) like :terms)
+            ( :terms is null or upper(video.title) like :terms )
         and
-            ( members.id.castMemberId in :castMembers )
+            ( :castMembers is null or members.id.castMemberId in :castMembers )
         and
-            ( categories.id.categoryId in :categories )
+            ( :categories is null or categories.id.categoryId in :categories )
         and
-            ( genres.id.genreId in :genres )
+            ( :genres is null or genres.id.genreId in :genres )
     """
     )
     fun findAll(
-        @Param("terms") terms: String,
-        @Param("castMembers") castMembers: Set<String>,
-        @Param("categories") categories: Set<String>,
-        @Param("genres") genres: Set<String>,
+        @Param("terms") terms: String?,
+        @Param("castMembers") castMembers: Set<String>?,
+        @Param("categories") categories: Set<String>?,
+        @Param("genres") genres: Set<String>?,
         page: Pageable
     ): Page<VideoPreview>
 }
-
-/** TODO: Verificar essas queries depois pq pode dar merda
- * where
- *   ( :terms is null or upper(video.title) like :terms)
- * and
- *   ( :castMembers is null or members.id.castMemberId in :castMembers )
- * and
- *   ( :categories is null or categories.id.categoryId in :categories )
- * and
- *   ( :genres is null or genres.id.genreId in :genres )
- */

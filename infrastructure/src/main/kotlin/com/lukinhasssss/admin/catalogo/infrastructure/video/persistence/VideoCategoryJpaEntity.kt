@@ -7,6 +7,8 @@ import jakarta.persistence.FetchType.LAZY
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
 import jakarta.persistence.Table
+import org.hibernate.Hibernate
+import java.util.Objects
 
 @Entity(name = "VideoCategory")
 @Table(name = "videos_categories")
@@ -29,4 +31,17 @@ class VideoCategoryJpaEntity(
         fun from(video: VideoJpaEntity, categoryId: CategoryID) =
             VideoCategoryJpaEntity(categoryId = categoryId, video = video)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other))
+            return false
+
+        other as VideoCategoryJpaEntity
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = Objects.hash(id)
 }

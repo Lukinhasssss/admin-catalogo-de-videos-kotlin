@@ -2,7 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
-import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
+import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapToNullIfEmpty
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
@@ -45,10 +45,10 @@ class DefaultVideoGateway(
         Logger.info(message = "Iniciando busca paginada dos videos no banco...")
 
         val actualPage = videoRepository.findAll(
-            terms = SqlUtils.like(term = terms),
-            castMembers = castMembers.mapTo(Identifier::value),
-            categories = categories.mapTo(Identifier::value),
-            genres = genres.mapTo(Identifier::value),
+            terms = SqlUtils.upper(term = terms),
+            castMembers = castMembers.mapToNullIfEmpty(Identifier::value),
+            categories = categories.mapToNullIfEmpty(Identifier::value),
+            genres = genres.mapToNullIfEmpty(Identifier::value),
             page = page
         )
 

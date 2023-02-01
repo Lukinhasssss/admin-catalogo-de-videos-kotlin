@@ -7,4 +7,10 @@ object CollectionUtils {
 
     fun <IN, out> Set<IN>.mapTo(mapper: (IN) -> out) =
         stream().map(mapper).toList().toSet()
+
+    fun <IN, out> Set<IN>.mapToNullIfEmpty(mapper: (IN) -> out): Set<out>? {
+        if (isEmpty()) return null
+
+        return stream().map(mapper).toList().toSet()
+    }
 }

@@ -47,9 +47,9 @@ data class Video(
             wasOpened: Boolean,
             wasPublished: Boolean,
             aRating: Rating,
-            categories: Set<CategoryID>,
-            genres: Set<GenreID>,
-            members: Set<CastMemberID>
+            categories: Set<CategoryID> = emptySet(),
+            genres: Set<GenreID> = emptySet(),
+            members: Set<CastMemberID> = emptySet()
         ): Video {
             val anId = VideoID.unique()
             val now = InstantUtils.now()
