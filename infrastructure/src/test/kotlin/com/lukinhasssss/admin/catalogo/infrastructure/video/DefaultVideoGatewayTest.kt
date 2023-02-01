@@ -2,22 +2,29 @@ package com.lukinhasssss.admin.catalogo.infrastructure.video
 
 import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.domain.Fixture
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryGateway
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
+import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoRepository
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import java.time.Year
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -40,6 +47,27 @@ class DefaultVideoGatewayTest {
     @Autowired
     private lateinit var videoRepository: VideoRepository
 
+    private lateinit var zoro: CastMember
+    private lateinit var theRock: CastMember
+
+    private lateinit var animes: Category
+    private lateinit var filmes: Category
+
+    private lateinit var shonen: Genre
+    private lateinit var acao: Genre
+
+    @BeforeEach
+    fun setUp() {
+        zoro = castMemberGateway.create(Fixture.CastMembers.zoro())
+        theRock = castMemberGateway.create(Fixture.CastMembers.theRock())
+
+        animes = categoryGateway.create(Fixture.Categories.animes())
+        filmes = categoryGateway.create(Fixture.Categories.filmes())
+
+        shonen = genreGateway.create(Fixture.Genres.shonen())
+        acao = genreGateway.create(Fixture.Genres.acao())
+    }
+
     @Test
     fun testInjection() {
         assertNotNull(videoGateway)
@@ -53,10 +81,6 @@ class DefaultVideoGatewayTest {
     @Transactional
     fun givenAValidVideo_whenCallsCreate_shouldPersistIt() {
         // given
-        val zoro = castMemberGateway.create(Fixture.CastMembers.zoro())
-        val animes = categoryGateway.create(Fixture.Categories.animes())
-        val shonen = genreGateway.create(Fixture.Genres.shonen())
-
         val expectedTitle = Fixture.title()
         val expectedDescription = Fixture.Videos.description()
         val expectedLaunchYear = Year.of(Fixture.year())
@@ -234,10 +258,6 @@ class DefaultVideoGatewayTest {
             )
         )
 
-        val zoro = castMemberGateway.create(Fixture.CastMembers.zoro())
-        val animes = categoryGateway.create(Fixture.Categories.animes())
-        val shonen = genreGateway.create(Fixture.Genres.shonen())
-
         val expectedTitle = Fixture.title()
         val expectedDescription = Fixture.Videos.description()
         val expectedLaunchYear = Year.of(Fixture.year())
@@ -386,10 +406,6 @@ class DefaultVideoGatewayTest {
     @Test
     fun givenAValidVideo_whenCallsFindById_shouldReturnIt() {
         // given
-        val zoro = castMemberGateway.create(Fixture.CastMembers.zoro())
-        val animes = categoryGateway.create(Fixture.Categories.animes())
-        val shonen = genreGateway.create(Fixture.Genres.shonen())
-
         val expectedTitle = Fixture.title()
         val expectedDescription = Fixture.Videos.description()
         val expectedLaunchYear = Year.of(Fixture.year())
@@ -536,5 +552,418 @@ class DefaultVideoGatewayTest {
         assertNull(actualVideo)
 
         assertEquals(1, videoRepository.count())
+    }
+
+    @Test
+    fun givenEmptyParams_whenCallsFindAll_shouldReturnAllList() {
+        // given
+        mockVideos()
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 4
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+        }
+    }
+
+    @Test
+    fun givenEmptyVideos_whenCallsFindAll_shouldReturnEmptyList() {
+        // given
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 0
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+        }
+    }
+
+    @Test
+    fun givenAValidCastMember_whenCallsFindAll_shouldReturnFilteredList() {
+        // given
+        mockVideos()
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 2
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = setOf(zoro.id),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+
+            assertEquals("Aula de empreendedorismo", items[0].title)
+            assertEquals("System Design no Mercado Livre na prática", items[1].title)
+        }
+    }
+
+    @Test
+    fun givenAValidCategory_whenCallsFindAll_shouldReturnFilteredList() {
+        // given
+        mockVideos()
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 2
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = setOf(animes.id),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+
+            assertEquals("21.1 Implementação dos testes integrados do findAll", items[0].title)
+            assertEquals("Aula de empreendedorismo", items[1].title)
+        }
+    }
+
+    @Test
+    fun givenAValidGenre_whenCallsFindAll_shouldReturnFilteredList() {
+        // given
+        mockVideos()
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 1
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = setOf(shonen.id)
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+
+            assertEquals("Aula de empreendedorismo", items[0].title)
+        }
+    }
+
+    @Test
+    fun givenAllParameters_whenCallsFindAll_shouldReturnFilteredList() {
+        // given
+        mockVideos()
+
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedTotal = 1
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = setOf(zoro.id),
+            categories = setOf(animes.id),
+            genres = setOf(shonen.id)
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total.toInt())
+            assertEquals(expectedTotal, items.size)
+
+            assertEquals("Aula de empreendedorismo", items[0].title)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "system, 0, 10, 1, 1, System Design no Mercado Livre na prática",
+        "microsser, 0, 10, 1, 1, Não cometa esses erros ao trabalhar com Microsserviços",
+        "empreendedorismo, 0, 10, 1, 1, Aula de empreendedorismo",
+        "21, 0, 10, 1, 1, 21.1 Implementação dos testes integrados do findAll",
+    )
+    fun givenAValidTerm_whenCallsFindAll_shouldReturnFiltered(
+        expectedTerms: String,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedVideo: String
+    ) {
+        // given
+        mockVideos()
+
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedTotal, items.size.toLong())
+            assertEquals(expectedVideo, items[0].title)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "title, asc, 0, 10, 4, 4, 21.1 Implementação dos testes integrados do findAll",
+        "title, desc, 0, 10, 4, 4, System Design no Mercado Livre na prática",
+        "createdAt, asc, 0, 10, 4, 4, System Design no Mercado Livre na prática",
+        "createdAt, desc, 0, 10, 4, 4, Aula de empreendedorismo",
+    )
+    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnOrdered(
+        expectedSort: String,
+        expectedDirection: String,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedVideo: String
+    ) {
+        // given
+        mockVideos()
+
+        val expectedTerms = ""
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedTotal, items.size.toLong())
+            assertEquals(expectedVideo, items[0].title)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0, 2, 2, 4, 21.1 Implementação dos testes integrados do findAll;Aula de empreendedorismo",
+        "1, 2, 2, 4, Não cometa esses erros ao trabalhar com Microsserviços;System Design no Mercado Livre na prática",
+    )
+    fun givenAValidPaging_whenCallsFindAll_shouldReturnPaged(
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedVideos: String
+    ) {
+        mockVideos()
+
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+
+        val aQuery = VideoSearchQuery(
+            page = expectedPage,
+            perPage = expectedPerPage,
+            terms = expectedTerms,
+            sort = expectedSort,
+            direction = expectedDirection,
+            castMembers = emptySet(),
+            categories = emptySet(),
+            genres = emptySet()
+        )
+
+        // when
+        val actualPage = videoGateway.findAll(aQuery)
+
+        // then
+        with(actualPage) {
+            assertEquals(expectedPage, currentPage)
+            assertEquals(expectedPerPage, perPage)
+            assertEquals(expectedTotal, total)
+            assertEquals(expectedItemsCount, items.size)
+
+            for ((index, expectedVideoTitle) in expectedVideos.split(";").withIndex()) {
+                val actualVideoTitle = items[index].title
+                assertEquals(expectedVideoTitle, actualVideoTitle)
+            }
+        }
+    }
+
+    private fun mockVideos() {
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = "System Design no Mercado Livre na prática",
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = setOf(filmes.id),
+                genres = setOf(acao.id),
+                members = setOf(zoro.id, theRock.id)
+            )
+        )
+
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = "Não cometa esses erros ao trabalhar com Microsserviços",
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating()
+            )
+        )
+
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = "21.1 Implementação dos testes integrados do findAll",
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = setOf(animes.id),
+                genres = setOf(acao.id),
+                members = setOf(theRock.id)
+            )
+        )
+
+        videoGateway.create(
+            Video.newVideo(
+                aTitle = "Aula de empreendedorismo",
+                aDescription = Fixture.Videos.description(),
+                aLaunchYear = Year.of(Fixture.year()),
+                aDuration = Fixture.duration(),
+                wasOpened = Fixture.bool(),
+                wasPublished = Fixture.bool(),
+                aRating = Fixture.Videos.rating(),
+                categories = setOf(animes.id),
+                genres = setOf(shonen.id),
+                members = setOf(zoro.id)
+            )
+        )
     }
 }
