@@ -10,7 +10,7 @@ plugins {
     id("org.sonarqube") version "3.5.0.2730"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
-    id("org.springframework.boot") version "3.0.1"
+    id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.flywaydb.flyway") version "9.11.0"
 }
