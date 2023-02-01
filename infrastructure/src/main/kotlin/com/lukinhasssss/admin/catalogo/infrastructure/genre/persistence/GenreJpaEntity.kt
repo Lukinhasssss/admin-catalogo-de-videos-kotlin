@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity
+@Entity(name = "Genre")
 @Table(name = "genres")
 class GenreJpaEntity(
 

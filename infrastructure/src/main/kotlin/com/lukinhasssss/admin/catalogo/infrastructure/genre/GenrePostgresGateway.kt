@@ -70,7 +70,13 @@ class GenrePostgresGateway(
     }
 
     override fun existsByIds(genreIDs: Iterable<GenreID>): List<GenreID> {
-        throw UnsupportedOperationException()
+        Logger.info(message = "Verificando se o(s) gênero(s) existe(m) no banco...")
+
+        val ids = genreIDs.map { it.value }
+
+        return repository.existsByIds(ids).map { GenreID.from(it) }.also {
+            Logger.info(message = "Finalizada verificação se o(s) gênero(s) existe(m) no banco!")
+        }
     }
 
     private fun assembleSpecification(terms: String) = SpecificationUtils.like<GenreJpaEntity>("name", terms)
