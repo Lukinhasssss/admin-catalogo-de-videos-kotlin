@@ -1,3 +1,22 @@
+logging:
+  level:
+    root: warn
+    com.lukinhasssss: info
+
+google:
+  cloud:
+    project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+    credentials: ${GOOGLE_CLOUD_CREDENTIALS}
+    storage:
+      catalogo-video:
+        bucket: catalogo_videos
+        connect-timeout: 300
+        read-timeout: 1000
+        retry-delay: 50
+        retry-max-delay: 50
+        retry-max-attempts: 2
+        retry-multiplier: 1.0
+
 server:
   port: 8080
   servlet:

@@ -7,6 +7,20 @@ object Logger {
 
     private const val STACK_TRACE_LEVEL = 3
 
+    fun debug(
+        logCode: String = "",
+        message: String,
+        payload: Any? = null
+    ) {
+        val callerName = Thread.currentThread().stackTrace[STACK_TRACE_LEVEL].className
+
+        val logger = LoggerFactory.getLogger(callerName)
+
+        val finalMessage = getFinalMessage(logCode, message, payload)
+
+        logger.debug(finalMessage)
+    }
+
     fun info(
         logCode: String = "",
         message: String,
