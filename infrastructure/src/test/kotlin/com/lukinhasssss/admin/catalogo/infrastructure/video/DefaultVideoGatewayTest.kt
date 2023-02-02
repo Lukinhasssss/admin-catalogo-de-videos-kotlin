@@ -812,7 +812,7 @@ class DefaultVideoGatewayTest {
             assertEquals(expectedPage, currentPage)
             assertEquals(expectedPerPage, perPage)
             assertEquals(expectedTotal, total)
-            assertEquals(expectedTotal, items.size.toLong())
+            assertEquals(expectedItemsCount, items.size.toLong())
             assertEquals(expectedVideo, items[0].title)
         }
     }
@@ -857,7 +857,7 @@ class DefaultVideoGatewayTest {
             assertEquals(expectedPage, currentPage)
             assertEquals(expectedPerPage, perPage)
             assertEquals(expectedTotal, total)
-            assertEquals(expectedTotal, items.size.toLong())
+            assertEquals(expectedItemsCount, items.size.toLong())
             assertEquals(expectedVideo, items[0].title)
         }
     }
