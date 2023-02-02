@@ -57,8 +57,9 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
-    // implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
-    // implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
+
+    implementation("com.google.cloud:google-cloud-storage:2.17.2")
+    implementation("com.google.guava:guava:31.1-jre")
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
