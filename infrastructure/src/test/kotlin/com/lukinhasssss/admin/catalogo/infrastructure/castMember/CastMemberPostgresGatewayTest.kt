@@ -189,6 +189,28 @@ class CastMemberPostgresGatewayTest {
     }
 
     @Test
+    fun givenTwoCastMembersAndOnePersisted_whenCallsExistsByIds_shouldReturnPersistedID() {
+        // given
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
+
+        val expectedItems = 1
+        val expectedId = aMember.id
+
+        assertEquals(0, castMemberRepository.count())
+
+        castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember))
+
+        assertEquals(1, castMemberRepository.count())
+
+        // when
+        val actualMember = castMemberGateway.existsByIds(listOf(CastMemberID.unique(), expectedId))
+
+        // then
+        assertEquals(expectedItems, actualMember.size)
+        assertEquals(expectedId.value, actualMember[0].value)
+    }
+
+    @Test
     fun givenEmptyCastMembers_whenCallsFindAll_shouldReturnEmpty() {
         // given
         val expectedPage = 0
