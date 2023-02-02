@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.delete
 
-import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID

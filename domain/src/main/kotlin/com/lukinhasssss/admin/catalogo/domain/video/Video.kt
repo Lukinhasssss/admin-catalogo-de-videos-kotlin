@@ -12,7 +12,7 @@ import java.time.Year
 data class Video(
     override val id: VideoID,
     val title: String,
-    val description: String? = null,
+    val description: String,
     val launchedAt: Year,
     val duration: Double,
     val rating: Rating,
@@ -41,15 +41,15 @@ data class Video(
     companion object {
         fun newVideo(
             aTitle: String,
-            aDescription: String?,
+            aDescription: String,
             aLaunchYear: Year,
             aDuration: Double,
             wasOpened: Boolean,
             wasPublished: Boolean,
             aRating: Rating,
-            categories: Set<CategoryID>,
-            genres: Set<GenreID>,
-            members: Set<CastMemberID>
+            categories: Set<CategoryID> = emptySet(),
+            genres: Set<GenreID> = emptySet(),
+            members: Set<CastMemberID> = emptySet()
         ): Video {
             val anId = VideoID.unique()
             val now = InstantUtils.now()
@@ -70,11 +70,51 @@ data class Video(
                 castMembers = members
             )
         }
+
+        fun with(
+            anId: VideoID,
+            aTitle: String,
+            aDescription: String,
+            aLaunchYear: Year,
+            aDuration: Double,
+            aRating: Rating,
+            wasOpened: Boolean,
+            wasPublished: Boolean,
+            aCreationDate: Instant,
+            anUpdateDate: Instant,
+            aBanner: ImageMedia? = null,
+            aThumbnail: ImageMedia? = null,
+            aThumbnailHalf: ImageMedia? = null,
+            aTrailer: AudioVideoMedia? = null,
+            aVideo: AudioVideoMedia? = null,
+            categories: Set<CategoryID> = emptySet(),
+            genres: Set<GenreID> = emptySet(),
+            members: Set<CastMemberID> = emptySet()
+        ) = Video(
+            id = anId,
+            title = aTitle,
+            description = aDescription,
+            launchedAt = aLaunchYear,
+            duration = aDuration,
+            rating = aRating,
+            opened = wasOpened,
+            published = wasPublished,
+            createdAt = aCreationDate,
+            updatedAt = anUpdateDate,
+            banner = aBanner,
+            thumbnail = aThumbnail,
+            thumbnailHalf = aThumbnailHalf,
+            trailer = aTrailer,
+            video = aVideo,
+            categories = categories,
+            genres = genres,
+            castMembers = members
+        )
     }
 
     fun update(
         aTitle: String,
-        aDescription: String?,
+        aDescription: String,
         aLaunchYear: Year,
         aDuration: Double,
         wasOpened: Boolean,

@@ -429,6 +429,28 @@ class GenrePostgresGatewayTest {
         }
     }
 
+    @Test
+    fun givenTwoGenresAndOnePersisted_whenCallsExistsByIds_shouldReturnPersistedID() {
+        // given
+        val aGenre = Genre.newGenre("Ação", true)
+
+        val expectedItems = 1
+        val expectedId = aGenre.id
+
+        assertEquals(0, genreRepository.count())
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(aGenre))
+
+        assertEquals(1, genreRepository.count())
+
+        // when
+        val actualGenre = genreGateway.existsByIds(listOf(GenreID.unique(), expectedId))
+
+        // then
+        assertEquals(expectedItems, actualGenre.size)
+        assertEquals(expectedId.value, actualGenre[0].value)
+    }
+
     @ParameterizedTest
     @CsvSource(
         "aç, 0, 10, 1, 1, Ação",

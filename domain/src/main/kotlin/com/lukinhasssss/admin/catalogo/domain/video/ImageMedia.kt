@@ -1,16 +1,18 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
 import com.lukinhasssss.admin.catalogo.domain.ValueObject
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 
 data class ImageMedia(
+    val id: String,
     val checksum: String,
     val name: String,
     val location: String
 ) : ValueObject() {
 
     companion object {
-        fun with(checksum: String, name: String, location: String) =
-            ImageMedia(checksum, name, location)
+        fun with(id: String = IdUtils.uuid(), checksum: String, name: String, location: String) =
+            ImageMedia(id, checksum, name, location)
     }
 
     override fun equals(other: Any?): Boolean {

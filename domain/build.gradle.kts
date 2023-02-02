@@ -17,6 +17,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
 }
 
 tasks.test {
@@ -30,4 +32,21 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
+}
+
+configurations {
+    create("testClasses") {
+        extendsFrom(testImplementation.get())
+    }
+}
+
+tasks.getByName("assemble").dependsOn("testJar")
+
+tasks.register<Jar>("testJar") {
+    archiveClassifier.set("test")
+    from(project.the<SourceSetContainer>()["test"].output)
+}
+
+artifacts {
+    testImplementation(tasks.getByName("testJar"))
 }

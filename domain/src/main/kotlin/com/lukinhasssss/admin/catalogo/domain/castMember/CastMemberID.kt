@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.domain.castMember
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
-import java.util.UUID
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 
 data class CastMemberID(
     override val value: String
@@ -9,15 +9,11 @@ data class CastMemberID(
 
     companion object {
         fun unique(): CastMemberID {
-            return from(anId = UUID.randomUUID())
+            return from(anId = IdUtils.uuid())
         }
 
         fun from(anId: String): CastMemberID {
             return CastMemberID(value = anId)
-        }
-
-        fun from(anId: UUID): CastMemberID {
-            return CastMemberID(value = anId.toString().lowercase())
         }
     }
 }

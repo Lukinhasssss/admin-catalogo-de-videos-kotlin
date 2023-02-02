@@ -15,7 +15,11 @@ class ImageMediaTest {
         val expectedLocation = "/images/ac"
 
         // when
-        val actualImage = ImageMedia.with(expectedChecksum, expectedName, expectedLocation)
+        val actualImage = ImageMedia.with(
+            checksum = expectedChecksum,
+            name = expectedName,
+            location = expectedLocation
+        )
 
         // then
         with(actualImage) {
@@ -32,8 +36,16 @@ class ImageMediaTest {
         val expectedChecksum = "abc"
         val expectedLocation = "/images/ac"
 
-        val img1 = ImageMedia.with(expectedChecksum, "Banner_01.png", expectedLocation)
-        val img2 = ImageMedia.with(expectedChecksum, "Banner_02.png", expectedLocation)
+        val img1 = ImageMedia.with(
+            checksum = expectedChecksum,
+            name = "Banner_01.png",
+            location = expectedLocation
+        )
+        val img2 = ImageMedia.with(
+            checksum = expectedChecksum,
+            name = "Banner_02.png",
+            location = expectedLocation
+        )
 
         // then
         assertEquals(img1, img2)

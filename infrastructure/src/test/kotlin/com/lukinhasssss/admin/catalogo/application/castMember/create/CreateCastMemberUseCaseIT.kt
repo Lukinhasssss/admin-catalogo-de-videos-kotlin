@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.create
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.IntegrationTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
@@ -29,7 +29,7 @@ class CreateCastMemberUseCaseIT {
     fun givenAValidCommand_whenCallsCreateCastMember_shoulReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aCommand = CreateCastMemberCommand.with(expectedName, expectedType)
 
@@ -56,7 +56,7 @@ class CreateCastMemberUseCaseIT {
     fun givenAnInvalidName_whenCallsCreateCastMember_shouldThrowsNotificationException() {
         // given
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be empty"
 

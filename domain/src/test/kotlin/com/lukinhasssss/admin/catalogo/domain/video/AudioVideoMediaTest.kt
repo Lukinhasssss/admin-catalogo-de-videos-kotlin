@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -14,10 +15,16 @@ class AudioVideoMediaTest {
         val expectedName = "Banner.png"
         val expectedRawLocation = "/images/ac"
         val expectedEncodedLocation = "/images/ac-encoded"
-        val expectedStatus = MediaStatus.PENDING
+        val expectedStatus = PENDING
 
         // when
-        val actualVideo = AudioVideoMedia.with(expectedChecksum, expectedName, expectedRawLocation, expectedEncodedLocation, expectedStatus)
+        val actualVideo = AudioVideoMedia.with(
+            checksum = expectedChecksum,
+            name = expectedName,
+            rawLocation = expectedRawLocation,
+            encodedLocation = expectedEncodedLocation,
+            status = expectedStatus
+        )
 
         // then
         with(actualVideo) {
@@ -36,8 +43,20 @@ class AudioVideoMediaTest {
         val expectedChecksum = "abc"
         val expectedRawLocation = "/images/ac"
 
-        val img1 = AudioVideoMedia.with(expectedChecksum, "Banner_01.png", expectedRawLocation, "", MediaStatus.PENDING)
-        val img2 = AudioVideoMedia.with(expectedChecksum, "Banner_02.png", expectedRawLocation, "", MediaStatus.PENDING)
+        val img1 = AudioVideoMedia.with(
+            checksum = expectedChecksum,
+            name = "Banner_01.png",
+            rawLocation = expectedRawLocation,
+            encodedLocation = "",
+            status = PENDING
+        )
+        val img2 = AudioVideoMedia.with(
+            checksum = expectedChecksum,
+            name = "Banner_02.png",
+            rawLocation = expectedRawLocation,
+            encodedLocation = "",
+            status = PENDING
+        )
 
         // then
         assertEquals(img1, img2)

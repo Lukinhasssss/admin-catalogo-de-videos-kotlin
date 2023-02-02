@@ -8,7 +8,7 @@ interface VideoGateway {
 
     fun findById(anID: VideoID): Video?
 
-    fun findAll(aQuery: VideoSearchQuery): Pagination<Video>
+    fun findAll(aQuery: VideoSearchQuery): Pagination<VideoPreview>
 
     fun update(aVideo: Video): Video
 

@@ -17,6 +17,7 @@ import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
@@ -27,9 +28,7 @@ import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.Conversions.string
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
@@ -37,8 +36,6 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.name
-import java.util.UUID
 
 @ControllerTest(controllers = [GenreAPI::class])
 class GenreAPITest {
@@ -189,7 +186,7 @@ class GenreAPITest {
     @Test
     fun givenAnInvalidId_whenCallsGetGenreByIdGenre_shouldReturnNotFound() {
         // given
-        val expectedId = GenreID.from(UUID.randomUUID().toString())
+        val expectedId = GenreID.from(IdUtils.uuid())
         val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
 
         every { getGenreByIdUseCase.execute(any()) } throws NotFoundException.with(expectedId, Genre::class)

@@ -35,7 +35,7 @@ class VideoValidator(
 
     private fun checkDescriptionConstraints() {
         with(aVideo.description) {
-            if (isNullOrBlank()) {
+            if (isEmpty()) {
                 validationHandler.append(Error(message = "'description' should not be empty"))
                 return
             }

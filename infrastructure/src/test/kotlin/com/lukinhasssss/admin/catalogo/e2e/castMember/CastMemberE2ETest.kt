@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.e2e.castMember
 
 import com.lukinhasssss.admin.catalogo.E2ETest
-import com.lukinhasssss.admin.catalogo.Fixture
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.ACTOR
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.DIRECTOR
@@ -57,7 +57,7 @@ class CastMemberE2ETest : MockDsl {
         assertEquals(0, castMemberRepository.count())
 
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val actualMemberId = givenACastMember(expectedName, expectedType)
 
@@ -78,7 +78,7 @@ class CastMemberE2ETest : MockDsl {
         assertEquals(0, castMemberRepository.count())
 
         val expectedName = "  "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedStatusCode = UNPROCESSABLE_ENTITY.value()
         val expectedErrorMessage = "'name' should not be empty"
 
@@ -189,10 +189,10 @@ class CastMemberE2ETest : MockDsl {
         assertEquals(0, castMemberRepository.count())
 
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         val actualId = givenACastMember(expectedName, expectedType)
 
@@ -215,8 +215,8 @@ class CastMemberE2ETest : MockDsl {
         val expectedStatusCode = NOT_FOUND.value()
         val expectedMessage = "CastMember with ID 123 was not found"
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         retrieveACastMemberResponse(CastMemberID.from("123")) Then {
             statusCode(expectedStatusCode)
@@ -233,7 +233,7 @@ class CastMemberE2ETest : MockDsl {
         val expectedType = ACTOR
         val expectedStatusCode = OK.value()
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         val actualId = givenACastMember("A Pedra", DIRECTOR)
 
@@ -257,11 +257,11 @@ class CastMemberE2ETest : MockDsl {
         assertEquals(0, castMemberRepository.count())
 
         val expectedName = "  "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedStatusCode = UNPROCESSABLE_ENTITY.value()
         val expectedErrorMessage = "'name' should not be empty"
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         val actualId = givenACastMember("A Pedra", DIRECTOR)
 
@@ -279,9 +279,9 @@ class CastMemberE2ETest : MockDsl {
 
         val expectedStatusCode = NO_CONTENT.value()
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
-        val actualId = givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        val actualId = givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         assertEquals(2, castMemberRepository.count())
 
@@ -298,8 +298,8 @@ class CastMemberE2ETest : MockDsl {
 
         val expectedStatusCode = NO_CONTENT.value()
 
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
-        givenACastMember(Fixture.name(), Fixture.CastMember.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
+        givenACastMember(Fixture.name(), Fixture.CastMembers.type())
 
         assertEquals(2, castMemberRepository.count())
 

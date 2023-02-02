@@ -70,7 +70,13 @@ class CastMemberPostgresGateway(
     }
 
     override fun existsByIds(castMemberIDs: Iterable<CastMemberID>): List<CastMemberID> {
-        throw UnsupportedOperationException()
+        Logger.info(message = "Verificando se o(s) membro(s) de elenco existe(m) no banco...")
+
+        val ids = castMemberIDs.map { it.value }
+
+        return repository.existsByIds(ids).map { CastMemberID.from(it) }.also {
+            Logger.info(message = "Finalizada verificação se o(s) membro(s) de elenco existe(m) no banco!")
+        }
     }
 
     private fun assembleSpecification(term: String) = SpecificationUtils.like<CastMemberJpaEntity>("name", term)

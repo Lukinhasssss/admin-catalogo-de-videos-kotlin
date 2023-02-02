@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.delete
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.IntegrationTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
@@ -33,8 +33,8 @@ class DeleteCastMemberUseCaseIT {
     @Test
     fun givenAValidId_whenCallsDeleteCastMember_shouldDeleteIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
-        val aMemberTwo = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
+        val aMemberTwo = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedId = aMember.id
 
@@ -60,7 +60,7 @@ class DeleteCastMemberUseCaseIT {
     @Test
     fun givenAnInvalidId_whenCallsDeleteCastMember_shouldBeOk() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedId = CastMemberID.from("any")
 
@@ -79,7 +79,7 @@ class DeleteCastMemberUseCaseIT {
     @Test
     fun givenAValidId_whenCallsDeleteCastMemberAndGatewayThrowsException_shouldReceiveException() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedId = aMember.id
 

@@ -1,8 +1,8 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.retrieve.get
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.get.DefaultGetCastMemberByIdUseCase
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
@@ -32,7 +32,7 @@ class GetCastMemberByIdUseCaseIT {
     fun givenAValidId_whenCallsGetCastMember_shouldReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 

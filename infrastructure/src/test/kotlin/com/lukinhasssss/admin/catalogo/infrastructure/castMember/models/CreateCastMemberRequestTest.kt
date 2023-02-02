@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.castMember.models
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.JacksonTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +16,7 @@ class CreateCastMemberRequestTest {
     @Test
     fun testUnmarshall() {
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val json = """
             {

@@ -1,4 +1,4 @@
-package com.lukinhasssss.admin.catalogo.application
+package com.lukinhasssss.admin.catalogo.domain
 
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
@@ -39,23 +39,29 @@ class Fixture {
 
     object Categories {
         private val ANIMES = Category.newCategory("Animes", "Some description", true)
+        private val FILMES = Category.newCategory("Filmes", "Some description", true)
 
         fun animes() = ANIMES
+        fun filmes() = FILMES
     }
 
     object Genres {
         private val SHONEN = Genre.newGenre("Shonen", true)
+        private val ACAO = Genre.newGenre("Ação", true)
 
         fun shonen() = SHONEN
+        fun acao() = ACAO
     }
 
     object CastMembers {
         private val LUFFY = CastMember.newMember("Monkey D Luffy", ACTOR)
         private val ZORO = CastMember.newMember("Roronoa Zoro", ACTOR)
+        private val THE_ROCK = CastMember.newMember("Dwayne Johnson", ACTOR)
 
         fun type() = FAKER.random.nextEnum(CastMemberType.values())
-        fun luffy() = CastMember.with(LUFFY)
+        fun luffy() = LUFFY
         fun zoro() = ZORO
+        fun theRock() = THE_ROCK
     }
 
     object Videos {

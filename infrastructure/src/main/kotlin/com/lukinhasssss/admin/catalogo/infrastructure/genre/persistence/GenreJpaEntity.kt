@@ -12,9 +12,9 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity
+@Entity(name = "Genre")
 @Table(name = "genres")
-data class GenreJpaEntity(
+class GenreJpaEntity(
 
     @Id
     val id: String,

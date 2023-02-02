@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "genres_categories")
-data class GenreCategoryJpaEntity(
+class GenreCategoryJpaEntity(
 
     @EmbeddedId
     val id: GenreCategoryID,

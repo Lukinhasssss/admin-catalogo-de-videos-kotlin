@@ -1,8 +1,11 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
 import com.lukinhasssss.admin.catalogo.domain.ValueObject
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 
 data class AudioVideoMedia(
+    val id: String,
     val checksum: String,
     val name: String,
     val rawLocation: String,
@@ -12,12 +15,13 @@ data class AudioVideoMedia(
 
     companion object {
         fun with(
+            id: String = IdUtils.uuid(),
             checksum: String,
             name: String,
             rawLocation: String,
-            encodedLocation: String,
-            status: MediaStatus
-        ) = AudioVideoMedia(checksum, name, rawLocation, encodedLocation, status)
+            encodedLocation: String = "",
+            status: MediaStatus = PENDING
+        ) = AudioVideoMedia(id, checksum, name, rawLocation, encodedLocation, status)
     }
 
     override fun equals(other: Any?): Boolean {

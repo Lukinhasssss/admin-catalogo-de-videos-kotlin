@@ -1,10 +1,10 @@
 package com.lukinhasssss.admin.catalogo.application.video.retrieve.list
 
-import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
-import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
+import com.lukinhasssss.admin.catalogo.domain.video.VideoPreview
 import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -25,7 +25,10 @@ class ListVideoUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidQuery_whenCallsListVideos_shouldReturnVideos() {
         // given
-        val videos = listOf(Fixture.video(), Fixture.video())
+        val videos = listOf(
+            VideoPreview(Fixture.video()),
+            VideoPreview(Fixture.video())
+        )
 
         val expectedPage = 0
         val expectedPerPage = 10
@@ -58,7 +61,7 @@ class ListVideoUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidQuery_whenCallsListVideoAndResultIsEmpty_shouldReturnVideos() {
         // given
-        val videos = listOf<Video>()
+        val videos = listOf<VideoPreview>()
 
         val expectedPage = 0
         val expectedPerPage = 10
