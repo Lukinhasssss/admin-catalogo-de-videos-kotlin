@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.services
 
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 
 interface StorageService {
 

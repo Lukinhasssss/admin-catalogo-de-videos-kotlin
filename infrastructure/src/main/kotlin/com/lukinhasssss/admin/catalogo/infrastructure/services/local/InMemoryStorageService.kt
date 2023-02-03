@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.services.local
 
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 import com.lukinhasssss.admin.catalogo.infrastructure.services.StorageService
 
 class InMemoryStorageService(

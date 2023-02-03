@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.application.video.create
 
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 
 data class CreateVideoCommand(
     val title: String,

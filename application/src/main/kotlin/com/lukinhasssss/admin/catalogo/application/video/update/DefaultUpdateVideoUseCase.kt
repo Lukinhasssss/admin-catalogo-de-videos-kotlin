@@ -18,6 +18,12 @@ import com.lukinhasssss.admin.catalogo.domain.video.Rating
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.BANNER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL_HALF
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
+import com.lukinhasssss.admin.catalogo.domain.video.VideoResource
 import java.time.Year
 
 class DefaultUpdateVideoUseCase(
@@ -77,23 +83,33 @@ class DefaultUpdateVideoUseCase(
 
         try {
             val aVideoMedia = if (video != null) {
-                mediaResourceGateway.storeAudioVideo(anId = anId, aResource = video)
+                mediaResourceGateway.storeAudioVideo(
+                    anId = anId, aResource = VideoResource.with(video, VIDEO)
+                )
             } else null
 
             val aTrailerMedia = if (trailer != null) {
-                mediaResourceGateway.storeAudioVideo(anId = anId, aResource = trailer)
+                mediaResourceGateway.storeAudioVideo(
+                    anId = anId, aResource = VideoResource.with(trailer, TRAILER)
+                )
             } else null
 
             val aBannerMedia = if (banner != null) {
-                mediaResourceGateway.storeImage(anId = anId, aResource = banner)
+                mediaResourceGateway.storeImage(
+                    anId = anId, aResource = VideoResource.with(banner, BANNER)
+                )
             } else null
 
             val aThumbnailMedia = if (thumbnail != null) {
-                mediaResourceGateway.storeImage(anId = anId, aResource = thumbnail)
+                mediaResourceGateway.storeImage(
+                    anId = anId, aResource = VideoResource.with(thumbnail, THUMBNAIL)
+                )
             } else null
 
             val aThumbnailHalfMedia = if (thumbnailHalf != null) {
-                mediaResourceGateway.storeImage(anId = anId, aResource = thumbnailHalf)
+                mediaResourceGateway.storeImage(
+                    anId = anId, aResource = VideoResource.with(thumbnailHalf, THUMBNAIL_HALF)
+                )
             } else null
 
             videoGateway.update(

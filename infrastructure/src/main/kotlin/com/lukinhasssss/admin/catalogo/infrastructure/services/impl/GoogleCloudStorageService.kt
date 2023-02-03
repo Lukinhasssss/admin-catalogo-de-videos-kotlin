@@ -4,7 +4,7 @@ import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 import com.lukinhasssss.admin.catalogo.infrastructure.services.StorageService
 import java.util.stream.StreamSupport
 
@@ -16,7 +16,7 @@ class GoogleCloudStorageService(
     override fun store(name: String, resource: Resource) {
         val blobInfo = BlobInfo.newBuilder(bucket, name)
             .setContentType(resource.contentType)
-            .setCrc32cFromHexString("")
+            .setCrc32cFromHexString(resource.checksum)
             .build()
 
         storage.create(blobInfo, resource.content)
@@ -42,10 +42,10 @@ class GoogleCloudStorageService(
 
     private fun Blob?.toResource() = if (this != null) {
         Resource.with(
+            checksum = crc32cToHexString,
             content = getContent(),
             contentType = contentType,
-            name = name,
-            type = Resource.Type.VIDEO // TODO: Ver se sera necesario alterar para poder receber nulo
+            name = name
         )
     } else null
 }
