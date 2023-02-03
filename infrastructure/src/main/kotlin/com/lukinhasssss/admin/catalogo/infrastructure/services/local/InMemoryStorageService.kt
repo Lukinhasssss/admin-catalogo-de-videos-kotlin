@@ -20,7 +20,7 @@ class InMemoryStorageService(
     override fun get(name: String): Resource? =
         storage[name]
 
-    fun storage(): Map<String, Resource> = storage
+    fun storage(): MutableMap<String, Resource> = storage
 
     fun reset() = storage.clear()
 }
