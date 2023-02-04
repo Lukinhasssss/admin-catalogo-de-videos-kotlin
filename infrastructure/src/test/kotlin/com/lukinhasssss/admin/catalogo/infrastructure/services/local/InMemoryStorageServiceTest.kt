@@ -109,7 +109,6 @@ class InMemoryStorageServiceTest {
 
         // then
         assertEquals(2, target.storage().size)
-        val teste = target.storage().values
         assertEquals(expectedNames, target.storage().keys)
     }
 }
