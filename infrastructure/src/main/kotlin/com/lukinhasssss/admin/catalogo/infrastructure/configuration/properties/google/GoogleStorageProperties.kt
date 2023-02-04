@@ -1,4 +1,4 @@
-package com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties
+package com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.google
 
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.log.Logger
 import org.springframework.beans.factory.InitializingBean
@@ -14,6 +14,6 @@ data class GoogleStorageProperties(
 ) : InitializingBean {
 
     override fun afterPropertiesSet() {
-        Logger.info(message = "", payload = this)
+        Logger.info(message = toString())
     }
 }

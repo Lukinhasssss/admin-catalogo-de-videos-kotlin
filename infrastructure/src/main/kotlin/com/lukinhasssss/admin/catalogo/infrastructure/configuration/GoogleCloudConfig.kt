@@ -6,8 +6,8 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.http.HttpTransportOptions
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
-import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.GoogleCloudProperties
-import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.GoogleStorageProperties
+import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.google.GoogleCloudProperties
+import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.google.GoogleStorageProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,7 +26,7 @@ class GoogleCloudConfig {
     fun googleCloudProperties() = GoogleCloudProperties()
 
     @Bean
-    @ConfigurationProperties(value = "google.cloud.storage.catalogo-video")
+    @ConfigurationProperties(value = "google.cloud.storage.catalogo-videos")
     fun googleStorageProperties() = GoogleStorageProperties()
 
     @Bean
