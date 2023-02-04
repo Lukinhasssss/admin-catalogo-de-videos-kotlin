@@ -87,6 +87,8 @@ class Fixture {
 
         fun rating() = FAKER.random.nextEnum(Rating.values())
 
+        fun mediaType() = FAKER.random.nextEnum(VideoMediaType.values())
+
         fun audioVideo(type: VideoMediaType): AudioVideoMedia {
             val id = IdUtils.uuid()
             val name = "${type.name.lowercase()}_$id"

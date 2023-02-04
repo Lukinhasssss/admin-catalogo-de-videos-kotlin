@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DefaultMediaResourceGateway(
-    private val storageProperties: StorageProperties,
+    storageProperties: StorageProperties,
     private val storageService: StorageService
 ) : MediaResourceGateway {
 
