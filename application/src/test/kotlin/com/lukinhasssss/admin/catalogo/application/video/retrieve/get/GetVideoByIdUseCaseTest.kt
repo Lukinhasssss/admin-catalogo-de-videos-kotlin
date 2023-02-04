@@ -3,14 +3,14 @@ package com.lukinhasssss.admin.catalogo.application.video.retrieve.get
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
-import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
-import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
-import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
-import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.BANNER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL_HALF
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -40,11 +40,11 @@ class GetVideoByIdUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf(Fixture.Categories.animes().id)
         val expectedGenres = setOf(Fixture.Genres.shonen().id)
         val expectedMembers = setOf(Fixture.CastMembers.luffy().id, Fixture.CastMembers.zoro().id)
-        val expectedVideo = audioVideo(Resource.Type.VIDEO)
-        val expectedTrailer = audioVideo(Resource.Type.TRAILER)
-        val expectedBanner = image(Resource.Type.BANNER)
-        val expectedThumb = image(Resource.Type.THUMBNAIL)
-        val expectedThumbHalf = image(Resource.Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.audioVideo(VIDEO)
+        val expectedTrailer = Fixture.Videos.audioVideo(TRAILER)
+        val expectedBanner = Fixture.Videos.imageMedia(BANNER)
+        val expectedThumb = Fixture.Videos.imageMedia(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.imageMedia(THUMBNAIL_HALF)
 
         var aVideo = Video.newVideo(
             expectedTitle,
@@ -109,27 +109,5 @@ class GetVideoByIdUseCaseTest : UseCaseTest() {
 
         // then
         assertEquals(expectedErrorMessage, actualError.message)
-    }
-
-    private fun audioVideo(type: Resource.Type): AudioVideoMedia {
-        val checksum = IdUtils.uuid()
-
-        return AudioVideoMedia.with(
-            checksum = checksum,
-            name = type.name,
-            rawLocation = "/videos/$checksum",
-            encodedLocation = "",
-            status = PENDING
-        )
-    }
-
-    private fun image(type: Resource.Type): ImageMedia {
-        val checksum = IdUtils.uuid()
-
-        return ImageMedia.with(
-            checksum = checksum,
-            name = type.name,
-            location = "/images/$checksum"
-        )
     }
 }

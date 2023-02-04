@@ -5,10 +5,15 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.ACTOR
 import com.lukinhasssss.admin.catalogo.domain.category.Category
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
+import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
+import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.Rating
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
-import com.lukinhasssss.admin.catalogo.domain.video.Resource.Type
 import com.lukinhasssss.admin.catalogo.domain.video.Video
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
 import io.github.serpro69.kfaker.Faker
 import java.time.Year
 
@@ -82,15 +87,30 @@ class Fixture {
 
         fun rating() = FAKER.random.nextEnum(Rating.values())
 
-        fun resource(type: Type): Resource {
+        fun mediaType() = FAKER.random.nextEnum(VideoMediaType.values())
+
+        fun audioVideo(type: VideoMediaType): AudioVideoMedia {
+            val id = IdUtils.uuid()
+            val name = "${type.name.lowercase()}_$id"
+            return AudioVideoMedia.with(checksum = id, name = name, rawLocation = "/raw/$name")
+        }
+
+        fun imageMedia(type: VideoMediaType): ImageMedia {
+            val id = IdUtils.uuid()
+            val name = "${type.name.lowercase()}_$id"
+            return ImageMedia.with(checksum = id, name = name, location = "/raw/$name")
+        }
+
+        fun resource(type: VideoMediaType): Resource {
             val contentType = when (type) {
-                Type.VIDEO, Type.TRAILER -> "video/mp4"
+                VIDEO, TRAILER -> "video/mp4"
                 else -> "image/jpg"
             }
 
+            val checksum = IdUtils.uuid()
             val content = "Conteudo".toByteArray()
 
-            return Resource.with(content, contentType, type.name.lowercase(), type)
+            return Resource.with(checksum, content, contentType, type.name.lowercase())
         }
     }
 }

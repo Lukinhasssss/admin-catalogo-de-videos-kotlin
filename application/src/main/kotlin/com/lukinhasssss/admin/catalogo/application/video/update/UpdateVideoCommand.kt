@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.application.video.update
 
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
+import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 
 data class UpdateVideoCommand(
     val id: String,

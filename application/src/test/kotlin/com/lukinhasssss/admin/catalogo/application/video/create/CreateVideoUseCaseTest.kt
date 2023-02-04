@@ -10,14 +10,16 @@ import com.lukinhasssss.admin.catalogo.domain.exception.InternalErrorException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreGateway
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
-import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.domain.video.MediaResourceGateway
-import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
-import com.lukinhasssss.admin.catalogo.domain.video.Resource
-import com.lukinhasssss.admin.catalogo.domain.video.Resource.Type
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.BANNER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL_HALF
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
+import com.lukinhasssss.admin.catalogo.domain.video.VideoResource
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -63,11 +65,11 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf(Fixture.Categories.animes().id)
         val expectedGenres = setOf(Fixture.Genres.shonen().id)
         val expectedMembers = setOf(Fixture.CastMembers.luffy().id, Fixture.CastMembers.zoro().id)
-        val expectedVideo = Fixture.Videos.resource(Type.VIDEO)
-        val expectedTrailer = Fixture.Videos.resource(Type.TRAILER)
-        val expectedBanner = Fixture.Videos.resource(Type.BANNER)
-        val expectedThumb = Fixture.Videos.resource(Type.THUMBNAIL)
-        val expectedThumbHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.resource(VIDEO)
+        val expectedTrailer = Fixture.Videos.resource(TRAILER)
+        val expectedBanner = Fixture.Videos.resource(BANNER)
+        val expectedThumb = Fixture.Videos.resource(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.resource(THUMBNAIL_HALF)
 
         val aCommand = CreateVideoCommand.with(
             aTitle = expectedTitle,
@@ -138,11 +140,11 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf<CategoryID>()
         val expectedGenres = setOf(Fixture.Genres.shonen().id)
         val expectedMembers = setOf(Fixture.CastMembers.luffy().id, Fixture.CastMembers.zoro().id)
-        val expectedVideo = Fixture.Videos.resource(Type.VIDEO)
-        val expectedTrailer = Fixture.Videos.resource(Type.TRAILER)
-        val expectedBanner = Fixture.Videos.resource(Type.BANNER)
-        val expectedThumb = Fixture.Videos.resource(Type.THUMBNAIL)
-        val expectedThumbHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.resource(VIDEO)
+        val expectedTrailer = Fixture.Videos.resource(TRAILER)
+        val expectedBanner = Fixture.Videos.resource(BANNER)
+        val expectedThumb = Fixture.Videos.resource(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.resource(THUMBNAIL_HALF)
 
         val aCommand = CreateVideoCommand.with(
             aTitle = expectedTitle,
@@ -212,11 +214,11 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf(Fixture.Categories.animes().id)
         val expectedGenres = setOf<GenreID>()
         val expectedMembers = setOf(Fixture.CastMembers.luffy().id, Fixture.CastMembers.zoro().id)
-        val expectedVideo = Fixture.Videos.resource(Type.VIDEO)
-        val expectedTrailer = Fixture.Videos.resource(Type.TRAILER)
-        val expectedBanner = Fixture.Videos.resource(Type.BANNER)
-        val expectedThumb = Fixture.Videos.resource(Type.THUMBNAIL)
-        val expectedThumbHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.resource(VIDEO)
+        val expectedTrailer = Fixture.Videos.resource(TRAILER)
+        val expectedBanner = Fixture.Videos.resource(BANNER)
+        val expectedThumb = Fixture.Videos.resource(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.resource(THUMBNAIL_HALF)
 
         val aCommand = CreateVideoCommand.with(
             aTitle = expectedTitle,
@@ -286,11 +288,11 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf(Fixture.Categories.animes().id)
         val expectedGenres = setOf(Fixture.Genres.shonen().id)
         val expectedMembers = setOf<CastMemberID>()
-        val expectedVideo = Fixture.Videos.resource(Type.VIDEO)
-        val expectedTrailer = Fixture.Videos.resource(Type.TRAILER)
-        val expectedBanner = Fixture.Videos.resource(Type.BANNER)
-        val expectedThumb = Fixture.Videos.resource(Type.THUMBNAIL)
-        val expectedThumbHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.resource(VIDEO)
+        val expectedTrailer = Fixture.Videos.resource(TRAILER)
+        val expectedBanner = Fixture.Videos.resource(BANNER)
+        val expectedThumb = Fixture.Videos.resource(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.resource(THUMBNAIL_HALF)
 
         val aCommand = CreateVideoCommand.with(
             aTitle = expectedTitle,
@@ -774,11 +776,11 @@ class CreateVideoUseCaseTest : UseCaseTest() {
         val expectedCategories = setOf(Fixture.Categories.animes().id)
         val expectedGenres = setOf(Fixture.Genres.shonen().id)
         val expectedMembers = setOf(Fixture.CastMembers.luffy().id, Fixture.CastMembers.zoro().id)
-        val expectedVideo = Fixture.Videos.resource(Type.VIDEO)
-        val expectedTrailer = Fixture.Videos.resource(Type.TRAILER)
-        val expectedBanner = Fixture.Videos.resource(Type.BANNER)
-        val expectedThumb = Fixture.Videos.resource(Type.THUMBNAIL)
-        val expectedThumbHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF)
+        val expectedVideo = Fixture.Videos.resource(VIDEO)
+        val expectedTrailer = Fixture.Videos.resource(TRAILER)
+        val expectedBanner = Fixture.Videos.resource(BANNER)
+        val expectedThumb = Fixture.Videos.resource(THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.resource(THUMBNAIL_HALF)
 
         val expectedErrorMessage = "An error on create video was observed [videoID:"
 
@@ -822,25 +824,15 @@ class CreateVideoUseCaseTest : UseCaseTest() {
 
     private fun mockImageMedia() =
         every { mediaResourceGateway.storeImage(any(), any()) } answers {
-            val resource = this.secondArg<Resource>()
+            val (checksum, _, _, name) = secondArg<VideoResource>().resource
 
-            ImageMedia.with(
-                checksum = IdUtils.uuid(),
-                name = resource.name,
-                location = "/img"
-            )
+            ImageMedia.with(checksum = checksum, name = name, location = "/raw/$name")
         }
 
     private fun mockAudioVideoMedia() =
         every { mediaResourceGateway.storeAudioVideo(any(), any()) } answers {
-            val resource = this.secondArg<Resource>()
+            val (checksum, _, _, name) = secondArg<VideoResource>().resource
 
-            AudioVideoMedia.with(
-                checksum = IdUtils.uuid(),
-                name = resource.name,
-                rawLocation = "/img",
-                encodedLocation = "",
-                status = PENDING
-            )
+            AudioVideoMedia.with(checksum = checksum, name = name, rawLocation = "/raw/$name")
         }
 }
