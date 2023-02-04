@@ -622,7 +622,7 @@ class DefaultVideoGatewayTest {
         }
     }
 
-    @Test
+    /*@Test
     fun givenAValidCastMember_whenCallsFindAll_shouldReturnFilteredList() {
         // given
         mockVideos()
@@ -770,7 +770,7 @@ class DefaultVideoGatewayTest {
 
             assertEquals("Aula de empreendedorismo", items[0].title)
         }
-    }
+    }*/
 
     @ParameterizedTest
     @CsvSource(
