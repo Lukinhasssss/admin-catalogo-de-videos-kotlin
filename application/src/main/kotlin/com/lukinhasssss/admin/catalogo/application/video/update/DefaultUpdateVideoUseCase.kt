@@ -84,31 +84,31 @@ class DefaultUpdateVideoUseCase(
         try {
             val aVideoMedia = if (video != null) {
                 mediaResourceGateway.storeAudioVideo(
-                    anId = anId, aResource = VideoResource.with(video, VIDEO)
+                    anId = anId, videoResource = VideoResource.with(video, VIDEO)
                 )
             } else null
 
             val aTrailerMedia = if (trailer != null) {
                 mediaResourceGateway.storeAudioVideo(
-                    anId = anId, aResource = VideoResource.with(trailer, TRAILER)
+                    anId = anId, videoResource = VideoResource.with(trailer, TRAILER)
                 )
             } else null
 
             val aBannerMedia = if (banner != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, aResource = VideoResource.with(banner, BANNER)
+                    anId = anId, imageResource = VideoResource.with(banner, BANNER)
                 )
             } else null
 
             val aThumbnailMedia = if (thumbnail != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, aResource = VideoResource.with(thumbnail, THUMBNAIL)
+                    anId = anId, imageResource = VideoResource.with(thumbnail, THUMBNAIL)
                 )
             } else null
 
             val aThumbnailHalfMedia = if (thumbnailHalf != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, aResource = VideoResource.with(thumbnailHalf, THUMBNAIL_HALF)
+                    anId = anId, imageResource = VideoResource.with(thumbnailHalf, THUMBNAIL_HALF)
                 )
             } else null
 
