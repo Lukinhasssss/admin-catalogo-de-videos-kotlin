@@ -14,7 +14,7 @@ class InMemoryStorageServiceTest {
     private val target = InMemoryStorageService()
 
     @BeforeEach
-    fun setUp() = target.reset()
+    fun setUp() = target.clear()
 
     @Test
     fun givenAValidResource_whenCallsStore_shouldStoreIt() {

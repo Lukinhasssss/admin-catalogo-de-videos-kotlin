@@ -22,5 +22,5 @@ class InMemoryStorageService(
 
     fun storage(): MutableMap<String, Resource> = storage
 
-    fun reset() = storage.clear()
+    fun clear() = storage.clear()
 }
