@@ -19,5 +19,7 @@ class NotFoundException(
 
             return NotFoundException(anErrorMessage, emptyList())
         }
+
+        fun with(error: Error) = NotFoundException(error.message, listOf(error))
     }
 }
