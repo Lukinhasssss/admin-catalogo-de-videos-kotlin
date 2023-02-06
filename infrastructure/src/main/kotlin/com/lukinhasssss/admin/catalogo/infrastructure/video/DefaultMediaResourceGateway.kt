@@ -22,7 +22,7 @@ class DefaultMediaResourceGateway(
 
     override fun storeAudioVideo(anId: VideoID, videoResource: VideoResource): AudioVideoMedia =
         with(videoResource) {
-            val filepath = filepath(anId, this)
+            val filepath = filepath(anId, this.type)
 
             store(filepath, resource)
 
@@ -35,7 +35,7 @@ class DefaultMediaResourceGateway(
 
     override fun storeImage(anId: VideoID, imageResource: VideoResource): ImageMedia =
         with(imageResource) {
-            val filepath = filepath(anId, this)
+            val filepath = filepath(anId, this.type)
 
             store(filepath, resource)
 
@@ -46,20 +46,23 @@ class DefaultMediaResourceGateway(
             )
         }
 
+    override fun getResource(anId: VideoID, aType: VideoMediaType): Resource? =
+        storageService.get(filepath(anId, aType))
+
     override fun clearResources(anId: VideoID) {
         val ids = storageService.list(folder(anId))
         storageService.deleteAll(ids)
     }
 
-    private fun filepath(anId: VideoID, aResource: VideoResource): String =
-        "${folder(anId)}/${filename(aResource.type)}"
+    private fun store(filepath: String, aResource: Resource) =
+        storageService.store(filepath, aResource)
+
+    private fun filepath(anId: VideoID, aType: VideoMediaType): String =
+        "${folder(anId)}/${filename(aType)}"
 
     private fun filename(aType: VideoMediaType): String =
         fileNamePattern.replace("{type}", aType.name)
 
     private fun folder(anId: VideoID): String =
         locationPattern.replace("{videoId}", anId.value)
-
-    private fun store(filepath: String, aResource: Resource) =
-        storageService.store(filepath, aResource)
 }
