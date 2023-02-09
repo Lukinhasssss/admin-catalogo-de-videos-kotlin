@@ -50,6 +50,7 @@ dependencies {
     }
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.postgresql:postgresql")
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
@@ -63,9 +64,10 @@ dependencies {
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
+    testImplementation("org.springframework.amqp:spring-rabbit-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.h2database:h2")
     testImplementation("org.flywaydb:flyway-core:9.11.0")
+    testImplementation("com.h2database:h2")
 
     // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
