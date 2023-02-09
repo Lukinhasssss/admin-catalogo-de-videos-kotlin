@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.application.video.delete
 
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
 import com.lukinhasssss.admin.catalogo.domain.exception.InternalErrorException
+import com.lukinhasssss.admin.catalogo.domain.video.MediaResourceGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import io.mockk.every
@@ -20,18 +21,23 @@ class DeleteVideoUseCaseTest : UseCaseTest() {
     @MockK
     private lateinit var videoGateway: VideoGateway
 
+    @MockK
+    private lateinit var mediaResourceGateway: MediaResourceGateway
+
     @Test
     fun givenAValidId_whenCallsDeleteVideo_shouldDeleteIt() {
         // given
         val expectedId = VideoID.unique()
 
         every { videoGateway.deleteById(expectedId) } returns Unit
+        every { mediaResourceGateway.clearResources(expectedId) } returns Unit
 
         // when
         assertDoesNotThrow { useCase.execute(expectedId.value) }
 
         // then
         verify { videoGateway.deleteById(expectedId) }
+        verify { mediaResourceGateway.clearResources(expectedId) }
     }
 
     @Test
@@ -40,12 +46,14 @@ class DeleteVideoUseCaseTest : UseCaseTest() {
         val expectedId = VideoID.from("123")
 
         every { videoGateway.deleteById(expectedId) } returns Unit
+        every { mediaResourceGateway.clearResources(expectedId) } returns Unit
 
         // when
         assertDoesNotThrow { useCase.execute(expectedId.value) }
 
         // then
         verify { videoGateway.deleteById(expectedId) }
+        verify { mediaResourceGateway.clearResources(expectedId) }
     }
 
     @Test
