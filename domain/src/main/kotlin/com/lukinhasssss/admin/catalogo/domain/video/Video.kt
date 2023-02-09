@@ -6,6 +6,8 @@ import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
 import java.time.Instant
 import java.time.Year
 
@@ -243,4 +245,24 @@ data class Video(
         thumbnail = thumbnail,
         thumbnailHalf = aThumbMedia
     )
+
+    fun processing(aMediaType: VideoMediaType): Video {
+        if (aMediaType == VIDEO && video != null)
+            return setVideo(video!!.processing())
+
+        if (aMediaType == TRAILER && trailer != null)
+            return setTrailer(trailer!!.processing())
+
+        return this
+    }
+
+    fun completed(aMediaType: VideoMediaType, encodedPath: String): Video {
+        if (aMediaType == VIDEO && video != null)
+            return setVideo(video!!.completed(encodedPath))
+
+        if (aMediaType == TRAILER && trailer != null)
+            return setTrailer(trailer!!.completed(encodedPath))
+
+        return this
+    }
 }

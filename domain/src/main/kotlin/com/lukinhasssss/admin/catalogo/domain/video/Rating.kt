@@ -22,14 +22,12 @@ enum class Rating(val description: String) {
                 it.name.equals(label, ignoreCase = true) || it.description.equals(label, ignoreCase = true)
             }
 
-            if (rating == null) invalidRating(label)
-
-            return rating!!
+            return rating ?: throw ratingNotFound(label)
         }
 
-        private fun invalidRating(rating: String): DomainException {
+        private fun ratingNotFound(rating: String): DomainException {
             val error = Error(message = "Rating not found $rating")
-            throw DomainException.with(error)
+            return DomainException.with(error)
         }
     }
 }

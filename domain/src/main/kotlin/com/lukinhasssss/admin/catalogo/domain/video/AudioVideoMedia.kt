@@ -2,7 +2,9 @@ package com.lukinhasssss.admin.catalogo.domain.video
 
 import com.lukinhasssss.admin.catalogo.domain.ValueObject
 import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.COMPLETED
 import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
+import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PROCESSING
 
 data class AudioVideoMedia(
     val id: String,
@@ -23,6 +25,24 @@ data class AudioVideoMedia(
             status: MediaStatus = PENDING
         ) = AudioVideoMedia(id, checksum, name, rawLocation, encodedLocation, status)
     }
+
+    fun processing() = with(
+        id = id,
+        checksum = checksum,
+        name = name,
+        rawLocation = rawLocation,
+        encodedLocation = encodedLocation,
+        status = PROCESSING
+    )
+
+    fun completed(encodedPath: String) = with(
+        id = id,
+        checksum = checksum,
+        name = name,
+        rawLocation = rawLocation,
+        encodedLocation = encodedPath,
+        status = COMPLETED
+    )
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

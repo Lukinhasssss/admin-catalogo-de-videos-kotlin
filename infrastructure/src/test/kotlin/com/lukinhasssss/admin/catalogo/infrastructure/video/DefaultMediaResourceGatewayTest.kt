@@ -8,6 +8,7 @@ import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.BANNER
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.THUMBNAIL
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.TRAILER
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
 import com.lukinhasssss.admin.catalogo.domain.video.VideoResource
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import kotlin.test.assertNull
 
 @IntegrationTest
 class DefaultMediaResourceGatewayTest {
@@ -100,7 +102,7 @@ class DefaultMediaResourceGatewayTest {
     }
 
     @Test
-    fun givenAValidVideId_whenCallsClearResources_shouldDeleteAll() {
+    fun givenAValidVideoId_whenCallsClearResources_shouldDeleteAll() {
         // given
         val videoOne = VideoID.unique()
         val videoTwo = VideoID.unique()
@@ -130,6 +132,25 @@ class DefaultMediaResourceGatewayTest {
         val actualKeys = storageService().storage().keys
 
         assertTrue(expectedValues.size == actualKeys.size && actualKeys.containsAll(expectedValues))
+    }
+
+    @Test
+    fun givenAnInvalidType_whenCallsGetResources_shouldReturnNull() {
+        // given
+        val videoId = VideoID.unique()
+        val expectedType = THUMBNAIL
+
+        storageService().store(getExpectedLocation(videoId, VIDEO), resource(mediaType()))
+        storageService().store(getExpectedLocation(videoId, TRAILER), resource(mediaType()))
+        storageService().store(getExpectedLocation(videoId, BANNER), resource(mediaType()))
+
+        assertEquals(3, storageService().storage().size)
+
+        // when
+        val actualResult = mediaResourceGateway.getResource(videoId, expectedType)
+
+        // then
+        assertNull(actualResult)
     }
 
     private fun storageService(): InMemoryStorageService =
