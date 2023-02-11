@@ -1,3 +1,9 @@
+amqp:
+  host: ${AMQP_RABBIT_HOST:localhost}
+  port: ${AMQP_RABBIT_PORT:5672}
+  username: ${AMQP_RABBIT_USERNAME:adm_videos}
+  password: ${AMQP_RABBIT_PASSWORD:123456}
+
 postgres:
   username: ${DB_POSTGRES_USERNAME:username}
   password: ${DB_POSTGRES_PASSWORD:password}
