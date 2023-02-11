@@ -125,12 +125,10 @@
 
     <root level="warn">
         <appender-ref ref="json-stdout-warning"/>
-<!--        <appender-ref ref="log-in-file"/>-->
     </root>
 
     <logger level="info" name="com.lukinhasssss" additivity="false">
         <appender-ref ref="json-stdout-info"/>
-<!--        <appender-ref ref="log-in-file"/>-->
     </logger>
 </configuration>
 
