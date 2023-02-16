@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.video
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.event.DomainEvent
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
@@ -34,8 +35,10 @@ data class Video(
 
     val categories: Set<CategoryID>,
     val genres: Set<GenreID>,
-    val castMembers: Set<CastMemberID>
-) : AggregateRoot<VideoID>(id) {
+    val castMembers: Set<CastMemberID>,
+
+    override val domainEvents: MutableList<DomainEvent> = mutableListOf()
+) : AggregateRoot<VideoID>(id, domainEvents) {
 
     override fun validate(handler: ValidationHandler) =
         VideoValidator(aVideo = this, validationHandler = handler).validate()
