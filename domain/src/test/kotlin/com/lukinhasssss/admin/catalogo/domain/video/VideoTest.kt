@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.video
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.ThrowsValidationHandler
 import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 import org.junit.jupiter.api.Test
@@ -65,6 +66,7 @@ class VideoTest {
             assertNull(thumbnailHalf)
             assertNull(trailer)
             assertNull(video)
+            assertTrue(domainEvents.isEmpty())
         }
 
         assertDoesNotThrow { actualVideo.validate(ThrowsValidationHandler()) }
@@ -83,6 +85,8 @@ class VideoTest {
         val expectedCategories = setOf(CategoryID.unique())
         val expectedGenres = setOf(GenreID.unique())
         val expectedMembers = setOf(CastMemberID.unique())
+        val expectedEvent = VideoMediaCreated("ID", "file")
+        val expectedEventsCount = 1
 
         val aVideo = Video.newVideo(
             aTitle = "Any Title",
@@ -96,6 +100,8 @@ class VideoTest {
             genres = emptySet(),
             members = emptySet()
         )
+
+        aVideo.registerEvent(expectedEvent)
 
         // when
         val actualVideo = aVideo.update(
@@ -132,6 +138,8 @@ class VideoTest {
             assertNull(thumbnailHalf)
             assertNull(trailer)
             assertNull(video)
+            assertEquals(expectedEventsCount, domainEvents.size)
+            assertEquals(expectedEvent, domainEvents[0])
         }
 
         assertDoesNotThrow { actualVideo.validate(ThrowsValidationHandler()) }
@@ -449,5 +457,40 @@ class VideoTest {
         }
 
         assertDoesNotThrow { actualVideo.validate(ThrowsValidationHandler()) }
+    }
+
+    @Test
+    fun givenValidVideo_whenCallsWith_shouldCreateWithoutEvents() {
+        // given
+        val expectedTitle = "Video Title"
+        val expectedDescription = "Video Description"
+        val expectedLaunchedAt = Year.of(2022)
+        val expectedDuration = 120.10
+        val expectedOpened = false
+        val expectedPublished = false
+        val expectedRating = Rating.L
+        val expectedCategories = setOf(CategoryID.unique())
+        val expectedGenres = setOf(GenreID.unique())
+        val expectedMembers = setOf(CastMemberID.unique())
+
+        // when
+        val aVideo = Video.with(
+            anId = VideoID.unique(),
+            aTitle = expectedTitle,
+            aDescription = expectedDescription,
+            aLaunchYear = expectedLaunchedAt,
+            aDuration = expectedDuration,
+            wasOpened = expectedOpened,
+            wasPublished = expectedPublished,
+            aRating = expectedRating,
+            categories = expectedCategories,
+            genres = expectedGenres,
+            members = expectedMembers,
+            aCreationDate = InstantUtils.now(),
+            anUpdateDate = InstantUtils.now()
+        )
+
+        // then
+        assertTrue(aVideo.domainEvents.isEmpty())
     }
 }

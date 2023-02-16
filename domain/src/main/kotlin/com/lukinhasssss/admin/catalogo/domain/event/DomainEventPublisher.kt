@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.event
 
 @FunctionalInterface
-interface DomainEventPublisher<T : DomainEvent> {
-    fun publishEvent(event: T)
+interface DomainEventPublisher {
+    fun publishEvent(event: DomainEvent)
 }

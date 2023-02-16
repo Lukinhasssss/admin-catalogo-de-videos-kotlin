@@ -141,7 +141,8 @@ data class Video(
         updatedAt = InstantUtils.now(),
         categories = categories,
         genres = genres,
-        castMembers = members
+        castMembers = members,
+        domainEvents = domainEvents
     )
 
     fun setVideo(aVideoMedia: AudioVideoMedia) = Video(
@@ -162,7 +163,8 @@ data class Video(
         trailer = trailer,
         banner = banner,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setTrailer(aTrailerMedia: AudioVideoMedia) = Video(
@@ -183,7 +185,8 @@ data class Video(
         trailer = aTrailerMedia,
         banner = banner,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setBanner(aBannerMedia: ImageMedia) = Video(
@@ -204,7 +207,8 @@ data class Video(
         trailer = trailer,
         banner = aBannerMedia,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setThumbnail(aThumbMedia: ImageMedia) = Video(
@@ -225,7 +229,8 @@ data class Video(
         trailer = trailer,
         banner = banner,
         thumbnail = aThumbMedia,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setThumbnailHalf(aThumbMedia: ImageMedia) = Video(

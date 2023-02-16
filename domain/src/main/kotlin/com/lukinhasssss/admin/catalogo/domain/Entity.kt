@@ -11,10 +11,12 @@ abstract class Entity<ID : Identifier>(
 
     abstract fun validate(handler: ValidationHandler)
 
-    fun publishDomainEvents(publisher: DomainEventPublisher<DomainEvent>) {
+    fun publishDomainEvents(publisher: DomainEventPublisher) {
         domainEvents.forEach { publisher.publishEvent(it) }
         domainEvents.clear()
     }
 
-    fun registerEvent(event: DomainEvent) = domainEvents.add(event)
+    fun registerEvent(event: DomainEvent) {
+        domainEvents.add(event)
+    }
 }

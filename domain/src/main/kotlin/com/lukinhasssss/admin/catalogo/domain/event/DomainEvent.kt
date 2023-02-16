@@ -4,5 +4,5 @@ import java.io.Serializable
 import java.time.Instant
 
 interface DomainEvent : Serializable {
-    fun occurredOn(): Instant
+    val occurredOn: Instant
 }

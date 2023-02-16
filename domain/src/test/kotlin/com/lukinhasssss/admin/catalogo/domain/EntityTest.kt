@@ -39,7 +39,7 @@ class EntityTest {
         assertEquals(2, anEntity.domainEvents.size)
 
         // when
-        anEntity.publishDomainEvents(object : DomainEventPublisher<DomainEvent> {
+        anEntity.publishDomainEvents(object : DomainEventPublisher {
             override fun publishEvent(event: DomainEvent) {
                 counter.incrementAndGet()
             }
@@ -50,9 +50,9 @@ class EntityTest {
         assertEquals(expectedSentEvents, counter.get())
     }
 
-    class DummyEvent : DomainEvent {
-        override fun occurredOn(): Instant = InstantUtils.now()
-    }
+    class DummyEvent(
+        override val occurredOn: Instant = InstantUtils.now()
+    ) : DomainEvent
 
     class DummyID(
         override val value: String = IdUtils.uuid()
