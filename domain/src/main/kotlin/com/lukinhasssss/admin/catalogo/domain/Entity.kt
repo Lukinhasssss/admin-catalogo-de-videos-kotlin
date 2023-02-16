@@ -11,7 +11,7 @@ abstract class Entity<ID : Identifier>(
 
     abstract fun validate(handler: ValidationHandler)
 
-    fun publishDomainEvents(publisher: DomainEventPublisher) {
+    fun publishDomainEvents(publisher: DomainEventPublisher<DomainEvent>) {
         domainEvents.forEach { publisher.publishEvent(it) }
         domainEvents.clear()
     }
