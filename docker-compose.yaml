@@ -24,6 +24,20 @@ services:
       FLYWAY_USER: "lukinhasssss"
       FLYWAY_PASSWORD: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
 
+  rabbitmq-admin-do-catalogo:
+    container_name: rabbitmq-admin-do-catalogo
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=adm_videos
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - adm_videos_network
+
   nginx-admin-do-catalogo:
     container_name: nginx-admin-do-catalogo
     build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo

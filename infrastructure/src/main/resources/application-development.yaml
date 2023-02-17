@@ -1,3 +1,11 @@
+amqp:
+  admin:
+    auto-create: true
+  host: localhost
+  port: 5672
+  username: adm_videos
+  password: 123456
+
 postgres:
   username: ${DB_POSTGRES_USERNAME:username}
   password: ${DB_POSTGRES_PASSWORD:password}

@@ -1,6 +1,8 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.video
 
 import com.lukinhasssss.admin.catalogo.domain.Identifier
+import com.lukinhasssss.admin.catalogo.domain.event.DomainEvent
+import com.lukinhasssss.admin.catalogo.domain.event.DomainEventPublisher
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapToNullIfEmpty
 import com.lukinhasssss.admin.catalogo.domain.video.Video
@@ -8,6 +10,8 @@ import com.lukinhasssss.admin.catalogo.domain.video.VideoGateway
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.domain.video.VideoPreview
 import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
+import com.lukinhasssss.admin.catalogo.infrastructure.configuration.annotations.VideoCreatedQueue
+import com.lukinhasssss.admin.catalogo.infrastructure.services.EventService
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.SqlUtils
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.log.Logger
 import com.lukinhasssss.admin.catalogo.infrastructure.video.persistence.VideoJpaEntity
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 class DefaultVideoGateway(
+    @VideoCreatedQueue private val eventService: EventService,
     private val videoRepository: VideoRepository
 ) : VideoGateway {
 
@@ -77,6 +82,16 @@ class DefaultVideoGateway(
         }
     }
 
-    private fun save(aVideo: Video): Video =
-        videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
+    private fun save(aVideo: Video): Video {
+        val result = videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
+
+        // TODO: Ver se tem como melhorar esse codigo
+        aVideo.publishDomainEvents(object : DomainEventPublisher {
+            override fun publishEvent(event: DomainEvent) {
+                eventService.send(event)
+            }
+        })
+
+        return result
+    }
 }

@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.domain.video
 import com.lukinhasssss.admin.catalogo.domain.AggregateRoot
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.event.DomainEvent
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.utils.InstantUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
@@ -34,8 +35,10 @@ data class Video(
 
     val categories: Set<CategoryID>,
     val genres: Set<GenreID>,
-    val castMembers: Set<CastMemberID>
-) : AggregateRoot<VideoID>(id) {
+    val castMembers: Set<CastMemberID>,
+
+    override val domainEvents: MutableList<DomainEvent> = mutableListOf()
+) : AggregateRoot<VideoID>(id, domainEvents) {
 
     override fun validate(handler: ValidationHandler) =
         VideoValidator(aVideo = this, validationHandler = handler).validate()
@@ -138,7 +141,8 @@ data class Video(
         updatedAt = InstantUtils.now(),
         categories = categories,
         genres = genres,
-        castMembers = members
+        castMembers = members,
+        domainEvents = domainEvents
     )
 
     fun setVideo(aVideoMedia: AudioVideoMedia) = Video(
@@ -159,7 +163,8 @@ data class Video(
         trailer = trailer,
         banner = banner,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setTrailer(aTrailerMedia: AudioVideoMedia) = Video(
@@ -180,7 +185,8 @@ data class Video(
         trailer = aTrailerMedia,
         banner = banner,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setBanner(aBannerMedia: ImageMedia) = Video(
@@ -201,7 +207,8 @@ data class Video(
         trailer = trailer,
         banner = aBannerMedia,
         thumbnail = thumbnail,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setThumbnail(aThumbMedia: ImageMedia) = Video(
@@ -222,7 +229,8 @@ data class Video(
         trailer = trailer,
         banner = banner,
         thumbnail = aThumbMedia,
-        thumbnailHalf = thumbnailHalf
+        thumbnailHalf = thumbnailHalf,
+        domainEvents = domainEvents
     )
 
     fun setThumbnailHalf(aThumbMedia: ImageMedia) = Video(
