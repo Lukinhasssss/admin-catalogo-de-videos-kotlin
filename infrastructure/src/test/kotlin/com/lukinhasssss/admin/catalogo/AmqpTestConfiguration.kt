@@ -2,7 +2,7 @@ package com.lukinhasssss.admin.catalogo
 
 import com.rabbitmq.client.Channel
 import io.mockk.every
-import io.mockk.mockk
+import io.mockk.spyk
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.connection.Connection
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
@@ -24,9 +24,9 @@ class AmqpTestConfiguration {
 
     @Bean
     fun connectionFactory(): ConnectionFactory {
-        val factory = mockk<ConnectionFactory>()
-        val connection = mockk<Connection >()
-        val channel = mockk<Channel>()
+        val factory = spyk<ConnectionFactory>()
+        val connection = spyk<Connection >()
+        val channel = spyk<Channel>()
 
         every { factory.createConnection() } returns connection
         every { connection.createChannel(any()) } returns channel
