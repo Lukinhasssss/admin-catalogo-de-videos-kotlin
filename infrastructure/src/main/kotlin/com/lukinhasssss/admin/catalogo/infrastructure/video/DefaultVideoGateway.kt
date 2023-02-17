@@ -85,6 +85,7 @@ class DefaultVideoGateway(
     private fun save(aVideo: Video): Video {
         val result = videoRepository.save(VideoJpaEntity.from(aVideo)).toAggregate()
 
+        // TODO: Ver se tem como melhorar esse codigo
         aVideo.publishDomainEvents(object : DomainEventPublisher {
             override fun publishEvent(event: DomainEvent) {
                 eventService.send(event)
