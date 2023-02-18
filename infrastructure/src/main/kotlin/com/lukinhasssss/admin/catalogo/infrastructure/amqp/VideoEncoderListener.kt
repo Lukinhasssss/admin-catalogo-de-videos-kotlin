@@ -21,7 +21,7 @@ class VideoEncoderListener(
         const val LISTENER_ID = "videoEncodedListener"
     }
 
-    @RabbitListener(id = LISTENER_ID, queues = ["\${amqp.queue.video-encoded.queue}"])
+    @RabbitListener(id = LISTENER_ID, queues = ["\${amqp.queues.video-encoded.queue}"])
     fun onVideoEncodedMessage(@Payload message: String) {
         when (val aResult = Json.readValue(message, VideoEncoderResult::class.java)) {
             is VideoEncoderCompleted -> {
