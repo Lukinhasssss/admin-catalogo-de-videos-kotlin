@@ -26,7 +26,7 @@ class VideoEncoderListener(
         when (val aResult = Json.readValue(message, VideoEncoderResult::class.java)) {
             is VideoEncoderCompleted -> {
                 Logger.info(
-                    message = "[message:video.listener.income] [status:completed] [payload:$message]",
+                    message = "Video successfully encoded",
                     payload = message
                 )
 
@@ -42,7 +42,7 @@ class VideoEncoderListener(
             }
 
             is VideoEncoderError -> Logger.error(
-                message = "[message:video.listener.income] [status:error] [payload:$message]",
+                message = "Error when encoding video",
                 payload = message
             )
         }
