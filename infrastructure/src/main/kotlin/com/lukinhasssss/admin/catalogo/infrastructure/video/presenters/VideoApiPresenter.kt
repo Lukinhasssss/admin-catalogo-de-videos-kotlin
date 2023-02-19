@@ -1,10 +1,12 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.video.presenters
 
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
+import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoOutput
 import com.lukinhasssss.admin.catalogo.domain.video.AudioVideoMedia
 import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.AudioVideoMediaResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.ImageMediaResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
 
 fun VideoOutput.toVideoResponse() =
@@ -46,3 +48,6 @@ private fun ImageMedia.toImageMediaResponse() =
         name = name,
         location = location
     )
+
+fun UpdateVideoOutput.toUpdateVideoResponse() =
+    UpdateVideoResponse(id = id)

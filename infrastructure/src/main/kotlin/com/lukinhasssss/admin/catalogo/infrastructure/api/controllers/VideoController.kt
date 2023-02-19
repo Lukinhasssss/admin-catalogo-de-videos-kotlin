@@ -3,12 +3,16 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoCommand
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoCommand
+import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCase
 import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 import com.lukinhasssss.admin.catalogo.infrastructure.api.VideoAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.HashingUtils
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.log.Logger
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toUpdateVideoResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +22,8 @@ import java.net.URI
 @RestController
 class VideoController(
     private val createVideoUseCase: CreateVideoUseCase,
-    private val getVideoByIdUseCase: GetVideoByIdUseCase
+    private val getVideoByIdUseCase: GetVideoByIdUseCase,
+    private val updateVideoUseCase: UpdateVideoUseCase
 ) : VideoAPI {
 
     override fun createFull(
@@ -97,6 +102,34 @@ class VideoController(
 
         return getVideoByIdUseCase.execute(id).toVideoResponse().also {
             Logger.info(message = "Finalizado processo de busca de video!", payload = it)
+        }
+    }
+
+    override fun update(id: String, payload: UpdateVideoRequest): ResponseEntity<Any> {
+        with(payload) {
+            Logger.info(message = "Iniciando processo de atualização de video...", payload = this)
+
+            val aCommand = UpdateVideoCommand.with(
+                anId = id,
+                aTitle = title,
+                aDescription = description,
+                aLaunchYear = launchYear,
+                aDuration = duration,
+                wasOpened = opened,
+                wasPublished = published,
+                aRating = rating,
+                categories = categories,
+                genres = genres,
+                members = members
+            )
+
+            val output = updateVideoUseCase.execute(aCommand)
+
+            Logger.info(message = "Finalizado processo de atualização de video!")
+            return ResponseEntity
+                .ok()
+                .location(URI.create("/videos/${output.id}"))
+                .body(output.toUpdateVideoResponse())
         }
     }
 
