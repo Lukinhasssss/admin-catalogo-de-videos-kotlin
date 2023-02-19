@@ -5,6 +5,7 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCa
 import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 import com.lukinhasssss.admin.catalogo.infrastructure.api.VideoAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.HashingUtils
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -31,7 +32,7 @@ class VideoController(
         bannerFile: MultipartFile?,
         thumbFile: MultipartFile?,
         thumbHalfFile: MultipartFile?
-    ): ResponseEntity<*> {
+    ): ResponseEntity<Any> {
         val aCommand = CreateVideoCommand.with(
             aTitle = aTitle,
             aDescription = aDescription,
@@ -56,6 +57,28 @@ class VideoController(
             URI.create("/videos/${output.id}")
         ).body(output)
     }
+
+    override fun createPartial(payload: CreateVideoRequest): ResponseEntity<Any> =
+        with(payload) {
+            val aCommand = CreateVideoCommand.with(
+                aTitle = title,
+                aDescription = description,
+                aLaunchYear = launchYear,
+                aDuration = duration,
+                wasOpened = opened,
+                wasPublished = published,
+                aRating = rating,
+                categories = categories,
+                genres = genres,
+                members = members
+            )
+
+            val output = createVideoUseCase.execute(aCommand)
+
+            return ResponseEntity.created(
+                URI.create("/videos/${output.id}")
+            ).body(output)
+        }
 
     private fun resourceOf(multipartFile: MultipartFile?) =
         if (multipartFile != null)
