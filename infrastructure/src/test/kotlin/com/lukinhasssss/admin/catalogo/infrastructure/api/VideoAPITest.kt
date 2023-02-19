@@ -6,19 +6,26 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoOutpu
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
+import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoOutput
+import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCase
 import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
+import com.lukinhasssss.admin.catalogo.domain.validation.Error
+import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -27,6 +34,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.time.Year
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -45,6 +53,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var getVideoByIdUseCase: GetVideoByIdUseCase
+
+    @MockkBean
+    private lateinit var updateVideoUseCase: UpdateVideoUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateFull_shouldReturnAnId() {
@@ -314,5 +325,143 @@ class VideoAPITest {
             jsonPath("$.genres_id", equalTo(expectedGenres.toList()))
             jsonPath("$.cast_members_id", equalTo(expectedMembers.toList()))
         }
+    }
+
+    @Test
+    fun givenAValidCommand_whenCallsUpdateVideo_shouldReturnVideoId() {
+        // given
+        val anime = Fixture.Categories.animes()
+        val shonen = Fixture.Genres.shonen()
+        val luffy = Fixture.CastMembers.luffy()
+
+        val expectedId = VideoID.unique()
+        val expectedTitle = Fixture.title()
+        val expectedDescription = Fixture.Videos.description()
+        val expectedLaunchYear = Year.of(Fixture.year())
+        val expectedDuration = Fixture.duration()
+        val expectedOpened = Fixture.bool()
+        val expectedPublished = Fixture.bool()
+        val expectedRating = Fixture.Videos.rating()
+        val expectedCategories = setOf(anime.id.value)
+        val expectedGenres = setOf(shonen.id.value)
+        val expectedMembers = setOf(luffy.id.value)
+
+        val aRequest = UpdateVideoRequest(
+            title = expectedTitle,
+            description = expectedDescription,
+            launchYear = expectedLaunchYear.value,
+            duration = expectedDuration,
+            opened = expectedOpened,
+            published = expectedPublished,
+            rating = expectedRating.description,
+            categories = expectedCategories,
+            genres = expectedGenres,
+            members = expectedMembers
+        )
+
+        every { updateVideoUseCase.execute(any()) } returns UpdateVideoOutput(expectedId.value)
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/videos/${expectedId.value}") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(aRequest)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(name = "Location", value = "/videos/${expectedId.value}")
+                string(name = "Content-Type", value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.id", equalTo(expectedId.value))
+        }
+
+        verify {
+            updateVideoUseCase.execute(
+                withArg {
+                    assertEquals(expectedTitle, it.title)
+                    assertEquals(expectedDescription, it.description)
+                    assertEquals(expectedLaunchYear.value, it.launchedAt)
+                    assertEquals(expectedDuration, it.duration)
+                    assertEquals(expectedOpened, it.opened)
+                    assertEquals(expectedPublished, it.published)
+                    assertEquals(expectedRating.description, it.rating)
+                    assertEquals(expectedCategories, it.categories)
+                    assertEquals(expectedGenres, it.genres)
+                    assertEquals(expectedMembers, it.members)
+                    assertNull(it.video)
+                    assertNull(it.trailer)
+                    assertNull(it.banner)
+                    assertNull(it.thumbnail)
+                    assertNull(it.thumbnailHalf)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidCommand_whenCallsUpdateVideo_shouldReturnNotification() {
+        // given
+        val anime = Fixture.Categories.animes()
+        val shonen = Fixture.Genres.shonen()
+        val luffy = Fixture.CastMembers.luffy()
+
+        val expectedId = VideoID.unique()
+        val expectedTitle = ""
+        val expectedDescription = Fixture.Videos.description()
+        val expectedLaunchYear = Year.of(Fixture.year())
+        val expectedDuration = Fixture.duration()
+        val expectedOpened = Fixture.bool()
+        val expectedPublished = Fixture.bool()
+        val expectedRating = Fixture.Videos.rating()
+        val expectedCategories = setOf(anime.id.value)
+        val expectedGenres = setOf(shonen.id.value)
+        val expectedMembers = setOf(luffy.id.value)
+
+        val expectedErrorCount = 1
+        val expectedErrorMessage = "'title' should not be empty"
+
+        val aRequest = UpdateVideoRequest(
+            title = expectedTitle,
+            description = expectedDescription,
+            launchYear = expectedLaunchYear.value,
+            duration = expectedDuration,
+            opened = expectedOpened,
+            published = expectedPublished,
+            rating = expectedRating.description,
+            categories = expectedCategories,
+            genres = expectedGenres,
+            members = expectedMembers
+        )
+
+        every {
+            updateVideoUseCase.execute(any())
+        } throws NotificationException(expectedErrorMessage, Notification.create(Error(expectedErrorMessage)))
+
+        // when
+        val aResponse = mvc.put(urlTemplate = "/videos/${expectedId.value}") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(aRequest)
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isUnprocessableEntity() }
+
+            header {
+                string(name = "Content-Type", value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
+            jsonPath("$.errors", hasSize<Int>(expectedErrorCount))
+            jsonPath("$.errors[0].message", equalTo(expectedErrorMessage))
+        }
+
+        verify { updateVideoUseCase.execute(any()) }
     }
 }
