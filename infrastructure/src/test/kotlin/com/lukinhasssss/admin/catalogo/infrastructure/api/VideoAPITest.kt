@@ -4,8 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
+import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
 import com.lukinhasssss.admin.catalogo.domain.Fixture
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
+import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -16,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.test.web.servlet.post
 import java.time.Year
@@ -33,6 +42,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var createVideoUseCase: CreateVideoUseCase
+
+    @MockkBean
+    private lateinit var getVideoByIdUseCase: GetVideoByIdUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateFull_shouldReturnAnId() {
@@ -201,6 +213,106 @@ class VideoAPITest {
                     assertNull(it.thumbnailHalf)
                 }
             )
+        }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsGetById_shouldReturnVideo() {
+        // given
+        val anime = Fixture.Categories.animes()
+        val shonen = Fixture.Genres.shonen()
+        val luffy = Fixture.CastMembers.luffy()
+
+        val expectedTitle = Fixture.title()
+        val expectedDescription = Fixture.Videos.description()
+        val expectedLaunchYear = Year.of(Fixture.year())
+        val expectedDuration = Fixture.duration()
+        val expectedOpened = Fixture.bool()
+        val expectedPublished = Fixture.bool()
+        val expectedRating = Fixture.Videos.rating()
+        val expectedCategories = setOf(anime.id.value)
+        val expectedGenres = setOf(shonen.id.value)
+        val expectedMembers = setOf(luffy.id.value)
+
+        val expectedVideo = Fixture.Videos.audioVideo(VideoMediaType.VIDEO)
+        val expectedTrailer = Fixture.Videos.audioVideo(VideoMediaType.TRAILER)
+        val expectedBanner = Fixture.Videos.imageMedia(VideoMediaType.BANNER)
+        val expectedThumb = Fixture.Videos.imageMedia(VideoMediaType.THUMBNAIL)
+        val expectedThumbHalf = Fixture.Videos.imageMedia(VideoMediaType.THUMBNAIL_HALF)
+
+        val aVideo = Video.newVideo(
+            aTitle = expectedTitle,
+            aDescription = expectedDescription,
+            aLaunchYear = expectedLaunchYear,
+            aDuration = expectedDuration,
+            wasOpened = expectedOpened,
+            wasPublished = expectedPublished,
+            aRating = expectedRating,
+            categories = expectedCategories.mapTo { CategoryID.from(it) },
+            genres = expectedGenres.mapTo { GenreID.from(it) },
+            members = expectedMembers.mapTo { CastMemberID.from(it) }
+        )
+            .updateVideoMedia(expectedVideo)
+            .updateTrailerMedia(expectedTrailer)
+            .updateBannerMedia(expectedBanner)
+            .updateThumbnailMedia(expectedThumb)
+            .updateThumbnailHalfMedia(expectedThumbHalf)
+
+        val expectedId = aVideo.id.value
+
+        every { getVideoByIdUseCase.execute(any()) } returns VideoOutput.from(aVideo)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/videos/$expectedId") {
+            accept = MediaType.APPLICATION_JSON
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(name = "Content-Type", value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.id", equalTo(expectedId))
+            jsonPath("$.id", equalTo(expectedId))
+            jsonPath("$.title", equalTo(expectedTitle))
+            jsonPath("$.description", equalTo(expectedDescription))
+            jsonPath("$.year_launched", equalTo(expectedLaunchYear.value))
+            jsonPath("$.duration", equalTo(expectedDuration))
+            jsonPath("$.opened", equalTo(expectedOpened))
+            jsonPath("$.published", equalTo(expectedPublished))
+            jsonPath("$.rating", equalTo(expectedRating.description))
+            jsonPath("$.created_at", equalTo(aVideo.createdAt.toString()))
+            jsonPath("$.updated_at", equalTo(aVideo.updatedAt.toString()))
+            jsonPath("$.video.id", equalTo(expectedVideo.id))
+            jsonPath("$.video.name", equalTo(expectedVideo.name))
+            jsonPath("$.video.checksum", equalTo(expectedVideo.checksum))
+            jsonPath("$.video.location", equalTo(expectedVideo.rawLocation))
+            // jsonPath("$.video.encoded_location", equalTo(expectedVideo.encodedLocation))
+            jsonPath("$.video.status", equalTo(expectedVideo.status.name))
+            jsonPath("$.trailer.id", equalTo(expectedTrailer.id))
+            jsonPath("$.trailer.name", equalTo(expectedTrailer.name))
+            jsonPath("$.trailer.checksum", equalTo(expectedTrailer.checksum))
+            jsonPath("$.trailer.location", equalTo(expectedTrailer.rawLocation))
+            // jsonPath("$.trailer.encoded_location", equalTo(expectedTrailer.encodedLocation))
+            jsonPath("$.trailer.status", equalTo(expectedTrailer.status.name))
+            jsonPath("$.banner.id", equalTo(expectedBanner.id))
+            jsonPath("$.banner.name", equalTo(expectedBanner.name))
+            jsonPath("$.banner.location", equalTo(expectedBanner.location))
+            jsonPath("$.banner.checksum", equalTo(expectedBanner.checksum))
+            jsonPath("$.thumbnail.id", equalTo(expectedThumb.id))
+            jsonPath("$.thumbnail.name", equalTo(expectedThumb.name))
+            jsonPath("$.thumbnail.location", equalTo(expectedThumb.location))
+            jsonPath("$.thumbnail.checksum", equalTo(expectedThumb.checksum))
+            jsonPath("$.thumbnail_half.id", equalTo(expectedThumbHalf.id))
+            jsonPath("$.thumbnail_half.name", equalTo(expectedThumbHalf.name))
+            jsonPath("$.thumbnail_half.location", equalTo(expectedThumbHalf.location))
+            jsonPath("$.thumbnail_half.checksum", equalTo(expectedThumbHalf.checksum))
+            jsonPath("$.categories_id", equalTo(expectedCategories.toList()))
+            jsonPath("$.genres_id", equalTo(expectedGenres.toList()))
+            jsonPath("$.cast_members_id", equalTo(expectedMembers.toList()))
         }
     }
 }
