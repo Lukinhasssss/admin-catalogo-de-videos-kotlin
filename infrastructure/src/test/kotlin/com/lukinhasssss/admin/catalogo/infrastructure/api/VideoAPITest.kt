@@ -7,6 +7,8 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCa
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
+import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
+import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.VideoListOutput
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCase
 import com.lukinhasssss.admin.catalogo.domain.Fixture
@@ -14,12 +16,14 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
+import com.lukinhasssss.admin.catalogo.domain.video.VideoPreview
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
 import com.ninjasquad.springmockk.MockkBean
@@ -29,6 +33,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -40,8 +45,8 @@ import org.springframework.test.web.servlet.multipart
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.Year
-import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @ControllerTest(controllers = [VideoAPI::class])
 class VideoAPITest {
@@ -60,6 +65,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var getVideoByIdUseCase: GetVideoByIdUseCase
+
+    @MockkBean
+    private lateinit var listVideosUseCase: ListVideosUseCase
 
     @MockkBean
     private lateinit var updateVideoUseCase: UpdateVideoUseCase
@@ -486,5 +494,120 @@ class VideoAPITest {
         aResponse.andExpect { status { isNoContent() } }
 
         verify { deleteVideoUseCase.execute(expectedId.value) }
+    }
+
+    @Test
+    fun givenValidParams_whenCallsListVideos_shouldReturnPagination() {
+        // given
+        val aVideo = VideoPreview(Fixture.video())
+
+        val expectedPage = 50
+        val expectedPerPage = 50
+        val expectedTerms = "Algo"
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedCastMembers = "cast1"
+        val expectedGenres = "gen1"
+        val expectedCategories = "cat1"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(VideoListOutput.from(aVideo))
+
+        every { listVideosUseCase.execute(any()) } returns
+            Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/videos") {
+            param("page", expectedPage.toString())
+            param("perPage", expectedPerPage.toString())
+            param("sort", expectedSort)
+            param("dir", expectedDirection)
+            param("search", expectedTerms)
+            param("cast_members_ids", expectedCastMembers)
+            param("categories_ids", expectedCategories)
+            param("genres_ids", expectedGenres)
+            accept(MediaType.APPLICATION_JSON)
+        }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+            jsonPath("$.current_page", equalTo(expectedPage))
+            jsonPath("$.per_page", equalTo(expectedPerPage))
+            jsonPath("$.total", equalTo(expectedTotal))
+            jsonPath("$.items.size()", equalTo(expectedItemsCount))
+            jsonPath("$.items[0].id", equalTo(aVideo.id))
+            jsonPath("$.items[0].title", equalTo(aVideo.title))
+            jsonPath("$.items[0].description", equalTo(aVideo.description))
+            jsonPath("$.items[0].created_at", equalTo(aVideo.createdAt.toString()))
+            jsonPath("$.items[0].updated_at", equalTo(aVideo.updatedAt.toString()))
+        }
+
+        verify {
+            listVideosUseCase.execute(
+                withArg {
+                    assertEquals(expectedPage, it.page)
+                    assertEquals(expectedPerPage, it.perPage)
+                    assertEquals(expectedDirection, it.direction)
+                    assertEquals(expectedSort, it.sort)
+                    assertEquals(expectedTerms, it.terms)
+                    assertEquals(setOf(CastMemberID.from(expectedCastMembers)), it.castMembers)
+                    assertEquals(setOf(CategoryID.from(expectedCategories)), it.categories)
+                    assertEquals(setOf(GenreID.from(expectedGenres)), it.genres)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenEmptyParams_whenCallsListVideosWithDefaultValues_shouldReturnPagination() {
+        // given
+        val aVideo = VideoPreview(Fixture.video())
+
+        val expectedPage = 0
+        val expectedPerPage = 25
+        val expectedTerms = ""
+        val expectedSort = "title"
+        val expectedDirection = "asc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(VideoListOutput.from(aVideo))
+
+        every { listVideosUseCase.execute(any()) } returns
+            Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/videos") {
+            accept(MediaType.APPLICATION_JSON)
+        }
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+            jsonPath("$.current_page", equalTo(expectedPage))
+            jsonPath("$.per_page", equalTo(expectedPerPage))
+            jsonPath("$.total", equalTo(expectedTotal))
+            jsonPath("$.items.size()", equalTo(expectedItemsCount))
+            jsonPath("$.items[0].id", equalTo(aVideo.id))
+            jsonPath("$.items[0].title", equalTo(aVideo.title))
+            jsonPath("$.items[0].description", equalTo(aVideo.description))
+            jsonPath("$.items[0].created_at", equalTo(aVideo.createdAt.toString()))
+            jsonPath("$.items[0].updated_at", equalTo(aVideo.updatedAt.toString()))
+        }
+
+        verify {
+            listVideosUseCase.execute(
+                withArg {
+                    assertEquals(expectedPage, it.page)
+                    assertEquals(expectedPerPage, it.perPage)
+                    assertEquals(expectedDirection, it.direction)
+                    assertEquals(expectedSort, it.sort)
+                    assertEquals(expectedTerms, it.terms)
+                    assertTrue(it.castMembers.isEmpty())
+                    assertTrue(it.categories.isEmpty())
+                    assertTrue(it.genres.isEmpty())
+                }
+            )
+        }
     }
 }
