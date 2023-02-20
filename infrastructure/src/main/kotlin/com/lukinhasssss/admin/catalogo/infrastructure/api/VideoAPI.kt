@@ -1,7 +1,9 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -74,6 +76,26 @@ interface VideoAPI {
         ]
     )
     fun getById(@PathVariable(name = "id") id: String): VideoResponse
+
+    @GetMapping(produces = [APPLICATION_JSON_VALUE])
+    @Operation(summary = "List all videos paginated")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Videos listed"),
+            ApiResponse(responseCode = "422", description = "A query param was invalid"),
+            ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        ]
+    )
+    fun list(
+        @RequestParam(name = "search", required = false, defaultValue = "") search: String,
+        @RequestParam(name = "page", required = false, defaultValue = "0") page: Int,
+        @RequestParam(name = "perPage", required = false, defaultValue = "25") perPage: Int,
+        @RequestParam(name = "sort", required = false, defaultValue = "title") sort: String,
+        @RequestParam(name = "dir", required = false, defaultValue = "asc") direction: String,
+        @RequestParam(name = "cast_members_ids", required = false, defaultValue = "") castMembers: Set<String>,
+        @RequestParam(name = "categories_ids", required = false, defaultValue = "") categories: Set<String>,
+        @RequestParam(name = "genres_ids", required = false, defaultValue = "") genres: Set<String>
+    ): Pagination<VideoListResponse>
 
     @PutMapping(value = ["{id}"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
     @Operation(summary = "Update a video by it's identifier")

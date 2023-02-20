@@ -4,16 +4,25 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoComma
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
+import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoCommand
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCase
+import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
+import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.resource.Resource
+import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
+import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.api.VideoAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.HashingUtils
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.log.Logger
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toUpdateVideoResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -25,6 +34,7 @@ class VideoController(
     private val createVideoUseCase: CreateVideoUseCase,
     private val deleteVideoUseCase: DeleteVideoUseCase,
     private val getVideoByIdUseCase: GetVideoByIdUseCase,
+    private val listVideosUseCase: ListVideosUseCase,
     private val updateVideoUseCase: UpdateVideoUseCase
 ) : VideoAPI {
 
@@ -104,6 +114,34 @@ class VideoController(
 
         return getVideoByIdUseCase.execute(id).toVideoResponse().also {
             Logger.info(message = "Finalizado processo de busca de video!", payload = it)
+        }
+    }
+
+    override fun list(
+        search: String,
+        page: Int,
+        perPage: Int,
+        sort: String,
+        direction: String,
+        castMembers: Set<String>,
+        categories: Set<String>,
+        genres: Set<String>
+    ): Pagination<VideoListResponse> {
+        Logger.info(message = "Iniciando processo de listagem de videos...")
+
+        val aQuery = VideoSearchQuery(
+            page = page,
+            perPage = perPage,
+            terms = search,
+            sort = sort,
+            direction = direction,
+            castMembers = castMembers.mapTo { CastMemberID.from(it) },
+            categories = categories.mapTo { CategoryID.from(it) },
+            genres = genres.mapTo { GenreID.from(it) }
+        )
+
+        return listVideosUseCase.execute(aQuery).toVideoListResponse().also {
+            Logger.info(message = "Finalizado processo de listagem de videos")
         }
     }
 
