@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
+import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoOutput
@@ -23,6 +24,8 @@ import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRe
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -31,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.test.web.servlet.post
@@ -50,6 +54,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var createVideoUseCase: CreateVideoUseCase
+
+    @MockkBean
+    private lateinit var deleteVideoUseCase: DeleteVideoUseCase
 
     @MockkBean
     private lateinit var getVideoByIdUseCase: GetVideoByIdUseCase
@@ -463,5 +470,21 @@ class VideoAPITest {
         }
 
         verify { updateVideoUseCase.execute(any()) }
+    }
+
+    @Test
+    fun givenAValidId_whenCallsDeleteById_shouldDeleteIt() {
+        // given
+        val expectedId = VideoID.unique()
+
+        every { deleteVideoUseCase.execute(any()) } just runs
+
+        // when
+        val aResponse = mvc.delete("/videos/${expectedId.value}")
+
+        // then
+        aResponse.andExpect { status { isNoContent() } }
+
+        verify { deleteVideoUseCase.execute(expectedId.value) }
     }
 }
