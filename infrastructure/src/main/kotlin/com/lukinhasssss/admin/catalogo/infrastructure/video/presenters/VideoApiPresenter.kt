@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.video.presenters
 
+import com.lukinhasssss.admin.catalogo.application.video.media.upload.UploadMediaOutput
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.VideoListOutput
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoOutput
@@ -9,10 +10,11 @@ import com.lukinhasssss.admin.catalogo.domain.video.ImageMedia
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.AudioVideoMediaResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.ImageMediaResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UploadMediaResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
 
-fun VideoOutput.toVideoResponse() =
+fun VideoOutput.toResponse() =
     VideoResponse(
         id = id,
         title = title,
@@ -24,17 +26,17 @@ fun VideoOutput.toVideoResponse() =
         rating = rating.description,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        video = video?.toAudioVideoMediaResponse(),
-        trailer = trailer?.toAudioVideoMediaResponse(),
-        banner = banner?.toImageMediaResponse(),
-        thumbnail = thumbnail?.toImageMediaResponse(),
-        thumbnailHalf = thumbnailHalf?.toImageMediaResponse(),
+        video = video?.toResponse(),
+        trailer = trailer?.toResponse(),
+        banner = banner?.toResponse(),
+        thumbnail = thumbnail?.toResponse(),
+        thumbnailHalf = thumbnailHalf?.toResponse(),
         categories = categories,
         genres = genres,
         members = castMembers
     )
 
-private fun AudioVideoMedia.toAudioVideoMediaResponse() =
+private fun AudioVideoMedia.toResponse() =
     AudioVideoMediaResponse(
         id = id,
         checksum = checksum,
@@ -44,7 +46,7 @@ private fun AudioVideoMedia.toAudioVideoMediaResponse() =
         status = status.name
     )
 
-private fun ImageMedia.toImageMediaResponse() =
+private fun ImageMedia.toResponse() =
     ImageMediaResponse(
         id = id,
         checksum = checksum,
@@ -52,10 +54,10 @@ private fun ImageMedia.toImageMediaResponse() =
         location = location
     )
 
-fun Pagination<VideoListOutput>.toVideoListResponse() =
-    map { it.toVideoListResponse() }
+fun Pagination<VideoListOutput>.toResponse() =
+    map { it.toResponse() }
 
-private fun VideoListOutput.toVideoListResponse() =
+private fun VideoListOutput.toResponse() =
     VideoListResponse(
         id = id,
         title = title,
@@ -64,5 +66,6 @@ private fun VideoListOutput.toVideoListResponse() =
         updatedAt = updatedAt
     )
 
-fun UpdateVideoOutput.toUpdateVideoResponse() =
-    UpdateVideoResponse(id = id)
+fun UpdateVideoOutput.toResponse() = UpdateVideoResponse(id = id)
+
+fun UploadMediaOutput.toResponse() = UploadMediaResponse(videoId = videoId, mediaType = mediaType)

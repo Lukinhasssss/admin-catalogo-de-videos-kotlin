@@ -5,6 +5,8 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCa
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaCommand
 import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaUseCase
+import com.lukinhasssss.admin.catalogo.application.video.media.upload.UploadMediaCommand
+import com.lukinhasssss.admin.catalogo.application.video.media.upload.UploadMediaUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoCommand
@@ -15,6 +17,8 @@ import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
 import com.lukinhasssss.admin.catalogo.domain.resource.Resource
 import com.lukinhasssss.admin.catalogo.domain.utils.CollectionUtils.mapTo
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
+import com.lukinhasssss.admin.catalogo.domain.video.VideoResource
 import com.lukinhasssss.admin.catalogo.domain.video.VideoSearchQuery
 import com.lukinhasssss.admin.catalogo.infrastructure.api.VideoAPI
 import com.lukinhasssss.admin.catalogo.infrastructure.utils.HashingUtils
@@ -23,9 +27,7 @@ import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRe
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
-import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toUpdateVideoResponse
-import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoListResponse
-import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoResponse
+import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -40,7 +42,8 @@ class VideoController(
     private val getMediaUseCase: GetMediaUseCase,
     private val getVideoByIdUseCase: GetVideoByIdUseCase,
     private val listVideosUseCase: ListVideosUseCase,
-    private val updateVideoUseCase: UpdateVideoUseCase
+    private val updateVideoUseCase: UpdateVideoUseCase,
+    private val uploadMediaUseCase: UploadMediaUseCase
 ) : VideoAPI {
 
     override fun createFull(
@@ -117,7 +120,7 @@ class VideoController(
     override fun getById(id: String): VideoResponse {
         Logger.info(message = "Iniciando processo de busca de video...")
 
-        return getVideoByIdUseCase.execute(id).toVideoResponse().also {
+        return getVideoByIdUseCase.execute(id).toResponse().also {
             Logger.info(message = "Finalizado processo de busca de video!", payload = it)
         }
     }
@@ -145,7 +148,7 @@ class VideoController(
             genres = genres.mapTo { GenreID.from(it) }
         )
 
-        return listVideosUseCase.execute(aQuery).toVideoListResponse().also {
+        return listVideosUseCase.execute(aQuery).toResponse().also {
             Logger.info(message = "Finalizado processo de listagem de videos")
         }
     }
@@ -174,12 +177,12 @@ class VideoController(
             return ResponseEntity
                 .ok()
                 .location(URI.create("/videos/${output.id}"))
-                .body(output.toUpdateVideoResponse())
+                .body(output.toResponse())
         }
     }
 
     override fun getMediaByType(id: String, type: String): ResponseEntity<ByteArray> {
-        Logger.info(message = "Iniciando processo de busca de video media...")
+        Logger.info(message = "Iniciando processo de busca de media...")
 
         val aMedia = getMediaUseCase.execute(GetMediaCommand.with(id, type))
 
@@ -189,7 +192,23 @@ class VideoController(
             .contentType(MediaType.valueOf(aMedia.contentType))
             .contentLength(aMedia.content.size.toLong())
             .body(aMedia.content)
-            .also { Logger.info(message = "Finalizado processo de busca de video media!", payload = it) }
+            .also { Logger.info(message = "Finalizado processo de busca de media!", payload = it) }
+    }
+
+    override fun uploadMediaByType(id: String, type: String, media: MultipartFile): ResponseEntity<Any> {
+        Logger.info(message = "Iniciando processo de upload de media...")
+
+        val aCommand = UploadMediaCommand(
+            videoId = id,
+            videoResource = VideoResource.with(resourceOf(media)!!, VideoMediaType.of(type))
+        )
+
+        val responseBody = uploadMediaUseCase.execute(aCommand).toResponse()
+
+        Logger.info(message = "Finalizado processo de upload de media!", payload = responseBody)
+        return ResponseEntity
+            .created(URI.create("/videos/$id/medias/$type"))
+            .body(responseBody)
     }
 
     override fun deleteById(id: String) {

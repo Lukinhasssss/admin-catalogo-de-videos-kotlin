@@ -126,6 +126,21 @@ interface VideoAPI {
         @PathVariable(name = "type") type: String
     ): ResponseEntity<ByteArray>
 
+    @PostMapping(value = ["{id}/medias/{type}"])
+    @Operation(summary = "Upload a video media by it's type")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "201", description = "Media created successfully"),
+            ApiResponse(responseCode = "404", description = "Video was not found"),
+            ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        ]
+    )
+    fun uploadMediaByType(
+        @PathVariable(name = "id") id: String,
+        @PathVariable(name = "type") type: String,
+        @RequestParam(name = "media_file") media: MultipartFile
+    ): ResponseEntity<Any>
+
     @DeleteMapping(value = ["{id}"])
     @ResponseStatus(value = NO_CONTENT)
     @Operation(summary = "Delete a video by it's identifier")
