@@ -7,6 +7,8 @@ import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCa
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaUseCase
 import com.lukinhasssss.admin.catalogo.application.video.media.get.MediaOutput
+import com.lukinhasssss.admin.catalogo.application.video.media.upload.UploadMediaOutput
+import com.lukinhasssss.admin.catalogo.application.video.media.upload.UploadMediaUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
@@ -39,7 +41,10 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
+import org.springframework.http.HttpHeaders.CONTENT_LENGTH
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpHeaders.LOCATION
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
@@ -78,6 +83,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var updateVideoUseCase: UpdateVideoUseCase
+
+    @MockkBean
+    private lateinit var uploadMediaUseCase: UploadMediaUseCase
 
     @Test
     fun givenAValidCommand_whenCallsCreateFull_shouldReturnAnId() {
@@ -638,9 +646,9 @@ class VideoAPITest {
             status { isOk() }
 
             header {
-                string(HttpHeaders.CONTENT_TYPE, expectedMedia.contentType)
-                string(HttpHeaders.CONTENT_LENGTH, expectedMedia.content.size.toString())
-                string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${expectedMedia.name}")
+                string(CONTENT_TYPE, expectedMedia.contentType)
+                string(CONTENT_LENGTH, expectedMedia.content.size.toString())
+                string(CONTENT_DISPOSITION, "attachment; filename=${expectedMedia.name}")
             }
 
             content { bytes(expectedMedia.content) }
@@ -653,6 +661,83 @@ class VideoAPITest {
                     assertEquals(expectedMediaType.name, it.mediaType)
                 }
             )
+        }
+    }
+
+    @Test
+    fun givenAValidVideoIdAndFile_whenCallsUploadMedia_shouldStoreIt() {
+        // given
+        val expectedId = VideoID.unique().value
+        val expectedType = VIDEO
+        val expectedResource = Fixture.Videos.resource(expectedType)
+
+        val expectedVideo = with(expectedResource) {
+            MockMultipartFile("media_file", name, contentType, content)
+        }
+
+        every { uploadMediaUseCase.execute(any()) } returns UploadMediaOutput(expectedId, expectedType)
+
+        // when
+        val aResponse = mvc.multipart(urlTemplate = "/videos/$expectedId/medias/$expectedType") {
+            file(expectedVideo)
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.MULTIPART_FORM_DATA
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isCreated() }
+
+            header {
+                string(name = LOCATION, value = "/videos/$expectedId/medias/${expectedType.name}")
+                string(name = CONTENT_TYPE, value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.video_id", equalTo(expectedId))
+            jsonPath("$.media_type", equalTo(expectedType.name))
+        }
+
+        verify {
+            uploadMediaUseCase.execute(
+                withArg {
+                    assertEquals(expectedId, it.videoId)
+                    assertEquals(expectedType, it.videoResource.type)
+                    assertEquals(expectedResource.name, it.videoResource.resource.name)
+                    assertEquals(expectedResource.content, it.videoResource.resource.content)
+                    assertEquals(expectedResource.contentType, it.videoResource.resource.contentType)
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAnInvalidMediaType_whenCallsUploadMedia_shouldReturnError() {
+        // given
+        val expectedId = VideoID.unique().value
+        val expectedResource = Fixture.Videos.resource(VIDEO)
+
+        val expectedVideo = with(expectedResource) {
+            MockMultipartFile("media_file", name, contentType, content)
+        }
+
+        val expectedErrorMessage = "Media type INVALID doesn't exists"
+
+        // when
+        val aResponse = mvc.multipart(urlTemplate = "/videos/$expectedId/medias/INVALID") {
+            file(expectedVideo)
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.MULTIPART_FORM_DATA
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isNotFound() }
+
+            header {
+                string(name = CONTENT_TYPE, value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
         }
     }
 }
