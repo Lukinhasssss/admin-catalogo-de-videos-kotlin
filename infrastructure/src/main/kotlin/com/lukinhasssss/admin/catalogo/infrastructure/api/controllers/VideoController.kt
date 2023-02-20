@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoCommand
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
+import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoCommand
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCase
@@ -22,6 +23,7 @@ import java.net.URI
 @RestController
 class VideoController(
     private val createVideoUseCase: CreateVideoUseCase,
+    private val deleteVideoUseCase: DeleteVideoUseCase,
     private val getVideoByIdUseCase: GetVideoByIdUseCase,
     private val updateVideoUseCase: UpdateVideoUseCase
 ) : VideoAPI {
@@ -130,6 +132,14 @@ class VideoController(
                 .ok()
                 .location(URI.create("/videos/${output.id}"))
                 .body(output.toUpdateVideoResponse())
+        }
+    }
+
+    override fun deleteById(id: String) {
+        Logger.info(message = "Iniciando processo de deleção de video...")
+
+        deleteVideoUseCase.execute(id).also {
+            Logger.info(message = "Finalizado processo de deleção de video!")
         }
     }
 
