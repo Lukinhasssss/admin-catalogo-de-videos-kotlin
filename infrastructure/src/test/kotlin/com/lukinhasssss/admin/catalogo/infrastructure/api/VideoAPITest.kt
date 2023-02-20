@@ -18,6 +18,7 @@ import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoUseCa
 import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
+import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
@@ -317,7 +318,6 @@ class VideoAPITest {
             }
 
             jsonPath("$.id", equalTo(expectedId))
-            jsonPath("$.id", equalTo(expectedId))
             jsonPath("$.title", equalTo(expectedTitle))
             jsonPath("$.description", equalTo(expectedDescription))
             jsonPath("$.year_launched", equalTo(expectedLaunchYear.value))
@@ -354,6 +354,33 @@ class VideoAPITest {
             jsonPath("$.categories_id", equalTo(expectedCategories.toList()))
             jsonPath("$.genres_id", equalTo(expectedGenres.toList()))
             jsonPath("$.cast_members_id", equalTo(expectedMembers.toList()))
+        }
+    }
+
+    @Test
+    fun givenAnInvalidId_whenCallsGetById_shouldReturnNotFound() {
+        // given
+        val expectedId = VideoID.unique()
+        val expectedErrorMessage = "Video with ID ${expectedId.value} was not found"
+
+        every {
+            getVideoByIdUseCase.execute(any())
+        } throws NotFoundException.with(expectedId, Video::class)
+
+        // when
+        val aResponse = mvc.get(urlTemplate = "/videos/$expectedId") {
+            accept = MediaType.APPLICATION_JSON
+        }.andDo { print() }
+
+        // then
+        aResponse.andExpect {
+            status { isNotFound() }
+
+            header {
+                string(name = "Content-Type", value = MediaType.APPLICATION_JSON_VALUE)
+            }
+
+            jsonPath("$.message", equalTo(expectedErrorMessage))
         }
     }
 
