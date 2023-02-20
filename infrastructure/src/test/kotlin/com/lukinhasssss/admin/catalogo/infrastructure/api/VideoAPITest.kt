@@ -5,6 +5,8 @@ import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
+import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaUseCase
+import com.lukinhasssss.admin.catalogo.application.video.media.get.MediaOutput
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.VideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
@@ -23,6 +25,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.domain.video.Video
 import com.lukinhasssss.admin.catalogo.domain.video.VideoID
 import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType
+import com.lukinhasssss.admin.catalogo.domain.video.VideoMediaType.VIDEO
 import com.lukinhasssss.admin.catalogo.domain.video.VideoPreview
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.CreateVideoRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.video.models.UpdateVideoRequest
@@ -36,6 +39,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
@@ -62,6 +66,9 @@ class VideoAPITest {
 
     @MockkBean
     private lateinit var deleteVideoUseCase: DeleteVideoUseCase
+
+    @MockkBean
+    private lateinit var getMediaUseCase: GetMediaUseCase
 
     @MockkBean
     private lateinit var getVideoByIdUseCase: GetVideoByIdUseCase
@@ -260,7 +267,7 @@ class VideoAPITest {
         val expectedGenres = setOf(shonen.id.value)
         val expectedMembers = setOf(luffy.id.value)
 
-        val expectedVideo = Fixture.Videos.audioVideo(VideoMediaType.VIDEO)
+        val expectedVideo = Fixture.Videos.audioVideo(VIDEO)
         val expectedTrailer = Fixture.Videos.audioVideo(VideoMediaType.TRAILER)
         val expectedBanner = Fixture.Videos.imageMedia(VideoMediaType.BANNER)
         val expectedThumb = Fixture.Videos.imageMedia(VideoMediaType.THUMBNAIL)
@@ -606,6 +613,44 @@ class VideoAPITest {
                     assertTrue(it.castMembers.isEmpty())
                     assertTrue(it.categories.isEmpty())
                     assertTrue(it.genres.isEmpty())
+                }
+            )
+        }
+    }
+
+    @Test
+    fun givenAValidVideoIdAndFileType_whenCallsGetMediaById_shouldReturnContent() {
+        // given
+        val expectedId = VideoID.unique().value
+
+        val expectedMediaType = VIDEO
+        val expectedResource = Fixture.Videos.resource(expectedMediaType)
+
+        val expectedMedia = MediaOutput(expectedResource.content, expectedResource.contentType, expectedResource.name)
+
+        every { getMediaUseCase.execute(any()) } returns expectedMedia
+
+        // when
+        val aResponse = mvc.get("/videos/$expectedId/medias/${expectedMediaType.name}")
+
+        // then
+        aResponse.andExpect {
+            status { isOk() }
+
+            header {
+                string(HttpHeaders.CONTENT_TYPE, expectedMedia.contentType)
+                string(HttpHeaders.CONTENT_LENGTH, expectedMedia.content.size.toString())
+                string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${expectedMedia.name}")
+            }
+
+            content { bytes(expectedMedia.content) }
+        }
+
+        verify {
+            getMediaUseCase.execute(
+                withArg {
+                    assertEquals(expectedId, it.videoId)
+                    assertEquals(expectedMediaType.name, it.mediaType)
                 }
             )
         }
