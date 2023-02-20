@@ -112,6 +112,20 @@ interface VideoAPI {
         @RequestBody payload: UpdateVideoRequest
     ): ResponseEntity<Any>
 
+    @GetMapping(value = ["{id}/medias/{type}"])
+    @Operation(summary = "Get a video media by it's type")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Media retrieved successfully"),
+            ApiResponse(responseCode = "404", description = "Media was not found"),
+            ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        ]
+    )
+    fun getMediaByType(
+        @PathVariable(name = "id") id: String,
+        @PathVariable(name = "type") type: String
+    ): ResponseEntity<ByteArray>
+
     @DeleteMapping(value = ["{id}"])
     @ResponseStatus(value = NO_CONTENT)
     @Operation(summary = "Delete a video by it's identifier")

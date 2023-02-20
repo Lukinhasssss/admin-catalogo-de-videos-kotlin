@@ -3,6 +3,8 @@ package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoCommand
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
 import com.lukinhasssss.admin.catalogo.application.video.delete.DeleteVideoUseCase
+import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaCommand
+import com.lukinhasssss.admin.catalogo.application.video.media.get.GetMediaUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.get.GetVideoByIdUseCase
 import com.lukinhasssss.admin.catalogo.application.video.retrieve.list.ListVideosUseCase
 import com.lukinhasssss.admin.catalogo.application.video.update.UpdateVideoCommand
@@ -24,6 +26,8 @@ import com.lukinhasssss.admin.catalogo.infrastructure.video.models.VideoResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toUpdateVideoResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoListResponse
 import com.lukinhasssss.admin.catalogo.infrastructure.video.presenters.toVideoResponse
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -33,6 +37,7 @@ import java.net.URI
 class VideoController(
     private val createVideoUseCase: CreateVideoUseCase,
     private val deleteVideoUseCase: DeleteVideoUseCase,
+    private val getMediaUseCase: GetMediaUseCase,
     private val getVideoByIdUseCase: GetVideoByIdUseCase,
     private val listVideosUseCase: ListVideosUseCase,
     private val updateVideoUseCase: UpdateVideoUseCase
@@ -171,6 +176,20 @@ class VideoController(
                 .location(URI.create("/videos/${output.id}"))
                 .body(output.toUpdateVideoResponse())
         }
+    }
+
+    override fun getMediaByType(id: String, type: String): ResponseEntity<ByteArray> {
+        Logger.info(message = "Iniciando processo de busca de video media...")
+
+        val aMedia = getMediaUseCase.execute(GetMediaCommand.with(id, type))
+
+        return ResponseEntity
+            .ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${aMedia.name}")
+            .contentType(MediaType.valueOf(aMedia.contentType))
+            .contentLength(aMedia.content.size.toLong())
+            .body(aMedia.content)
+            .also { Logger.info(message = "Finalizado processo de busca de video media!", payload = it) }
     }
 
     override fun deleteById(id: String) {
