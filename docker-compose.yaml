@@ -23,6 +23,44 @@ services:
       FLYWAY_DB: "jdbc:postgresql://postgres-admin-do-catalogo:5432/adm_videos"
       FLYWAY_USER: "lukinhasssss"
       FLYWAY_PASSWORD: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
+#    env_file:
+#      - .env
+
+  keycloak-admin-do-catalogo:
+    container_name: keycloak-admin-do-catalogo
+    image: quay.io/keycloak/keycloak:20.0.3
+    environment:
+#      - DB_VENDOR=postgres
+#      - DB_USER=keycloak
+#      - DB_DATABASE=keycloak
+#      - DB_PASSWORD=6jhVPaQWhgEMl0sXPnNmkLfS
+#      - DB_PORT=5432
+#      - DB_ADDR=keycloak_db
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "18080:8080"
+      - "18443:8443"
+      - "19990:9990"
+    command:
+      - start-dev
+    networks:
+      - adm_videos_network
+    volumes:
+      - keycloak_data:/data
+
+#  keycloak_db:
+#    image: postgres:latest
+#    ports:
+#      - "15432:15432"
+#    environment:
+#      - POSTGRES_DB=keycloak
+#      - POSTGRES_USER=keycloak
+#      - POSTGRES_PASSWORD=6jhVPaQWhgEMl0sXPnNmkLfS
+#      - POSTGRES_ROOT_PASSWORD=qgZqZGdoe5loJ0OrZvq36LBr
+#    volumes:
+#      - keycloak_postgresql:/var/lib/postgresql
+#      - keycloak_postgresql_data:/var/lib/postgresql/data
 
   rabbitmq-admin-do-catalogo:
     container_name: rabbitmq-admin-do-catalogo
@@ -274,3 +312,4 @@ volumes:
   grafana_data:
   elasticsearch_data:
   filebeat_data:
+  keycloak_data:
