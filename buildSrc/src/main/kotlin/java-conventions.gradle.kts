@@ -10,7 +10,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+    implementation("io.vavr:vavr-kotlin:${Version.vavr}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 tasks.withType<Test> {

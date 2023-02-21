@@ -41,8 +41,6 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.14")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
 
-    implementation("io.vavr:vavr-kotlin:${Version.vavr}")
-
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
     }

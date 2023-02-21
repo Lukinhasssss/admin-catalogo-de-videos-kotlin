@@ -17,8 +17,6 @@ repositories {
 dependencies {
     implementation(project(":domain"))
 
-    implementation("io.vavr:vavr-kotlin:${Version.vavr}")
-
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
     testImplementation(kotlin("test"))
