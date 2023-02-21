@@ -1,7 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
+    id("java-conventions")
     kotlin("jvm") version "1.8.0"
     kotlin("plugin.spring") version "1.8.0"
     kotlin("plugin.jpa") version "1.8.0"
@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
-version = "1.0-SNAPSHOT"
+// version = "1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 tasks.withType<BootJar> {
@@ -85,19 +85,6 @@ flyway {
     password = System.getenv("FLYWAY_PASSWORD") ?: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
 
     cleanDisabled = false
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        useK2 = false
-        javaParameters = true
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 tasks.testCodeCoverageReport {

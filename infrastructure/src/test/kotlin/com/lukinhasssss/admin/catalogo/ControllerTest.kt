@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo
 
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.ObjectMapperConfig
+import org.junit.jupiter.api.Tag
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.AliasFor
@@ -14,6 +15,7 @@ import kotlin.reflect.KClass
 @Inherited
 @WebMvcTest
 @Import(ObjectMapperConfig::class)
+@Tag(value = "integrationTest")
 annotation class ControllerTest(
     @get:AliasFor(annotation = WebMvcTest::class, attribute = "controllers")
     val controllers: Array<KClass<*>> = []

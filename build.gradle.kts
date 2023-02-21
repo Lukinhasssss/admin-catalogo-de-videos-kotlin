@@ -1,18 +1,15 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.8.0"
-    id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
 group = "com.lukinhasssss.admin.catalogo"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -81,6 +78,8 @@ subprojects {
 }
 // END OF SONAR MULTI-MODULE CONFIGURATION
 
+/*** SOMENTE PARA APRENDIZADO ***/
+
 // START OF JACOCO MULTI-PROJECT CONFIGURATION
 // tasks.register<JacocoReport>("codeCoverageReport") {
 //     subprojects {
@@ -101,19 +100,52 @@ subprojects {
 // }
 // END OF JACOCO MULTI-PROJECT CONFIGURATION
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        useK2 = false
-        javaParameters = true
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-jacoco {
-    toolVersion = "0.8.8"
-}
+// tasks.withType<KotlinCompile> {
+//     kotlinOptions {
+//         useK2 = false
+//         javaParameters = true
+//         jvmTarget = JavaVersion.VERSION_17.toString()
+//         freeCompilerArgs = listOf("-Xjsr305=strict")
+//     }
+// }
+//
+// tasks.withType<Test> {
+//     useJUnitPlatform()
+// }
+//
+// jacoco {
+//     toolVersion = "0.8.8"
+// }
+//
+// tasks.register<Test>("unitTests") {
+//     description = "Runs unit tests"
+//     group = "verification"
+//
+//     useJUnitPlatform {
+//         includeTags("unitTest")
+//     }
+//
+//     shouldRunAfter(tasks.test)
+// }
+//
+// tasks.register<Test>("integrationTests") {
+//     description = "Runs integration tests"
+//     group = "verification"
+//
+//     useJUnitPlatform {
+//         includeTags("integrationTest")
+//     }
+//
+//     shouldRunAfter(tasks.test)
+// }
+//
+// tasks.register<Test>("e2eTests") {
+//     description = "Runs e2e tests"
+//     group = "verification"
+//
+//     useJUnitPlatform {
+//         includeTags("e2eTest")
+//     }
+//
+//     shouldRunAfter(tasks.test)
+// }

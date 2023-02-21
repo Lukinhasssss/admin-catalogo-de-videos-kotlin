@@ -1,6 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
+    id("java-conventions")
     kotlin("jvm") version "1.8.0"
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
@@ -9,7 +8,7 @@ plugins {
 }
 
 group = "com.lukinhasssss.admin.catalogo.application"
-version = "1.0-SNAPSHOT"
+// version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -24,17 +23,4 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.2")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        useK2 = false
-        javaParameters = true
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-    }
-}
-
-tasks.test {
-    useJUnitPlatform()
 }

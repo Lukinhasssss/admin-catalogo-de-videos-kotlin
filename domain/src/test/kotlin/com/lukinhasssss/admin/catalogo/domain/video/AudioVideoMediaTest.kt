@@ -1,12 +1,13 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.video.MediaStatus.PENDING
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
 
-class AudioVideoMediaTest {
+class AudioVideoMediaTest : UnitTest() {
 
     @Test
     fun givenValidParams_whenCallsNewAudioVideo_shouldReturnInstance() {
