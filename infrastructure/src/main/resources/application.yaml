@@ -81,6 +81,12 @@ spring:
     port: ${amqp.port}
     username: ${amqp.username}
     password: ${amqp.password}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.host}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          issuer-uri: ${keycloak.host}/realms/${keycloak.realm}
   servlet:
     multipart:
       max-file-size: 10GB

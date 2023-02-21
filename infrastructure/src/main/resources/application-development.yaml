@@ -6,6 +6,10 @@ amqp:
   username: ${AMQP_RABBIT_USERNAME:adm_videos}
   password: ${AMQP_RABBIT_PASSWORD:123456}
 
+keycloak:
+  realm: ${KEYCLOAK_REALM:codeflix}
+  host: ${KEYCLOAK_HOST:http://localhost:18443}
+
 postgres:
   url: ${DB_POSTGRES_URL:localhost:5432}
   username: ${DB_POSTGRES_USERNAME:username}

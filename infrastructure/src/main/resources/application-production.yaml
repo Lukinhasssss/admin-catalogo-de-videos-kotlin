@@ -1,14 +1,18 @@
 amqp:
-  host: ${AMQP_RABBIT_HOST:localhost}
-  port: ${AMQP_RABBIT_PORT:5672}
-  username: ${AMQP_RABBIT_USERNAME:adm_videos}
-  password: ${AMQP_RABBIT_PASSWORD:123456}
+  host: ${AMQP_RABBIT_HOST}
+  port: ${AMQP_RABBIT_PORT}
+  username: ${AMQP_RABBIT_USERNAME}
+  password: ${AMQP_RABBIT_PASSWORD}
+
+keycloak:
+  realm: ${KEYCLOAK_REALM}
+  host: ${KEYCLOAK_HOST}
 
 postgres:
-  url: ${DB_POSTGRES_URL:localhost:5432}
-  username: ${DB_POSTGRES_USERNAME:username}
-  password: ${DB_POSTGRES_PASSWORD:password}
-  schema: ${DB_POSTGRES_SCHEMA:adm_videos}
+  url: ${DB_POSTGRES_URL}
+  username: ${DB_POSTGRES_USERNAME}
+  password: ${DB_POSTGRES_PASSWORD}
+  schema: ${DB_POSTGRES_SCHEMA}
 
 spring:
   jpa:
