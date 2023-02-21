@@ -66,7 +66,7 @@ services:
 
   keycloak-admin-do-catalogo:
     container_name: keycloak-admin-do-catalogo
-    image: quay.io/keycloak/keycloak:20.0.3
+    image: quay.io/keycloak/keycloak:20.0.5
     environment:
       #      - DB_VENDOR=postgres
       #      - DB_USER=keycloak
@@ -85,7 +85,7 @@ services:
     networks:
       - adm_videos_network
     volumes:
-      - keycloak_data:/data
+      - keycloak_data:/opt/keycloak/data/
 
   #  keycloak_db:
   #    image: postgres:latest
