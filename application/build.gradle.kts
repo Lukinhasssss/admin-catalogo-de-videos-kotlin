@@ -24,12 +24,6 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.2")
-    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
-    // testImplementation("com.github.javafaker:javafaker:1.0.2")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
@@ -39,4 +33,8 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

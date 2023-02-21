@@ -63,7 +63,7 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+            "${projectDir.parentFile.path}/build/reports/jacoco/test/jacocoTestReport.xml"
         )
         property("sonar.exclusions", "build/generated/**/*")
     }
@@ -74,7 +74,7 @@ subprojects {
         properties {
             property(
                 "sonar.coverage.jacoco.xmlReportPaths",
-                "${projectDir.parentFile.path}/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+                "${projectDir.parentFile.path}/build/reports/jacoco/test/jacocoTestReport.xml"
             )
         }
     }
@@ -82,29 +82,24 @@ subprojects {
 // END OF SONAR MULTI-MODULE CONFIGURATION
 
 // START OF JACOCO MULTI-PROJECT CONFIGURATION
-tasks.register<JacocoReport>("codeCoverageReport") {
-    subprojects {
-        this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
-            this@subprojects.tasks.matching {
-                it.extensions.findByType<JacocoTaskExtension>() != null
-            }.configureEach {
-                sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
-                executionData(this)
-            }
-        }
-    }
-
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-}
+// tasks.register<JacocoReport>("codeCoverageReport") {
+//     subprojects {
+//         this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
+//             this@subprojects.tasks.matching {
+//                 it.extensions.findByType<JacocoTaskExtension>() != null
+//             }.configureEach {
+//                 sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
+//                 executionData(this)
+//             }
+//         }
+//     }
+//
+//     reports {
+//         xml.required.set(true)
+//         html.required.set(true)
+//     }
+// }
 // END OF JACOCO MULTI-PROJECT CONFIGURATION
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)
-}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
@@ -113,4 +108,12 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.8"
 }

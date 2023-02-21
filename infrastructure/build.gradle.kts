@@ -13,6 +13,7 @@ plugins {
     id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.flywaydb.flyway") version "9.11.0"
+    id("jacoco-report-aggregation")
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -69,7 +70,6 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:9.11.0")
     testImplementation("com.h2database:h2")
 
-    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
@@ -87,10 +87,6 @@ flyway {
     cleanDisabled = false
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         useK2 = false
@@ -98,4 +94,22 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.testCodeCoverageReport {
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(file("${projectDir.parentFile.path}/build/reports/jacoco/test/jacocoTestReport.xml"))
+
+        html.required.set(true)
+        html.outputLocation.set(file("${projectDir.parentFile.path}/build/reports/jacoco/test/"))
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.testCodeCoverageReport)
 }
