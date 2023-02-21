@@ -1,6 +1,5 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.configuration
 
-import com.nimbusds.jose.shaded.gson.JsonObject
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
@@ -32,9 +31,10 @@ class SecurityConfig {
         private const val ROLE_VIDEOS = "CATALOGO_VIDEOS"
 
         private const val REALM_ACCESS = "realm_access"
-        private const val RESOURCE_ACCESS = "resource_acess"
+        private const val RESOURCE_ACCESS = "resource_access"
         private const val ROLES = "roles"
 
+        private const val ROLE_PREFIX = "ROLE_"
         private const val SEPARATOR = "_"
     }
 
@@ -75,13 +75,13 @@ class SecurityConfig {
             val resourceRoles = extractResourceRoles(jwt)
 
             return Stream.concat(realmRoles, resourceRoles)
-                .map { SimpleGrantedAuthority(it.uppercase()) }
+                .map { SimpleGrantedAuthority(ROLE_PREFIX + it.uppercase()) }
                 .collect(Collectors.toSet())
         }
 
         private fun extractRealmRoles(jwt: Jwt): Stream<String> =
             Optional.ofNullable(jwt.getClaimAsMap(REALM_ACCESS))
-                .map { it[ROLES] as Collection<String> }
+                .map { it[ROLES] as List<String> }
                 .orElse(emptyList())
                 .stream()
 
@@ -97,8 +97,8 @@ class SecurityConfig {
 
         private fun MutableMap.MutableEntry<String, Any>.mapResource(): Stream<String> {
             val key = this.key
-            val value = this.value as JsonObject
-            val roles = value[ROLES] as Collection<String>
+            val value = this.value as Map<String, Any>
+            val roles = value[ROLES] as List<String>
 
             return roles.stream().map { role -> key.plus(SEPARATOR).plus(role) }
         }
