@@ -2,14 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version Version.kotlin
-    kotlin("plugin.spring") version Version.kotlin
-    kotlin("plugin.jpa") version Version.kotlin
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.spring") version "1.8.0"
+    kotlin("plugin.jpa") version "1.8.0"
     id("application")
     id("jacoco")
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    id("org.sonarqube") version "3.5.0.2730"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
     id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.flywaydb.flyway") version "9.11.0"
@@ -40,7 +40,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.14")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
 
-    implementation(Dependency.vavr)
+    implementation("io.vavr:vavr-kotlin:0.10.2")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -69,13 +69,14 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:9.11.0")
     testImplementation("com.h2database:h2")
 
+    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 
-    testImplementation("org.testcontainers:testcontainers:${Version.testContainer}")
-    testImplementation("org.testcontainers:postgresql:${Version.testContainer}")
-    testImplementation("org.testcontainers:junit-jupiter:${Version.testContainer}")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
 }
 
 flyway {
@@ -86,6 +87,10 @@ flyway {
     cleanDisabled = false
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         useK2 = false
@@ -93,8 +98,4 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

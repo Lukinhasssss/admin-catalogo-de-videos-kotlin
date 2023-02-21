@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version Version.kotlin
+    kotlin("jvm") version "1.8.0"
     id("jacoco")
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    id("org.sonarqube") version "3.5.0.2730"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
 group = "com.lukinhasssss.admin.catalogo.application"
@@ -18,12 +18,18 @@ repositories {
 dependencies {
     implementation(project(":domain"))
 
-    implementation(Dependency.vavr)
+    implementation("io.vavr:vavr-kotlin:0.10.2")
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
     testImplementation(kotlin("test"))
-    testImplementation(Dependency.mockk)
+    testImplementation("io.mockk:mockk:1.13.2")
+    // testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
+    // testImplementation("com.github.javafaker:javafaker:1.0.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
@@ -33,8 +39,4 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
-}
-
-tasks.test {
-    useJUnitPlatform()
 }

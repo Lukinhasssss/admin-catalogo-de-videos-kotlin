@@ -4,11 +4,11 @@ import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version Version.kotlin
+    kotlin("jvm") version "1.8.0"
     id("jacoco")
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    id("org.sonarqube") version "3.5.0.2730"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
 }
 
 group = "com.lukinhasssss.admin.catalogo"
@@ -101,6 +101,11 @@ tasks.register<JacocoReport>("codeCoverageReport") {
 }
 // END OF JACOCO MULTI-PROJECT CONFIGURATION
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         useK2 = false
@@ -108,9 +113,4 @@ tasks.withType<KotlinCompile> {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)
 }
