@@ -5,10 +5,10 @@ amqp:
   password: ${AMQP_RABBIT_PASSWORD:123456}
 
 postgres:
+  url: ${DB_POSTGRES_URL:localhost:5432}
   username: ${DB_POSTGRES_USERNAME:username}
   password: ${DB_POSTGRES_PASSWORD:password}
   schema: ${DB_POSTGRES_SCHEMA:adm_videos}
-  url: ${DB_POSTGRES_URL:localhost:5432}
 
 spring:
   jpa:
