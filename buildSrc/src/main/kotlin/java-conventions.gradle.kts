@@ -3,7 +3,7 @@ plugins {
     id("jacoco")
 }
 
-version = "1.0.0"
+version = Version.project
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = Version.jacoco
 }
 
 tasks.register<Test>("unitTests") {

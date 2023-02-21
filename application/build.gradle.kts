@@ -1,10 +1,10 @@
 plugins {
     id("java-conventions")
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version Version.kotlin
     id("jacoco")
-    id("org.sonarqube") version "3.5.0.2730"
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
+    id("org.sonarqube") version Version.sonarqube
+    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
+    id("io.gitlab.arturbosch.detekt") version Version.detekt
 }
 
 group = "com.lukinhasssss.admin.catalogo.application"
@@ -17,7 +17,7 @@ repositories {
 dependencies {
     implementation(project(":domain"))
 
-    implementation("io.vavr:vavr-kotlin:0.10.2")
+    implementation("io.vavr:vavr-kotlin:${Version.vavr}")
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
