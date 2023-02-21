@@ -1,6 +1,5 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.configuration.json
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
@@ -37,7 +36,7 @@ enum class Json {
                 .build()
         )
         .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-        .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+        // .serializationInclusion(JsonInclude.Include.NON_EMPTY)
         .build()
 
     private fun afterburnerModule(): AfterburnerModule {

@@ -7,7 +7,7 @@ import java.time.Instant
 data class VideoListOutput(
     val id: String,
     val title: String,
-    val description: String? = null,
+    val description: String,
     val createdAt: Instant,
     val updatedAt: Instant
 ) {

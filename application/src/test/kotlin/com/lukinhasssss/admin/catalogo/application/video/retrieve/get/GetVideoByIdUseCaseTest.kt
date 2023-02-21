@@ -59,11 +59,11 @@ class GetVideoByIdUseCaseTest : UseCaseTest() {
             expectedMembers
         )
 
-        aVideo = aVideo.setVideo(expectedVideo)
-        aVideo = aVideo.setTrailer(expectedTrailer)
-        aVideo = aVideo.setBanner(expectedBanner)
-        aVideo = aVideo.setThumbnail(expectedThumb)
-        aVideo = aVideo.setThumbnailHalf(expectedThumbHalf)
+        aVideo = aVideo.updateVideoMedia(expectedVideo)
+        aVideo = aVideo.updateTrailerMedia(expectedTrailer)
+        aVideo = aVideo.updateBannerMedia(expectedBanner)
+        aVideo = aVideo.updateThumbnailMedia(expectedThumb)
+        aVideo = aVideo.updateThumbnailHalfMedia(expectedThumbHalf)
 
         val expectedId = aVideo.id
 

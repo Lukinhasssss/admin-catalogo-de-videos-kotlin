@@ -10,8 +10,6 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
-import org.hamcrest.Matchers.hasKey
-import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -139,7 +137,7 @@ class GenreE2ETest : MockDsl {
             body("current_page", equalTo(3))
             body("per_page", equalTo(1))
             body("total", equalTo(3))
-            body("$", not(hasKey("items")))
+            // body("$", not(hasKey("items")))
         }
     }
 

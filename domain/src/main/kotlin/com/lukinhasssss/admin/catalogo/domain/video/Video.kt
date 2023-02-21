@@ -145,7 +145,7 @@ data class Video(
         domainEvents = domainEvents
     )
 
-    fun setVideo(aVideoMedia: AudioVideoMedia) = Video(
+    fun updateVideoMedia(aVideoMedia: AudioVideoMedia) = Video(
         id = id,
         title = title,
         description = description,
@@ -167,7 +167,7 @@ data class Video(
         domainEvents = domainEvents
     )
 
-    fun setTrailer(aTrailerMedia: AudioVideoMedia) = Video(
+    fun updateTrailerMedia(aTrailerMedia: AudioVideoMedia) = Video(
         id = id,
         title = title,
         description = description,
@@ -189,7 +189,7 @@ data class Video(
         domainEvents = domainEvents
     )
 
-    fun setBanner(aBannerMedia: ImageMedia) = Video(
+    fun updateBannerMedia(aBannerMedia: ImageMedia) = Video(
         id = id,
         title = title,
         description = description,
@@ -211,7 +211,7 @@ data class Video(
         domainEvents = domainEvents
     )
 
-    fun setThumbnail(aThumbMedia: ImageMedia) = Video(
+    fun updateThumbnailMedia(aThumbMedia: ImageMedia) = Video(
         id = id,
         title = title,
         description = description,
@@ -233,7 +233,7 @@ data class Video(
         domainEvents = domainEvents
     )
 
-    fun setThumbnailHalf(aThumbMedia: ImageMedia) = Video(
+    fun updateThumbnailHalfMedia(aThumbMedia: ImageMedia) = Video(
         id = id,
         title = title,
         description = description,
@@ -256,20 +256,20 @@ data class Video(
 
     fun processing(aMediaType: VideoMediaType): Video {
         if (aMediaType == VIDEO && video != null)
-            return setVideo(video!!.processing())
+            return updateVideoMedia(video!!.processing())
 
         if (aMediaType == TRAILER && trailer != null)
-            return setTrailer(trailer!!.processing())
+            return updateTrailerMedia(trailer!!.processing())
 
         return this
     }
 
     fun completed(aMediaType: VideoMediaType, encodedPath: String): Video {
         if (aMediaType == VIDEO && video != null)
-            return setVideo(video!!.completed(encodedPath))
+            return updateVideoMedia(video!!.completed(encodedPath))
 
         if (aMediaType == TRAILER && trailer != null)
-            return setTrailer(trailer!!.completed(encodedPath))
+            return updateTrailerMedia(trailer!!.completed(encodedPath))
 
         return this
     }

@@ -181,7 +181,7 @@ class VideoTest {
         )
 
         // when
-        val actualVideo = aVideo.setVideo(aVideoMedia)
+        val actualVideo = aVideo.updateVideoMedia(aVideoMedia)
 
         // then
         with(actualVideo) {
@@ -245,7 +245,7 @@ class VideoTest {
         )
 
         // when
-        val actualVideo = aVideo.setTrailer(aTrailerMedia)
+        val actualVideo = aVideo.updateTrailerMedia(aTrailerMedia)
 
         // then
         with(actualVideo) {
@@ -307,7 +307,7 @@ class VideoTest {
         )
 
         // when
-        val actualVideo = aVideo.setBanner(aBannerMedia)
+        val actualVideo = aVideo.updateBannerMedia(aBannerMedia)
 
         // then
         with(actualVideo) {
@@ -369,7 +369,7 @@ class VideoTest {
         )
 
         // when
-        val actualVideo = aVideo.setThumbnail(aThumbMedia)
+        val actualVideo = aVideo.updateThumbnailMedia(aThumbMedia)
 
         // then
         with(actualVideo) {
@@ -431,7 +431,7 @@ class VideoTest {
         )
 
         // when
-        val actualVideo = aVideo.setThumbnailHalf(aThumbMedia)
+        val actualVideo = aVideo.updateThumbnailHalfMedia(aThumbMedia)
 
         // then
         with(actualVideo) {

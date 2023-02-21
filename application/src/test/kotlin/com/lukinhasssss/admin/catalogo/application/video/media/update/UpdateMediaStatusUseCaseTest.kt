@@ -33,7 +33,7 @@ class UpdateMediaStatusUseCaseTest : UseCaseTest() {
         val expectedType = VIDEO
         val expectedMedia = Fixture.Videos.audioVideo(expectedType)
 
-        val aVideo = Fixture.Videos.systemDesign().setVideo(expectedMedia)
+        val aVideo = Fixture.Videos.systemDesign().updateVideoMedia(expectedMedia)
 
         val expectedId = aVideo.id
 
@@ -82,7 +82,7 @@ class UpdateMediaStatusUseCaseTest : UseCaseTest() {
         val expectedType = VIDEO
         val expectedMedia = Fixture.Videos.audioVideo(expectedType)
 
-        val aVideo = Fixture.Videos.systemDesign().setVideo(expectedMedia)
+        val aVideo = Fixture.Videos.systemDesign().updateVideoMedia(expectedMedia)
 
         val expectedId = aVideo.id
 
@@ -131,7 +131,7 @@ class UpdateMediaStatusUseCaseTest : UseCaseTest() {
         val expectedType = TRAILER
         val expectedMedia = Fixture.Videos.audioVideo(expectedType)
 
-        val aVideo = Fixture.Videos.systemDesign().setTrailer(expectedMedia)
+        val aVideo = Fixture.Videos.systemDesign().updateTrailerMedia(expectedMedia)
 
         val expectedId = aVideo.id
 
@@ -180,7 +180,7 @@ class UpdateMediaStatusUseCaseTest : UseCaseTest() {
         val expectedType = TRAILER
         val expectedMedia = Fixture.Videos.audioVideo(expectedType)
 
-        val aVideo = Fixture.Videos.systemDesign().setTrailer(expectedMedia)
+        val aVideo = Fixture.Videos.systemDesign().updateTrailerMedia(expectedMedia)
 
         val expectedId = aVideo.id
 
@@ -229,7 +229,7 @@ class UpdateMediaStatusUseCaseTest : UseCaseTest() {
         val expectedType = TRAILER
         val expectedMedia = Fixture.Videos.audioVideo(expectedType)
 
-        val aVideo = Fixture.Videos.systemDesign().setTrailer(expectedMedia)
+        val aVideo = Fixture.Videos.systemDesign().updateTrailerMedia(expectedMedia)
 
         val expectedId = aVideo.id
 

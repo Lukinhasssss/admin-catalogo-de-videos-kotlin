@@ -11,8 +11,8 @@ import java.time.Instant
 data class VideoOutput(
     val id: String,
     val title: String,
-    val description: String?,
-    val launchedAt: Int?,
+    val description: String,
+    val launchedAt: Int,
     val duration: Double,
     val opened: Boolean,
     val published: Boolean,

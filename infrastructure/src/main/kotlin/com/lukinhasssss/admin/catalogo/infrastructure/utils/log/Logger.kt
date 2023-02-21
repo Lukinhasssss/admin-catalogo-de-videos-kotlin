@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.utils.log
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.infrastructure.configuration.json.Json
 import org.slf4j.LoggerFactory
 
 object Logger {
@@ -70,6 +70,6 @@ object Logger {
             "payload" to payload
         )
 
-        return ObjectMapper().writeValueAsString(finalMessage)
+        return Json.writeValueAsString(finalMessage)
     }
 }

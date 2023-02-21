@@ -22,11 +22,11 @@ class DefaultUploadMediaUseCase(
         var aVideo = videoGateway.findById(anId) ?: throw notFound(anId)
 
         aVideo = when (videoResource.type) {
-            VIDEO -> aVideo.setVideo(mediaResourceGateway.storeAudioVideo(anId, videoResource))
-            TRAILER -> aVideo.setTrailer(mediaResourceGateway.storeAudioVideo(anId, videoResource))
-            BANNER -> aVideo.setBanner(mediaResourceGateway.storeImage(anId, videoResource))
-            THUMBNAIL -> aVideo.setThumbnail(mediaResourceGateway.storeImage(anId, videoResource))
-            THUMBNAIL_HALF -> aVideo.setThumbnailHalf(mediaResourceGateway.storeImage(anId, videoResource))
+            VIDEO -> aVideo.updateVideoMedia(mediaResourceGateway.storeAudioVideo(anId, videoResource))
+            TRAILER -> aVideo.updateTrailerMedia(mediaResourceGateway.storeAudioVideo(anId, videoResource))
+            BANNER -> aVideo.updateBannerMedia(mediaResourceGateway.storeImage(anId, videoResource))
+            THUMBNAIL -> aVideo.updateThumbnailMedia(mediaResourceGateway.storeImage(anId, videoResource))
+            THUMBNAIL_HALF -> aVideo.updateThumbnailHalfMedia(mediaResourceGateway.storeImage(anId, videoResource))
         }
 
         UploadMediaOutput.with(

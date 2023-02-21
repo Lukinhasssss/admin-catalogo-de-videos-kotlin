@@ -8,7 +8,6 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.DIRECTOR
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence.CastMemberRepository
 import io.restassured.module.kotlin.extensions.Then
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.nullValue
@@ -135,7 +134,7 @@ class CastMemberE2ETest : MockDsl {
             body("current_page", equalTo(3))
             body("per_page", equalTo(1))
             body("total", equalTo(3))
-            body("$", Matchers.not(Matchers.hasKey("items")))
+            // body("$", Matchers.not(Matchers.hasKey("items")))
         }
     }
 
