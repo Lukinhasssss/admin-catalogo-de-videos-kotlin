@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.e2e.castMember
 
 import com.lukinhasssss.admin.catalogo.E2ETest
+import com.lukinhasssss.admin.catalogo.KeycloakTestContainers
 import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType.ACTOR
@@ -30,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @E2ETest
 @Testcontainers
-class CastMemberE2ETest : MockDsl {
+class CastMemberE2ETest : MockDsl, KeycloakTestContainers {
 
     @Autowired
     private lateinit var castMemberRepository: CastMemberRepository

@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.e2e
 
+import com.lukinhasssss.admin.catalogo.KeycloakTestContainers
 import com.lukinhasssss.admin.catalogo.domain.Identifier
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
@@ -21,10 +22,15 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.response.Response
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpStatus
 import kotlin.reflect.KClass
 
-interface MockDsl {
+interface MockDsl : KeycloakTestContainers {
+
+    companion object {
+        const val BASE_URL = "http://localhost:8081/api"
+    }
 
     /* START OF CAST MEMBER MOCKS */
 
@@ -74,7 +80,7 @@ interface MockDsl {
     fun givenACategory(aName: String, aDescription: String?, isActive: Boolean): CategoryID {
         val requestBody = CreateCategoryRequest(aName, aDescription, isActive)
 
-        val actualId = given(url = "/categories", requestBody)
+        val actualId = given(resource = "/categories", requestBody)
 
         return CategoryID.from(actualId)
     }
@@ -94,6 +100,8 @@ interface MockDsl {
     ) = list("/categories", page, perPage, search, sort, direction)
 
     fun retrieveACategory(anId: CategoryID) = retrieve("/categories", anId, CategoryResponse::class)
+
+    fun retrieveACategoryResponse(anId: CategoryID) = retrieveResult("/categories", anId)
 
     fun updateACategory(anId: CategoryID, requestBody: UpdateCategoryRequest) = update("/categories", anId, requestBody)
 
@@ -127,22 +135,27 @@ interface MockDsl {
 
     fun retrieveAGenre(anId: GenreID) = retrieve("/genres", anId, GenreResponse::class)
 
+    fun retrieveAGenreResponse(anId: GenreID) = retrieveResult("/genres", anId)
+
     fun updateAGenre(anId: GenreID, requestBody: UpdateGenreRequest) = update("/genres", anId, requestBody)
 
     /* END OF GENRE MOCKS */
 
     /* START OF AUXILIAR FUNCTIONS */
 
-    private fun delete(url: String, anId: Identifier): Response {
-        return When { delete("/api$url/${anId.value}") }
+    private fun delete(resource: String, anId: Identifier): Response {
+        return Given {
+            header(AUTHORIZATION, getAccessToken())
+        } When { delete("$BASE_URL$resource/${anId.value}") }
     }
 
-    private fun given(url: String, requestBody: Any): String {
+    private fun given(resource: String, requestBody: Any): String {
         val actualId = Given {
+            header(AUTHORIZATION, getAccessToken())
             contentType(ContentType.JSON)
             body(Json.writeValueAsString(requestBody))
         } When {
-            post("/api$url")
+            post("$BASE_URL$resource")
         } Then {
             statusCode(HttpStatus.CREATED.value())
         } Extract { jsonPath().get<String>("id") }
@@ -150,15 +163,16 @@ interface MockDsl {
         return actualId
     }
 
-    private fun givenResult(url: String, requestBody: Any): Response {
+    private fun givenResult(resource: String, requestBody: Any): Response {
         return Given {
+            header(AUTHORIZATION, getAccessToken())
             contentType(ContentType.JSON)
             body(Json.writeValueAsString(requestBody))
-        } When { post("/api$url") }
+        } When { post("$BASE_URL$resource") }
     }
 
     private fun list(
-        url: String,
+        resource: String,
         page: Int,
         perPage: Int,
         search: String,
@@ -166,17 +180,22 @@ interface MockDsl {
         direction: String
     ): Response {
         return Given {
+            header(AUTHORIZATION, getAccessToken())
             param("page", page)
             param("perPage", perPage)
             param("search", search)
             param("sort", sort)
             param("dir", direction)
-        } When { get("/api$url") }
+        } When {
+            get("$BASE_URL$resource")
+        }
     }
 
-    private fun <T : Any> retrieve(url: String, anId: Identifier, kclass: KClass<T>): T {
-        val json = When {
-            get("/api$url/${anId.value}")
+    private fun <T : Any> retrieve(resource: String, anId: Identifier, kclass: KClass<T>): T {
+        val json = Given {
+            header(AUTHORIZATION, getAccessToken())
+        } When {
+            get("$BASE_URL$resource/${anId.value}")
         } Then {
             statusCode(HttpStatus.OK.value())
         } Extract { body().asString() }
@@ -184,15 +203,20 @@ interface MockDsl {
         return Json.readValue(json, kclass.java)
     }
 
-    private fun retrieveResult(url: String, anId: Identifier): Response =
-        When { get("/api$url/${anId.value}") }
+    private fun retrieveResult(resource: String, anId: Identifier): Response =
+        Given {
+            header("Authorization", getAccessToken())
+        } When {
+            get("$BASE_URL$resource/${anId.value}")
+        }
 
-    private fun update(url: String, anId: Identifier, requestBody: Any): Response {
+    private fun update(resource: String, anId: Identifier, requestBody: Any): Response {
         val response = Given {
+            header(AUTHORIZATION, getAccessToken())
             contentType(ContentType.JSON)
             body(Json.writeValueAsString(requestBody))
         } When {
-            put("/api$url/${anId.value}")
+            put("$BASE_URL$resource/${anId.value}")
         }
 
         return response

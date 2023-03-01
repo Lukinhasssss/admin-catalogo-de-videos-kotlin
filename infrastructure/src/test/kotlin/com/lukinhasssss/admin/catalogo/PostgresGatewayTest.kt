@@ -15,8 +15,9 @@ import java.lang.annotation.Inherited
 @DataJpaTest
 @ComponentScan(
     basePackages = ["com.lukinhasssss.admin.catalogo"],
+    useDefaultFilters = false,
     includeFilters = [
-        ComponentScan.Filter(type = FilterType.REGEX, pattern = [".[PostgresGateway]"])
+        ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*PostgresGateway"])
     ]
 )
 @ExtendWith(PostgresCleanUpExtension::class)

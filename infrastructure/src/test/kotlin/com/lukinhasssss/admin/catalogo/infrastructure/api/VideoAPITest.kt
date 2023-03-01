@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.ApiTest
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoOutput
 import com.lukinhasssss.admin.catalogo.application.video.create.CreateVideoUseCase
@@ -126,6 +127,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.multipart(urlTemplate = "/videos") {
+            with(ApiTest.VIDEOS_JWT)
             file(expectedVideo)
             file(expectedTrailer)
             file(expectedBanner)
@@ -218,6 +220,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/videos") {
+            with(ApiTest.VIDEOS_JWT)
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(aRequest)
@@ -306,6 +309,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/videos/$expectedId") {
+            with(ApiTest.VIDEOS_JWT)
             accept = MediaType.APPLICATION_JSON
         }.andDo { print() }
 
@@ -369,6 +373,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/videos/$expectedId") {
+            with(ApiTest.VIDEOS_JWT)
             accept = MediaType.APPLICATION_JSON
         }.andDo { print() }
 
@@ -420,6 +425,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/videos/${expectedId.value}") {
+            with(ApiTest.VIDEOS_JWT)
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(aRequest)
@@ -501,6 +507,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/videos/${expectedId.value}") {
+            with(ApiTest.VIDEOS_JWT)
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(aRequest)
@@ -530,7 +537,9 @@ class VideoAPITest {
         every { deleteVideoUseCase.execute(any()) } just runs
 
         // when
-        val aResponse = mvc.delete("/videos/${expectedId.value}")
+        val aResponse = mvc.delete("/videos/${expectedId.value}") {
+            with(ApiTest.VIDEOS_JWT)
+        }
 
         // then
         aResponse.andExpect { status { isNoContent() } }
@@ -560,6 +569,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/videos") {
+            with(ApiTest.VIDEOS_JWT)
             param("page", expectedPage.toString())
             param("perPage", expectedPerPage.toString())
             param("sort", expectedSort)
@@ -620,6 +630,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/videos") {
+            with(ApiTest.VIDEOS_JWT)
             accept(MediaType.APPLICATION_JSON)
         }
 
@@ -666,7 +677,9 @@ class VideoAPITest {
         every { getMediaUseCase.execute(any()) } returns expectedMedia
 
         // when
-        val aResponse = mvc.get("/videos/$expectedId/medias/${expectedMediaType.name}")
+        val aResponse = mvc.get("/videos/$expectedId/medias/${expectedMediaType.name}") {
+            with(ApiTest.VIDEOS_JWT)
+        }
 
         // then
         aResponse.andExpect {
@@ -706,6 +719,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.multipart(urlTemplate = "/videos/$expectedId/medias/$expectedType") {
+            with(ApiTest.VIDEOS_JWT)
             file(expectedVideo)
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.MULTIPART_FORM_DATA
@@ -751,6 +765,7 @@ class VideoAPITest {
 
         // when
         val aResponse = mvc.multipart(urlTemplate = "/videos/$expectedId/medias/INVALID") {
+            with(ApiTest.VIDEOS_JWT)
             file(expectedVideo)
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.MULTIPART_FORM_DATA
