@@ -4,7 +4,7 @@ object Version {
     val detekt = "1.22.0-RC2"
     val ktlint = "11.0.0"
     val jacoco = "0.8.8"
-    val flyway = "9.11.0"
+    val flyway = "9.15.0"
     val sonarqube = "3.5.0.2730"
     val springBoot = "3.0.2"
     val springDependencyManagement = "1.1.0"

@@ -57,11 +57,11 @@ dependencies {
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
     implementation("ch.qos.logback:logback-classic:1.4.5")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
-    implementation("com.google.cloud:google-cloud-storage:2.17.2")
+    implementation("com.google.cloud:google-cloud-storage:2.19.0")
     implementation("com.google.guava:guava:31.1-jre")
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
@@ -80,6 +80,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:${Version.testContainers}")
     testImplementation("org.testcontainers:postgresql:${Version.testContainers}")
     testImplementation("org.testcontainers:junit-jupiter:${Version.testContainers}")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
 }
 
 flyway {
