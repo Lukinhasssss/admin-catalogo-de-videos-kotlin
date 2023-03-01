@@ -43,10 +43,10 @@ class SecurityConfig {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/cast_members*").hasAnyRole(ROLE_ADMIN, ROLE_CAST_MEMBERS)
-                it.requestMatchers("/categories*").hasAnyRole(ROLE_ADMIN, ROLE_CATEGORIES)
-                it.requestMatchers("/genres*").hasAnyRole(ROLE_ADMIN, ROLE_GENRES)
-                it.requestMatchers("/videos*").hasAnyRole(ROLE_ADMIN, ROLE_VIDEOS)
+                it.requestMatchers("/cast_members/**").hasAnyRole(ROLE_ADMIN, ROLE_CAST_MEMBERS)
+                it.requestMatchers("/categories/**").hasAnyRole(ROLE_ADMIN, ROLE_CATEGORIES)
+                it.requestMatchers("/genres/**").hasAnyRole(ROLE_ADMIN, ROLE_GENRES)
+                it.requestMatchers("/videos/**").hasAnyRole(ROLE_ADMIN, ROLE_VIDEOS)
                 it.anyRequest().hasRole("ROLE_ADMIN")
             }
             .oauth2ResourceServer {
