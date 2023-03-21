@@ -8,7 +8,6 @@ plugins {
 }
 
 group = "com.lukinhasssss.admin.catalogo.application"
-// version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -20,5 +19,5 @@ dependencies {
     testImplementation(project(path = ":domain", configuration = "testClasses"))
 
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.13.2")
+    testImplementation("io.mockk:mockk:1.13.4")
 }

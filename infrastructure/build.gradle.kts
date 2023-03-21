@@ -27,6 +27,8 @@ tasks.withType<BootJar> {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {
@@ -38,8 +40,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
 
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.14")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -61,7 +63,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
-    implementation("com.google.cloud:google-cloud-storage:2.19.0")
+    implementation("com.google.cloud:google-cloud-storage:2.20.1")
     implementation("com.google.guava:guava:31.1-jre")
 
     testImplementation(project(path = ":domain", configuration = "testClasses"))
@@ -73,7 +75,7 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:${Version.flyway}")
     testImplementation("com.h2database:h2")
 
-    testImplementation("com.ninja-squad:springmockk:4.0.0")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 
@@ -81,6 +83,8 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:${Version.testContainers}")
     testImplementation("org.testcontainers:junit-jupiter:${Version.testContainers}")
     testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
+    // testImplementation("org.jboss.resteasy:resteasy-core:6.2.3.Final")
+    // testImplementation("org.jboss.resteasy:resteasy-multipart-provider:6.2.3.Final")
 }
 
 flyway {

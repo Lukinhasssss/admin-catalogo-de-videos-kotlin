@@ -8,7 +8,6 @@ plugins {
 }
 
 group = "com.lukinhasssss.admin.catalogo.domain"
-// version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
