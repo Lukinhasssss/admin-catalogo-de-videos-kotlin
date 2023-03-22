@@ -1,16 +1,20 @@
 amqp:
   admin:
     auto-create: true
-  host: localhost
-  port: 5672
-  username: adm_videos
-  password: 123456
+  host: ${AMQP_RABBIT_HOST:localhost}
+  port: ${AMQP_RABBIT_PORT:5672}
+  username: ${AMQP_RABBIT_USERNAME:adm_videos}
+  password: ${AMQP_RABBIT_PASSWORD:123456}
+
+keycloak:
+  realm: ${KEYCLOAK_REALM:codeflix}
+  host: ${KEYCLOAK_HOST:http://localhost:18080}
 
 postgres:
+  url: ${DB_POSTGRES_URL:localhost:5432}
   username: ${DB_POSTGRES_USERNAME:username}
   password: ${DB_POSTGRES_PASSWORD:password}
   schema: adm_videos
-  url: ${DB_POSTGRES_URL:localhost:5432}
 
 server:
   port: 8080

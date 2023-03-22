@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.ApiTest
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryOutput
 import com.lukinhasssss.admin.catalogo.application.category.create.CreateCategoryUseCase
@@ -87,6 +88,7 @@ class CategoryAPITest {
 
         // when
         val request = post("/categories")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(anInput))
 
@@ -124,6 +126,7 @@ class CategoryAPITest {
 
         // when
         val request = post("/categories")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(anInput))
 
@@ -163,6 +166,7 @@ class CategoryAPITest {
 
         // when
         val request = post("/categories")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(anInput))
 
@@ -202,6 +206,7 @@ class CategoryAPITest {
         whenever(getCategoryByIdUseCase.execute(any())).thenReturn(CategoryOutput.from(aCategory))
 
         val request = get("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
 
         val response = mvc.perform(request).andDo(print())
 
@@ -233,6 +238,7 @@ class CategoryAPITest {
             .thenThrow(NotFoundException.with(expectedId, Category::class))
 
         val request = get("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
 
         val response = mvc.perform(request).andDo(print())
 
@@ -257,6 +263,7 @@ class CategoryAPITest {
 
         // when
         val request = put("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(aCommand))
 
@@ -289,6 +296,7 @@ class CategoryAPITest {
 
         // when
         val request = put("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(aCommand))
 
@@ -319,6 +327,7 @@ class CategoryAPITest {
 
         // when
         val request = put("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(aCommand))
 
@@ -341,6 +350,7 @@ class CategoryAPITest {
         doNothing().whenever(deleteCategoryUseCase).execute(any())
 
         val request = delete("/categories/$expectedId")
+            .with(ApiTest.CATEGORIES_JWT)
 
         val response = mvc.perform(request).andDo(print())
 
@@ -369,6 +379,7 @@ class CategoryAPITest {
             .thenReturn(Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems))
 
         val request = get("/categories")
+            .with(ApiTest.CATEGORIES_JWT)
             .queryParam("page", expectedPage.toString())
             .queryParam("perPage", expectedPerPage.toString())
             .queryParam("sort", expectedSort)

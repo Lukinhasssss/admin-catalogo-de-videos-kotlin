@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 logging:
   level:
     root: info
@@ -7,6 +10,10 @@ amqp:
   port: 5672
   username: adm_videos
   password: 123456
+
+keycloak:
+  realm: test
+  host: http://test:8443
 
 postgres:
   username: username

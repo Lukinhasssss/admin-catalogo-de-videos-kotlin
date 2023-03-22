@@ -1,13 +1,13 @@
 package com.lukinhasssss.admin.catalogo.e2e.genre
 
 import com.lukinhasssss.admin.catalogo.E2ETest
+import com.lukinhasssss.admin.catalogo.KeycloakTestContainers
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.UpdateGenreRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.persistence.GenreRepository
 import io.restassured.module.kotlin.extensions.Then
-import io.restassured.module.kotlin.extensions.When
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions
@@ -26,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @E2ETest
 @Testcontainers
-class GenreE2ETest : MockDsl {
+class GenreE2ETest : MockDsl, KeycloakTestContainers {
 
     @Autowired
     private lateinit var genreRepository: GenreRepository
@@ -215,12 +215,11 @@ class GenreE2ETest : MockDsl {
         assertTrue(POSTGRESQL_CONTAINER.isRunning)
         assertEquals(0, genreRepository.count())
 
+        val expectedStatusCode = HttpStatus.NOT_FOUND.value()
         val expectedMessage = "Genre with ID 123 was not found"
 
-        When {
-            get("/api/genres/123")
-        } Then {
-            statusCode(HttpStatus.NOT_FOUND.value())
+        retrieveAGenreResponse(GenreID.from("123")) Then {
+            statusCode(expectedStatusCode)
             body("message", equalTo(expectedMessage))
         }
     }

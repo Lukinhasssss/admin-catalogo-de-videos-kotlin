@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 
-class EntityTest {
+class EntityTest : UnitTest() {
 
     @Test
     fun givenEmptyDomainEvents_whenCallsRegisterEvent_shouldAddEventToList() {

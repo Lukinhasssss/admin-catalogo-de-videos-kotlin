@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
@@ -14,7 +15,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class VideoTest {
+class VideoTest : UnitTest() {
 
     @Test
     fun givenValidParams_whenCallNewVideo_shouldInstantiate() {

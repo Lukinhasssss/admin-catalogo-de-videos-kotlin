@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.castMember
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -7,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class CastMemberTest {
+class CastMemberTest : UnitTest() {
 
     @Test
     fun givenAValidParams_whenCallsNewMember_thenInstantiateACastMember() {

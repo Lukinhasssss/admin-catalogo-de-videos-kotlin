@@ -1,11 +1,12 @@
 package com.lukinhasssss.admin.catalogo.e2e.category
 
 import com.lukinhasssss.admin.catalogo.E2ETest
+import com.lukinhasssss.admin.catalogo.KeycloakTestContainers
+import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.e2e.MockDsl
 import com.lukinhasssss.admin.catalogo.infrastructure.category.models.UpdateCategoryRequest
 import com.lukinhasssss.admin.catalogo.infrastructure.category.persistence.CategoryRepository
 import io.restassured.module.kotlin.extensions.Then
-import io.restassured.module.kotlin.extensions.When
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @E2ETest
 @Testcontainers
-class CategoryE2ETest : MockDsl {
+class CategoryE2ETest : MockDsl, KeycloakTestContainers {
 
     @Autowired
     private lateinit var categoryRepository: CategoryRepository
@@ -188,12 +189,11 @@ class CategoryE2ETest : MockDsl {
         assertTrue(POSTGRESQL_CONTAINER.isRunning)
         assertEquals(0, categoryRepository.count())
 
+        val expectedStatusCode = HttpStatus.NOT_FOUND.value()
         val expectedMessage = "Category with ID 123 was not found"
 
-        When {
-            get("/api/categories/123")
-        } Then {
-            statusCode(HttpStatus.NOT_FOUND.value())
+        retrieveACategoryResponse(CategoryID.from("123")) Then {
+            statusCode(expectedStatusCode)
             body("message", equalTo(expectedMessage))
         }
     }

@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.video
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import java.time.Year
 import kotlin.test.assertEquals
 
-class VideoValidatorTest {
+class VideoValidatorTest : UnitTest() {
 
     @Test
     fun givenEmptyTitle_whenCallsValidate_shouldReceiveError() {

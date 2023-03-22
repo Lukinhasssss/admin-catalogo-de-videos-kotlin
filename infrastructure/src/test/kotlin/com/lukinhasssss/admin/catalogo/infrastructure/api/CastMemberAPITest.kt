@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.ApiTest
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberUseCase
@@ -75,6 +76,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -116,6 +118,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -156,7 +159,9 @@ class CastMemberAPITest {
         every { getCastMemberByIdUseCase.execute(any()) } returns CastMemberOutput.from(aMember)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+        val aResponse = mvc.get(urlTemplate = "/cast_members/$expectedId") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect {
@@ -187,7 +192,9 @@ class CastMemberAPITest {
         } throws NotFoundException.with(id = expectedId, anAggregate = CastMember::class)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members/${expectedId.value}").andDo { print() }
+        val aResponse = mvc.get(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect {
@@ -218,6 +225,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -262,6 +270,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -305,6 +314,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -339,7 +349,9 @@ class CastMemberAPITest {
         every { deleteCastMemberUseCase.execute(any()) } returns Unit
 
         // when
-        val aResponse = mvc.delete(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+        val aResponse = mvc.delete(urlTemplate = "/cast_members/$expectedId") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect { status { isNoContent() } }
@@ -367,6 +379,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             param("page", expectedPage.toString())
             param("perPage", expectedPerPage.toString())
             param("sort", expectedSort)
@@ -419,7 +432,9 @@ class CastMemberAPITest {
         } returns Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members")
+        val aResponse = mvc.get(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }
 
         // then
         aResponse.andExpect {
