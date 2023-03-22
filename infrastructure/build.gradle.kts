@@ -59,7 +59,7 @@ dependencies {
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
@@ -107,4 +107,12 @@ tasks.testCodeCoverageReport {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.testCodeCoverageReport)
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }

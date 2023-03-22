@@ -21,3 +21,11 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.4")
 }
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
