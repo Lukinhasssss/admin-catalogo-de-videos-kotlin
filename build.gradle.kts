@@ -3,10 +3,10 @@ import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
-    kotlin("jvm") version Version.kotlin
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    kotlin("jvm") version Version.KOTLIN
+    id("org.sonarqube") version Version.SONARQUBE
+    id("org.jlleitschuh.gradle.ktlint") version Version.KTLINT
+    id("io.gitlab.arturbosch.detekt") version Version.DETEKT
 }
 
 group = "com.lukinhasssss.admin.catalogo"
@@ -17,7 +17,7 @@ repositories {
 
 // START OF DETEKT AND KTLINT CONFIGURATION
 detekt {
-    toolVersion = Version.detekt
+    toolVersion = Version.DETEKT
     config = files("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }

@@ -3,14 +3,14 @@ plugins {
     id("jacoco")
 }
 
-version = Version.project
+version = Version.PROJECT
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.vavr:vavr-kotlin:${Version.vavr}")
+    implementation("io.vavr:vavr-kotlin:${Version.VAVR}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
@@ -20,7 +20,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-    toolVersion = Version.jacoco
+    toolVersion = Version.JACOCO
 }
 
 tasks.register<Test>("unitTests") {

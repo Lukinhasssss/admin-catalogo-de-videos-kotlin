@@ -1,13 +1,15 @@
 plugins {
     id("java-conventions")
-    kotlin("jvm") version Version.kotlin
+    kotlin("jvm") version Version.KOTLIN
     id("jacoco")
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    id("org.sonarqube") version Version.SONARQUBE
+    id("org.jlleitschuh.gradle.ktlint") version Version.KTLINT
+    id("io.gitlab.arturbosch.detekt") version Version.DETEKT
 }
 
 group = "com.lukinhasssss.admin.catalogo.application"
+
+version = "1.0.0"
 
 repositories {
     mavenCentral()

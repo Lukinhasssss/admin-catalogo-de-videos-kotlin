@@ -5,15 +5,15 @@ plugins {
     id("application")
     id("jacoco")
     id("jacoco-report-aggregation")
-    id("org.sonarqube") version Version.sonarqube
-    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
-    id("io.gitlab.arturbosch.detekt") version Version.detekt
-    id("org.springframework.boot") version Version.springBoot
-    id("io.spring.dependency-management") version Version.springDependencyManagement
-    id("org.flywaydb.flyway") version Version.flyway
-    kotlin("jvm") version Version.kotlin
-    kotlin("plugin.spring") version Version.kotlin
-    kotlin("plugin.jpa") version Version.kotlin
+    id("org.sonarqube") version Version.SONARQUBE
+    id("org.jlleitschuh.gradle.ktlint") version Version.KTLINT
+    id("io.gitlab.arturbosch.detekt") version Version.DETEKT
+    id("org.springframework.boot") version Version.SPRING_BOOT
+    id("io.spring.dependency-management") version Version.SPRING_DEPENDENCY_MANAGEMENT
+    id("org.flywaydb.flyway") version Version.FLYWAY
+    kotlin("jvm") version Version.KOTLIN
+    kotlin("plugin.spring") version Version.KOTLIN
+    kotlin("plugin.jpa") version Version.KOTLIN
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
@@ -27,8 +27,6 @@ tasks.withType<BootJar> {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
-    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {
@@ -72,19 +70,19 @@ dependencies {
     testImplementation("org.springframework.amqp:spring-rabbit-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    testImplementation("org.flywaydb:flyway-core:${Version.flyway}")
+    testImplementation("org.flywaydb:flyway-core:${Version.FLYWAY}")
     testImplementation("com.h2database:h2")
 
     testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 
-    testImplementation("org.testcontainers:testcontainers:${Version.testContainers}")
-    testImplementation("org.testcontainers:postgresql:${Version.testContainers}")
-    testImplementation("org.testcontainers:junit-jupiter:${Version.testContainers}")
+    testImplementation("org.testcontainers:testcontainers:${Version.TEST_CONTAINERS}")
+    testImplementation("org.testcontainers:postgresql:${Version.TEST_CONTAINERS}")
+    testImplementation("org.testcontainers:junit-jupiter:${Version.TEST_CONTAINERS}")
     testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
-    // testImplementation("org.jboss.resteasy:resteasy-core:6.2.3.Final")
-    // testImplementation("org.jboss.resteasy:resteasy-multipart-provider:6.2.3.Final")
+    testImplementation("org.jboss.resteasy:resteasy-core:4.7.9.Final")
+    testImplementation("org.jboss.resteasy:resteasy-multipart-provider:4.7.9.Final")
 }
 
 flyway {
