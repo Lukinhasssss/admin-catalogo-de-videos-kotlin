@@ -2,7 +2,7 @@ object Version {
     const val PROJECT = "1.0.0"
     const val KOTLIN = "1.8.20"
     const val DETEKT = "1.22.0-RC2"
-    const val KTLINT = "11.1.0"
+    const val KTLINT = "11.3.1"
     const val JACOCO = "0.8.8"
     const val FLYWAY = "9.16.3"
     const val SONARQUBE = "4.0.0.2929"
