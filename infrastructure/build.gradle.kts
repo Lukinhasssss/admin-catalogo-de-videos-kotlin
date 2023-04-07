@@ -6,8 +6,6 @@ plugins {
     id("jacoco")
     id("jacoco-report-aggregation")
     id("org.sonarqube") version Version.SONARQUBE
-    id("org.jlleitschuh.gradle.ktlint") version Version.KTLINT
-    id("io.gitlab.arturbosch.detekt") version Version.DETEKT
     id("org.springframework.boot") version Version.SPRING_BOOT
     id("io.spring.dependency-management") version Version.SPRING_DEPENDENCY_MANAGEMENT
     id("org.flywaydb.flyway") version Version.FLYWAY
