@@ -9,13 +9,14 @@ plugins {
     id("org.springframework.boot") version Version.SPRING_BOOT
     id("io.spring.dependency-management") version Version.SPRING_DEPENDENCY_MANAGEMENT
     id("org.flywaydb.flyway") version Version.FLYWAY
+    id("io.gatling.gradle") version Version.GATLING
     kotlin("jvm") version Version.KOTLIN
     kotlin("plugin.spring") version Version.KOTLIN
     kotlin("plugin.jpa") version Version.KOTLIN
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
-// version = "1.0-SNAPSHOT"
+version = "1.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 tasks.withType<BootJar> {

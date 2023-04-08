@@ -43,6 +43,7 @@ class SecurityConfig {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
+                it.requestMatchers("/actuator/**").permitAll()
                 it.requestMatchers("/cast_members/**").hasAnyRole(ROLE_ADMIN, ROLE_CAST_MEMBERS)
                 it.requestMatchers("/categories/**").hasAnyRole(ROLE_ADMIN, ROLE_CATEGORIES)
                 it.requestMatchers("/genres/**").hasAnyRole(ROLE_ADMIN, ROLE_GENRES)

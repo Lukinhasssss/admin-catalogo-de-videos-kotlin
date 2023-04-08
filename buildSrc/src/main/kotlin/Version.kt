@@ -9,4 +9,5 @@ object Version {
     const val SPRING_DEPENDENCY_MANAGEMENT = "1.1.0"
     const val TEST_CONTAINERS = "1.17.6"
     const val VAVR = "0.10.2"
+    const val GATLING = "3.9.3.1"
 }

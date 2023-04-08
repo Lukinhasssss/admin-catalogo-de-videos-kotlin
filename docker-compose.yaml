@@ -14,18 +14,19 @@ services:
     restart: on-failure
     depends_on:
       - postgres-admin-do-catalogo
+      - rabbitmq-admin-do-catalogo
     env_file:
       - .env
 
-  nginx-admin-do-catalogo:
-    container_name: nginx-admin-do-catalogo
-    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
-    ports:
-      - '80:80'
-    depends_on:
-      - admin-do-catalogo
-    networks:
-      - adm_videos_network
+#  nginx-admin-do-catalogo:
+#    container_name: nginx-admin-do-catalogo
+#    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
+#    ports:
+#      - '80:80'
+#    depends_on:
+#      - admin-do-catalogo
+#    networks:
+#      - adm_videos_network
 
   postgres-admin-do-catalogo:
     container_name: adm_videos_postgres

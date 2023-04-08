@@ -7,8 +7,6 @@ plugins {
 
 group = "com.lukinhasssss.admin.catalogo.application"
 
-version = "1.0.0"
-
 repositories {
     mavenCentral()
 }
