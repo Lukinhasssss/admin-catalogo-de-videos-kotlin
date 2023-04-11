@@ -35,7 +35,7 @@ class AudioVideoMediaJpaEntity(
 
     companion object {
         fun from(media: AudioVideoMedia?) = with(media) {
-            if (this != null)
+            if (this != null) {
                 AudioVideoMediaJpaEntity(
                     id = id,
                     name = name,
@@ -44,7 +44,9 @@ class AudioVideoMediaJpaEntity(
                     encodedPath = encodedLocation,
                     status = status
                 )
-            else null
+            } else {
+                null
+            }
         }
     }
 

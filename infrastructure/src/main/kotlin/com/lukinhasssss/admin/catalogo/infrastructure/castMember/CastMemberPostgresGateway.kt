@@ -56,8 +56,10 @@ class CastMemberPostgresGateway(
     override fun deleteById(anID: CastMemberID) = with(anID.value) {
         Logger.info(message = "Iniciando deleção do membro de elenco salvo no banco...")
 
-        if (repository.existsById(this)) repository.deleteById(this).also {
-            Logger.info(message = "Membro de elenco deletado do banco com sucesso!")
+        if (repository.existsById(this)) {
+            repository.deleteById(this).also {
+                Logger.info(message = "Membro de elenco deletado do banco com sucesso!")
+            }
         }
     }
 

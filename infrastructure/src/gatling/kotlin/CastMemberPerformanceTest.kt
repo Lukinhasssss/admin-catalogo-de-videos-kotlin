@@ -1,6 +1,10 @@
-import io.gatling.javaapi.core.CoreDsl.*
+import io.gatling.javaapi.core.CoreDsl.RawFileBody
+import io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers
+import io.gatling.javaapi.core.CoreDsl.jsonPath
+import io.gatling.javaapi.core.CoreDsl.scenario
 import io.gatling.javaapi.core.Simulation
-import io.gatling.javaapi.http.HttpDsl.*
+import io.gatling.javaapi.http.HttpDsl.http
+import io.gatling.javaapi.http.HttpDsl.status
 
 class CastMemberPerformanceTest : Simulation() {
 
@@ -31,28 +35,32 @@ class CastMemberPerformanceTest : Simulation() {
             }.pause(1)
         )
         .pause(2)
-        .exec(http("Create Cast Member")
-            .post("/cast_members")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("castMember/create.json"))
-            .check(status().`is`(201))
-            .check(jsonPath("$.id").saveAs("castMemberId"))
+        .exec(
+            http("Create Cast Member")
+                .post("/cast_members")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("castMember/create.json"))
+                .check(status().`is`(201))
+                .check(jsonPath("$.id").saveAs("castMemberId"))
         )
-        .exec(http("Get Cast Member By ID")
-            .get("/cast_members/#{castMemberId}")
-            .header("Authorization", "#{bearerToken}")
-            .check(status().`is`(200))
+        .exec(
+            http("Get Cast Member By ID")
+                .get("/cast_members/#{castMemberId}")
+                .header("Authorization", "#{bearerToken}")
+                .check(status().`is`(200))
         )
-        .exec(http("Update Cast Member By ID")
-            .put("/cast_members/#{castMemberId}")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("castMember/update.json"))
-            .check(status().`is`(200))
+        .exec(
+            http("Update Cast Member By ID")
+                .put("/cast_members/#{castMemberId}")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("castMember/update.json"))
+                .check(status().`is`(200))
         )
-        .exec(http("List Cast Members")
-            .get("/cast_members")
-            .header("Authorization", "#{bearerToken}")
-            .check(status().`is`(200))
+        .exec(
+            http("List Cast Members")
+                .get("/cast_members")
+                .header("Authorization", "#{bearerToken}")
+                .check(status().`is`(200))
         )
 
     init {

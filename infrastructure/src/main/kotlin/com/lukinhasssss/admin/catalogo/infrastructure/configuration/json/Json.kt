@@ -25,7 +25,9 @@ enum class Json {
             SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
         )
         .modules(
-            JavaTimeModule(), Jdk8Module(), afterburnerModule(),
+            JavaTimeModule(),
+            Jdk8Module(),
+            afterburnerModule(),
             KotlinModule.Builder()
                 .withReflectionCacheSize(Json.REFLECTION_CACHE_SIZE)
                 .configure(KotlinFeature.NullToEmptyCollection, true)

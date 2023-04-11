@@ -1,6 +1,10 @@
-import io.gatling.javaapi.core.CoreDsl.*
+import io.gatling.javaapi.core.CoreDsl.RawFileBody
+import io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers
+import io.gatling.javaapi.core.CoreDsl.jsonPath
+import io.gatling.javaapi.core.CoreDsl.scenario
 import io.gatling.javaapi.core.Simulation
-import io.gatling.javaapi.http.HttpDsl.*
+import io.gatling.javaapi.http.HttpDsl.http
+import io.gatling.javaapi.http.HttpDsl.status
 
 class CategoryPerformanceTest : Simulation() {
 
@@ -37,34 +41,38 @@ class CategoryPerformanceTest : Simulation() {
             }
         )
         .pause(2)
-        .exec(http("Create Category")
-            .post("/categories")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("category/create.json"))
-            .check(status().`is`(201))
-            .check(jsonPath("$.id").saveAs("categoryId"))
+        .exec(
+            http("Create Category")
+                .post("/categories")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("category/create.json"))
+                .check(status().`is`(201))
+                .check(jsonPath("$.id").saveAs("categoryId"))
         )
-        .exec(http("Get Category By ID")
-            .get("/categories/#{categoryId}")
-            .header("Authorization", "#{bearerToken}")
-            .check(status().`is`(200))
+        .exec(
+            http("Get Category By ID")
+                .get("/categories/#{categoryId}")
+                .header("Authorization", "#{bearerToken}")
+                .check(status().`is`(200))
         )
-        .exec(http("Update Category By ID")
-            .put("/categories/#{categoryId}")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("category/update.json"))
-            .check(status().`is`(200))
+        .exec(
+            http("Update Category By ID")
+                .put("/categories/#{categoryId}")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("category/update.json"))
+                .check(status().`is`(200))
         )
-        .exec(http("List Categories")
-            .get("/categories")
-            .header("Authorization", "#{bearerToken}")
-            .check(status().`is`(200))
+        .exec(
+            http("List Categories")
+                .get("/categories")
+                .header("Authorization", "#{bearerToken}")
+                .check(status().`is`(200))
         )
 
     init {
         setUp(
             scenario.injectClosed(
-                constantConcurrentUsers(100).during(360),
+                constantConcurrentUsers(100).during(360)
                 // rampConcurrentUsers(10).to(20).during(10)
             ).protocols(httpProtocol)
         )

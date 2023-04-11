@@ -14,12 +14,13 @@ object Authentication {
             "password" to Configuration.PASSWORD
         )
 
-        return exec(http("Authentication")
-            .post(Configuration.TOKEN_URL)
-            .formParamMap(formParams)
-            .asFormUrlEncoded()
-            .check(status().`is`(200))
-            .check(jsonPath("$.access_token").saveAs("token"))
+        return exec(
+            http("Authentication")
+                .post(Configuration.TOKEN_URL)
+                .formParamMap(formParams)
+                .asFormUrlEncoded()
+                .check(status().`is`(200))
+                .check(jsonPath("$.access_token").saveAs("token"))
         )
     }
 }

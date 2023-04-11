@@ -25,7 +25,7 @@ class AmqpTestConfiguration {
     @Bean
     fun connectionFactory(): ConnectionFactory {
         val factory = spyk<ConnectionFactory>()
-        val connection = spyk<Connection >()
+        val connection = spyk<Connection>()
         val channel = spyk<Channel>()
 
         every { factory.createConnection() } returns connection

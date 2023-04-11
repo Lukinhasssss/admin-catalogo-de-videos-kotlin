@@ -22,8 +22,9 @@ data class Genre(
         val notification = Notification.create()
         validate(notification)
 
-        if (notification.hasError())
+        if (notification.hasError()) {
             throw NotificationException(notification = notification)
+        }
     }
 
     companion object {
@@ -95,8 +96,9 @@ data class Genre(
     }
 
     fun addCategories(categories: List<CategoryID>): Genre {
-        if (categories.isEmpty())
+        if (categories.isEmpty()) {
             return this
+        }
 
         this.categories.addAll(categories)
         updatedAt = InstantUtils.now()

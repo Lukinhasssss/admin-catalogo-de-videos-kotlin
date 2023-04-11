@@ -56,8 +56,10 @@ class GenrePostgresGateway(
     override fun deleteById(anID: GenreID) = with(anID.value) {
         Logger.info(message = "Iniciando deleção do gênero salvo no banco...")
 
-        if (repository.existsById(this)) repository.deleteById(this).also {
-            Logger.info(message = "Gênero deletado do banco com sucesso!")
+        if (repository.existsById(this)) {
+            repository.deleteById(this).also {
+                Logger.info(message = "Gênero deletado do banco com sucesso!")
+            }
         }
     }
 

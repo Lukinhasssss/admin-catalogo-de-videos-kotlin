@@ -1,6 +1,9 @@
-import io.gatling.javaapi.core.CoreDsl.*
+import io.gatling.javaapi.core.CoreDsl.RawFileBody
+import io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers
+import io.gatling.javaapi.core.CoreDsl.scenario
 import io.gatling.javaapi.core.Simulation
-import io.gatling.javaapi.http.HttpDsl.*
+import io.gatling.javaapi.http.HttpDsl.http
+import io.gatling.javaapi.http.HttpDsl.status
 
 class VideoPerformanceTest : Simulation() {
 
@@ -31,16 +34,18 @@ class VideoPerformanceTest : Simulation() {
             }.pause(1)
         )
         .pause(2)
-        .exec(http("Create Video")
-            .post("/videos")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("video/createWithoutFiles.json"))
-            .check(status().`is`(201))
+        .exec(
+            http("Create Video")
+                .post("/videos")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("video/createWithoutFiles.json"))
+                .check(status().`is`(201))
         )
-        .exec(http("List Videos")
-            .get("/videos")
-            .header("Authorization", "#{bearerToken}")
-            .check(status().`is`(200))
+        .exec(
+            http("List Videos")
+                .get("/videos")
+                .header("Authorization", "#{bearerToken}")
+                .check(status().`is`(200))
         )
 
     init {

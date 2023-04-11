@@ -5,7 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 data class UpdateCastMemberCommand(
     val id: String,
     val name: String,
-    val type: CastMemberType,
+    val type: CastMemberType
 ) {
 
     companion object {

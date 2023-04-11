@@ -77,8 +77,10 @@ class DefaultVideoGateway(
     override fun deleteById(anID: VideoID) = with(anID) {
         Logger.info(message = "Iniciando deleção do video salvo no banco...")
 
-        if (videoRepository.existsById(value)) videoRepository.deleteById(value).also {
-            Logger.info(message = "Video deletado do banco com sucesso!")
+        if (videoRepository.existsById(value)) {
+            videoRepository.deleteById(value).also {
+                Logger.info(message = "Video deletado do banco com sucesso!")
+            }
         }
     }
 

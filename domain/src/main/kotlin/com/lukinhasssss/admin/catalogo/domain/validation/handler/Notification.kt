@@ -5,7 +5,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.ValidationHandler
 
 class Notification(
-    private val errors: MutableList<Error>,
+    private val errors: MutableList<Error>
 ) : ValidationHandler {
 
     companion object {

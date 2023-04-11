@@ -16,6 +16,8 @@ class EventConfig {
         @VideoCreatedQueue props: QueueProperties,
         ops: RabbitOperations
     ) = RabbitEventService(
-        exchange = props.exchange, routingKey = props.routingKey, ops = ops
+        exchange = props.exchange,
+        routingKey = props.routingKey,
+        ops = ops
     )
 }

@@ -1,6 +1,9 @@
-import io.gatling.javaapi.core.CoreDsl.*
+import io.gatling.javaapi.core.CoreDsl.RawFileBody
+import io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers
+import io.gatling.javaapi.core.CoreDsl.scenario
 import io.gatling.javaapi.core.Simulation
-import io.gatling.javaapi.http.HttpDsl.*
+import io.gatling.javaapi.http.HttpDsl.http
+import io.gatling.javaapi.http.HttpDsl.status
 
 class AdminDoCatalogoPerformanceTest : Simulation() {
 
@@ -31,35 +34,39 @@ class AdminDoCatalogoPerformanceTest : Simulation() {
             }.pause(1)
         )
         .pause(2)
-        .exec(http("Create Category")
-            .post("/categories")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("category/create.json"))
-            .check(status().`is`(201))
+        .exec(
+            http("Create Category")
+                .post("/categories")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("category/create.json"))
+                .check(status().`is`(201))
         )
-        .exec(http("Create Genre")
-            .post("/genres")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("genre/create.json"))
-            .check(status().`is`(201))
+        .exec(
+            http("Create Genre")
+                .post("/genres")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("genre/create.json"))
+                .check(status().`is`(201))
         )
-        .exec(http("Create Cast Member")
-            .post("/cast_members")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("castMember/create.json"))
-            .check(status().`is`(201))
+        .exec(
+            http("Create Cast Member")
+                .post("/cast_members")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("castMember/create.json"))
+                .check(status().`is`(201))
         )
-        .exec(http("Create Video")
-            .post("/videos")
-            .header("Authorization", "#{bearerToken}")
-            .body(RawFileBody("video/createWithoutFiles.json"))
-            .check(status().`is`(201))
+        .exec(
+            http("Create Video")
+                .post("/videos")
+                .header("Authorization", "#{bearerToken}")
+                .body(RawFileBody("video/createWithoutFiles.json"))
+                .check(status().`is`(201))
         )
 
     init {
         setUp(
             scenario.injectClosed(
-                constantConcurrentUsers(100).during(360),
+                constantConcurrentUsers(100).during(360)
             ).protocols(httpProtocol)
         )
     }
