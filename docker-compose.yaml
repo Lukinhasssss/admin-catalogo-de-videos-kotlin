@@ -31,17 +31,7 @@ services:
   postgres-admin-do-catalogo:
     container_name: adm_videos_postgres
     image: postgres:latest
-    #    platform: linux/amd64
     restart: unless-stopped
-    #    volumes:
-    #      - postgres_data:/var/lib/postgresql/data
-    security_opt:
-      - seccomp:unconfined
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
     ports:
       - "5432:5432"
     networks:
@@ -50,6 +40,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER-username}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
       POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    security_opt:
+      - seccomp:unconfined
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    #    volumes:
+    #      - postgres_data:/var/lib/postgresql/data
 
   rabbitmq-admin-do-catalogo:
     container_name: rabbitmq-admin-do-catalogo
@@ -64,6 +63,11 @@ services:
       - "5672:5672"
     networks:
       - adm_videos_network
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   keycloak-admin-do-catalogo:
     container_name: keycloak-admin-do-catalogo
