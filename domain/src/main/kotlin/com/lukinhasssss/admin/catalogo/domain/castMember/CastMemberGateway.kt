@@ -13,4 +13,6 @@ interface CastMemberGateway {
     fun update(aCastMember: CastMember): CastMember
 
     fun deleteById(anID: CastMemberID)
+
+    fun existsByIds(castMemberIDs: Iterable<CastMemberID>): List<CastMemberID>
 }

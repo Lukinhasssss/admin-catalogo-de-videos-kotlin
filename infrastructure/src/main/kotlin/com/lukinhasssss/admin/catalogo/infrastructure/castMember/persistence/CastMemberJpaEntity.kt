@@ -2,17 +2,17 @@ package com.lukinhasssss.admin.catalogo.infrastructure.castMember.persistence
 
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType.STRING
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.time.Instant
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType.STRING
-import javax.persistence.Enumerated
-import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity(name = "CastMember")
 @Table(name = "cast_members")
-data class CastMemberJpaEntity(
+class CastMemberJpaEntity(
 
     @Id
     val id: String,

@@ -1,9 +1,9 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.retrieve.list
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.IntegrationTest
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.CastMemberListOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.DefaultListCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.pagination.SearchQuery
@@ -33,8 +33,8 @@ class ListCastMemberUseCaseIT {
     fun givenAValidQuery_whenCallsListCastMembers_shouldReturnAll() {
         // given
         val members = listOf(
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
         )
 
         castMemberRepository.saveAllAndFlush(members.map { CastMemberJpaEntity.from(it) })

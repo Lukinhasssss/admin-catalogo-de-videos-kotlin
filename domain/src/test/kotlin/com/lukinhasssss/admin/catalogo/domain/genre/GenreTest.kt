@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.genre
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.category.CategoryID
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class GenreTest {
+class GenreTest : UnitTest() {
 
     @Test
     fun givenValidParams_whenCallNewGenre_shouldInstantiateAGenre() {

@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo.domain.category
 
+import com.lukinhasssss.admin.catalogo.domain.UnitTest
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.ThrowsValidationHandler
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -11,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class CategoryTest {
+class CategoryTest : UnitTest() {
 
     @Test
     fun givenAValidParams_whenCallNewCategory_thenShouldInstantiateACategory() {

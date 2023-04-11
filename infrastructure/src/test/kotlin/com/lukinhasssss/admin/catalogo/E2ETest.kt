@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo
 
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.WebServerConfig
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
@@ -17,6 +18,7 @@ import java.lang.annotation.Inherited
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
 @ExtendWith(PostgresCleanUpExtension::class)
+@Tag(value = "e2eTest")
 annotation class E2ETest
 
 /**

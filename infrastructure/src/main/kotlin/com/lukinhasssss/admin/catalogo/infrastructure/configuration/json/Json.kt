@@ -1,6 +1,5 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.configuration.json
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
@@ -30,14 +29,14 @@ enum class Json {
             KotlinModule.Builder()
                 .withReflectionCacheSize(Json.REFLECTION_CACHE_SIZE)
                 .configure(KotlinFeature.NullToEmptyCollection, true)
-                .configure(KotlinFeature.NullToEmptyMap, true)
-                .configure(KotlinFeature.NullIsSameAsDefault, true)
-                .configure(KotlinFeature.SingletonSupport, true)
-                .configure(KotlinFeature.StrictNullChecks, true)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
                 .build()
         )
         .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-        .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+        // .serializationInclusion(JsonInclude.Include.NON_EMPTY)
         .build()
 
     private fun afterburnerModule(): AfterburnerModule {

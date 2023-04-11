@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.update
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.IntegrationTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
@@ -80,7 +80,7 @@ class UpdateCastMemberUseCaseIT {
 
         val expectedId = aMember.id
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be empty"
 
@@ -112,7 +112,7 @@ class UpdateCastMemberUseCaseIT {
 
         val expectedId = CastMemberID.from("123")
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "CastMember with ID 123 was not found"
 
         val aCommand = UpdateCastMemberCommand.with(expectedId.value, expectedName, expectedType)

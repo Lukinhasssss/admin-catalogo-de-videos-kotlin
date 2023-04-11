@@ -1,8 +1,8 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.ApiTest
 import com.lukinhasssss.admin.catalogo.ControllerTest
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.create.CreateCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.delete.DeleteCastMemberUseCase
@@ -12,12 +12,14 @@ import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.CastM
 import com.lukinhasssss.admin.catalogo.application.castMember.retrive.list.ListCastMemberUseCase
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberOutput
 import com.lukinhasssss.admin.catalogo.application.castMember.update.UpdateCastMemberUseCase
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberID
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberType
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.castMember.models.CreateCastMemberRequest
@@ -36,7 +38,6 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.util.UUID
 
 @ControllerTest(controllers = [CastMemberAPI::class])
 class CastMemberAPITest {
@@ -65,9 +66,9 @@ class CastMemberAPITest {
     @Test
     fun givenAValidCommand_whenCallsCreateCastMember_shouldReturnItsIdentifier() {
         // given
-        val expectedId = CastMemberID.from(UUID.randomUUID())
+        val expectedId = CastMemberID.from(IdUtils.uuid())
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aCommand = CreateCastMemberRequest(expectedName, expectedType)
 
@@ -75,6 +76,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -105,7 +107,7 @@ class CastMemberAPITest {
     fun givenAnInvalidName_whenCallsCreateCastMember_shouldReturnNotification() {
         // given
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "'name' should not be empty"
 
         val aCommand = CreateCastMemberRequest(expectedName, expectedType)
@@ -116,6 +118,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -147,7 +150,7 @@ class CastMemberAPITest {
     fun givenAValidId_whenCallsGetById_shouldReturnIt() {
         // given
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aMember = CastMember.newMember(expectedName, expectedType)
 
@@ -156,7 +159,9 @@ class CastMemberAPITest {
         every { getCastMemberByIdUseCase.execute(any()) } returns CastMemberOutput.from(aMember)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+        val aResponse = mvc.get(urlTemplate = "/cast_members/$expectedId") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect {
@@ -187,7 +192,9 @@ class CastMemberAPITest {
         } throws NotFoundException.with(id = expectedId, anAggregate = CastMember::class)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members/${expectedId.value}").andDo { print() }
+        val aResponse = mvc.get(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect {
@@ -210,7 +217,7 @@ class CastMemberAPITest {
 
         val expectedId = aMember.id
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
 
@@ -218,6 +225,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -251,7 +259,7 @@ class CastMemberAPITest {
 
         val expectedId = aMember.id
         val expectedName = "   "
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "'name' should not be empty"
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
@@ -262,6 +270,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -294,7 +303,7 @@ class CastMemberAPITest {
         // given
         val expectedId = CastMemberID.from("123")
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type()
+        val expectedType = Fixture.CastMembers.type()
         val expectedErrorMessage = "CastMember with ID 123 was not found"
 
         val aCommand = UpdateCastMemberRequest(expectedName, expectedType)
@@ -305,6 +314,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/cast_members/${expectedId.value}") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -339,7 +349,9 @@ class CastMemberAPITest {
         every { deleteCastMemberUseCase.execute(any()) } returns Unit
 
         // when
-        val aResponse = mvc.delete(urlTemplate = "/cast_members/$expectedId").andDo { print() }
+        val aResponse = mvc.delete(urlTemplate = "/cast_members/$expectedId") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect { status { isNoContent() } }
@@ -350,7 +362,7 @@ class CastMemberAPITest {
     @Test
     fun givenValidParams_whenCallsListCastMembers_shouldReturnIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedPage = 0
         val expectedPerPage = 20
@@ -367,6 +379,7 @@ class CastMemberAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
             param("page", expectedPage.toString())
             param("perPage", expectedPerPage.toString())
             param("sort", expectedSort)
@@ -403,7 +416,7 @@ class CastMemberAPITest {
     @Test
     fun givenEmptyParams_whenCallsListCastMembers_shouldUseDefaultsAndReturnIt() {
         // given
-        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+        val aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
 
         val expectedPage = 0
         val expectedPerPage = 10
@@ -419,7 +432,9 @@ class CastMemberAPITest {
         } returns Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/cast_members")
+        val aResponse = mvc.get(urlTemplate = "/cast_members") {
+            with(ApiTest.CAST_MEMBERS_JWT)
+        }
 
         // then
         aResponse.andExpect {

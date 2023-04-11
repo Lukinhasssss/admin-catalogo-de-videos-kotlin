@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.application.castMember.retrive.list
 
-import com.lukinhasssss.admin.catalogo.application.Fixture
 import com.lukinhasssss.admin.catalogo.application.UseCaseTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMember
 import com.lukinhasssss.admin.catalogo.domain.castMember.CastMemberGateway
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
@@ -26,8 +26,8 @@ class ListCastMemberUseCaseTest : UseCaseTest() {
     fun givenAValidQuery_whenCallsListCastMembers_shouldReturnAll() {
         // given
         val members = listOf(
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
         )
 
         val expectedPage = 0

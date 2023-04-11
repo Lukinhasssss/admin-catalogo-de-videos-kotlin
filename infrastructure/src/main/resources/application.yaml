@@ -1,3 +1,40 @@
+logging:
+  level:
+    root: warn
+    com.lukinhasssss: info
+
+amqp:
+  admin:
+    auto-create: false
+  queues:
+    video-created:
+      exchange: video.events
+      routing-key: video.created
+      queue: video.created.queue
+    video-encoded:
+      exchange: video.events
+      routing-key: video.encoded
+      queue: video.encoded.queue
+
+google:
+  cloud:
+    project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+    credentials: ${GOOGLE_CLOUD_CREDENTIALS}
+    storage:
+      catalogo-videos:
+        bucket: catalogo_videos
+        connect-timeout: 300
+        read-timeout: 1000
+        retry-delay: 50
+        retry-max-delay: 50
+        retry-max-attempts: 2
+        retry-multiplier: 1.0
+
+storage:
+  catalogo-videos:
+    filename-pattern: type-{type}
+    location-pattern: videoId-{videoId}
+
 server:
   port: 8080
   servlet:
@@ -29,8 +66,62 @@ spring:
     hibernate:
       ddl-auto: none
     properties:
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: UNSPECIFIED # https://github.com/spring-projects/spring-data-jpa/issues/2717
       "[hibernate.dialect]": org.hibernate.dialect.PostgreSQLDialect
       "[hibernate.generate_statistics]": false
       "[hibernate.connection.provider_disables_autocommit]": true
       # Para aumentar a performance ao máximo, desabilitamos o auto-commit e o open-in-view.
       # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
+  rabbitmq:
+    dynamic: ${amqp.admin.auto-create}
+    host: ${amqp.host}
+    port: ${amqp.port}
+    username: ${amqp.username}
+    password: ${amqp.password}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.host}/realms/${keycloak.realm}/protocol/openid-connect/certs
+          issuer-uri: ${keycloak.host}/realms/${keycloak.realm}
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 100GB
+
+management:
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  metrics:
+    enable:
+      jvm: true
+    distribution:
+      slo:
+        http: 50ms, 100ms, 200ms, 300ms, 500ms, 1s
+    tags:
+      application: admin-do-catalogo
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+info:
+  app:
+    name: Admin do Catálogo de Vídeos
+    description: Projeto para a adiministração do catálogo de vídeos
+    version: 1.0
+    java:
+      version: ${java.version}

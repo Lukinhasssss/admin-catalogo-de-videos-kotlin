@@ -1,5 +1,6 @@
 package com.lukinhasssss.admin.catalogo
 
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan
@@ -14,9 +15,11 @@ import java.lang.annotation.Inherited
 @DataJpaTest
 @ComponentScan(
     basePackages = ["com.lukinhasssss.admin.catalogo"],
+    useDefaultFilters = false,
     includeFilters = [
-        ComponentScan.Filter(type = FilterType.REGEX, pattern = [".[PostgresGateway]"])
+        ComponentScan.Filter(type = FilterType.REGEX, pattern = [".*PostgresGateway"])
     ]
 )
 @ExtendWith(PostgresCleanUpExtension::class)
+@Tag(value = "integrationTest")
 annotation class PostgresGatewayTest

@@ -1,6 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.lukinhasssss.admin.catalogo.ApiTest
 import com.lukinhasssss.admin.catalogo.ControllerTest
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreOutput
 import com.lukinhasssss.admin.catalogo.application.genre.create.CreateGenreUseCase
@@ -17,6 +18,7 @@ import com.lukinhasssss.admin.catalogo.domain.exception.NotificationException
 import com.lukinhasssss.admin.catalogo.domain.genre.Genre
 import com.lukinhasssss.admin.catalogo.domain.genre.GenreID
 import com.lukinhasssss.admin.catalogo.domain.pagination.Pagination
+import com.lukinhasssss.admin.catalogo.domain.utils.IdUtils
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
 import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 import com.lukinhasssss.admin.catalogo.infrastructure.genre.models.CreateGenreRequest
@@ -27,9 +29,7 @@ import io.mockk.verify
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.Conversions.string
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.servlet.MockMvc
@@ -37,8 +37,6 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.name
-import java.util.UUID
 
 @ControllerTest(controllers = [GenreAPI::class])
 class GenreAPITest {
@@ -78,6 +76,7 @@ class GenreAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/genres") {
+            with(ApiTest.GENRES_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -121,6 +120,7 @@ class GenreAPITest {
 
         // when
         val aResponse = mvc.post(urlTemplate = "/genres") {
+            with(ApiTest.GENRES_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -164,7 +164,9 @@ class GenreAPITest {
         every { getGenreByIdUseCase.execute(any()) } returns GenreOutput.from(aGenre)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/genres/$expectedId")
+        val aResponse = mvc.get(urlTemplate = "/genres/$expectedId") {
+            with(ApiTest.GENRES_JWT)
+        }
 
         // then
         aResponse.andExpect {
@@ -189,13 +191,15 @@ class GenreAPITest {
     @Test
     fun givenAnInvalidId_whenCallsGetGenreByIdGenre_shouldReturnNotFound() {
         // given
-        val expectedId = GenreID.from(UUID.randomUUID().toString())
+        val expectedId = GenreID.from(IdUtils.uuid())
         val expectedErrorMessage = "Genre with ID ${expectedId.value} was not found"
 
         every { getGenreByIdUseCase.execute(any()) } throws NotFoundException.with(expectedId, Genre::class)
 
         // when
-        val aResponse = mvc.get(urlTemplate = "/genres/${expectedId.value}")
+        val aResponse = mvc.get(urlTemplate = "/genres/${expectedId.value}") {
+            with(ApiTest.GENRES_JWT)
+        }
 
         // then
         aResponse.andExpect {
@@ -228,6 +232,7 @@ class GenreAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/genres/$expectedId") {
+            with(ApiTest.GENRES_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -272,6 +277,7 @@ class GenreAPITest {
 
         // when
         val aResponse = mvc.put(urlTemplate = "/genres/$expectedId") {
+            with(ApiTest.GENRES_JWT)
             contentType = APPLICATION_JSON
             content = mapper.writeValueAsString(aCommand)
         }.andDo { print() }
@@ -305,7 +311,9 @@ class GenreAPITest {
         every { deleteGenreUseCase.execute(any()) } returns Unit
 
         // when
-        val aResponse = mvc.delete(urlTemplate = "/genres/$expectedId").andDo { print() }
+        val aResponse = mvc.delete(urlTemplate = "/genres/$expectedId") {
+            with(ApiTest.GENRES_JWT)
+        }.andDo { print() }
 
         // then
         aResponse.andExpect { status { isNoContent() } }
@@ -333,6 +341,7 @@ class GenreAPITest {
 
         // when
         val aResponse = mvc.get(urlTemplate = "/genres") {
+            with(ApiTest.GENRES_JWT)
             param("page", expectedPage.toString())
             param("perPage", expectedPerPage.toString())
             param("sort", expectedSort)

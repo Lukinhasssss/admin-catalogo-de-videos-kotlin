@@ -1,7 +1,7 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.castMember.models
 
-import com.lukinhasssss.admin.catalogo.Fixture
 import com.lukinhasssss.admin.catalogo.JacksonTest
+import com.lukinhasssss.admin.catalogo.domain.Fixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ class CastMemberResponseTest {
     fun testMarshall() {
         val expectId = "123"
         val expectedName = Fixture.name()
-        val expectedType = Fixture.CastMember.type().name
+        val expectedType = Fixture.CastMembers.type().name
         val expectedCreatedAt = Instant.now()
         val expectedUpdatedAt = Instant.now()
 

@@ -1,22 +1,23 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.spring") version "1.7.21"
-    kotlin("plugin.jpa") version "1.7.21"
+    id("java-conventions")
     id("application")
     id("jacoco")
-    id("org.sonarqube") version "3.5.0.2730"
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0-RC2"
-    id("org.springframework.boot") version "2.7.5"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.flywaydb.flyway") version "9.8.3"
+    id("jacoco-report-aggregation")
+    id("org.sonarqube") version Version.sonarqube
+    id("org.jlleitschuh.gradle.ktlint") version Version.ktlint
+    id("io.gitlab.arturbosch.detekt") version Version.detekt
+    id("org.springframework.boot") version Version.springBoot
+    id("io.spring.dependency-management") version Version.springDependencyManagement
+    id("org.flywaydb.flyway") version Version.flyway
+    kotlin("jvm") version Version.kotlin
+    kotlin("plugin.spring") version Version.kotlin
+    kotlin("plugin.jpa") version Version.kotlin
 }
 
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
-version = "1.0-SNAPSHOT"
+// version = "1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 tasks.withType<BootJar> {
@@ -26,6 +27,8 @@ tasks.withType<BootJar> {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {
@@ -37,10 +40,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
 
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.13")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
-
-    implementation("io.vavr:vavr-kotlin:0.10.2")
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
 
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
@@ -48,22 +49,42 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-undertow") {
         exclude(group = "io.undertow", module = "undertow-websockets-jsr")
     }
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     implementation("org.postgresql:postgresql")
+    implementation("org.hibernate:hibernate-validator:8.0.0.Final")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
+    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+
+    implementation("com.google.cloud:google-cloud-storage:2.20.1")
+    implementation("com.google.guava:guava:31.1-jre")
+
+    testImplementation(project(path = ":domain", configuration = "testClasses"))
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.h2database:h2")
-    testImplementation("org.flywaydb:flyway-core:9.8.3")
+    testImplementation("org.springframework.amqp:spring-rabbit-test")
+    testImplementation("org.springframework.security:spring-security-test")
 
-    testImplementation("io.github.serpro69:kotlin-faker:1.12.0")
-    testImplementation("com.ninja-squad:springmockk:3.1.2")
+    testImplementation("org.flywaydb:flyway-core:${Version.flyway}")
+    testImplementation("com.h2database:h2")
+
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("io.rest-assured:kotlin-extensions:5.3.0")
 
-    testImplementation("org.testcontainers:testcontainers:1.17.6")
-    testImplementation("org.testcontainers:postgresql:1.17.6")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:testcontainers:${Version.testContainers}")
+    testImplementation("org.testcontainers:postgresql:${Version.testContainers}")
+    testImplementation("org.testcontainers:junit-jupiter:${Version.testContainers}")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
+    // testImplementation("org.jboss.resteasy:resteasy-core:6.2.3.Final")
+    // testImplementation("org.jboss.resteasy:resteasy-multipart-provider:6.2.3.Final")
 }
 
 flyway {
@@ -74,15 +95,24 @@ flyway {
     cleanDisabled = false
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+tasks.testCodeCoverageReport {
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(file("${projectDir.parentFile.path}/build/reports/jacoco/test/jacocoTestReport.xml"))
+
+        html.required.set(true)
+        html.outputLocation.set(file("${projectDir.parentFile.path}/build/reports/jacoco/test/"))
+    }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        useK2 = false
-        javaParameters = true
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-    }
+tasks.jacocoTestReport {
+    dependsOn(tasks.testCodeCoverageReport)
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }
