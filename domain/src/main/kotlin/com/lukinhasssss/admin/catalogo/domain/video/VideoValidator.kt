@@ -28,8 +28,9 @@ class VideoValidator(
 
             val titleLength = trim().length
 
-            if (titleLength > TITLE_MAX_LENGTH)
+            if (titleLength > TITLE_MAX_LENGTH) {
                 validationHandler.append(Error(message = "'title' must be between 1 and 255 characters"))
+            }
         }
     }
 
@@ -42,8 +43,9 @@ class VideoValidator(
 
             val descriptionLength = trim().length
 
-            if (descriptionLength > DESCRIPTION_MAX_LENGTH)
+            if (descriptionLength > DESCRIPTION_MAX_LENGTH) {
                 validationHandler.append(Error(message = "'description' must be between 1 and 4000 characters"))
+            }
         }
     }
 }

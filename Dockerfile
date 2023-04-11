@@ -5,7 +5,7 @@ WORKDIR /app
 ARG JAR_FILE=build/libs/app*.jar
 
 COPY $JAR_FILE /app.jar
-COPY --from=docker.elastic.co/observability/apm-agent-java:1.34.0 /usr/agent/elastic-apm-agent.jar /apm-agent.jar
+COPY --from=docker.elastic.co/observability/apm-agent-java:1.36.0 /usr/agent/elastic-apm-agent.jar /apm-agent.jar
 COPY opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
 
 RUN addgroup -S spring && adduser -S spring -G spring

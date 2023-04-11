@@ -36,7 +36,8 @@ class VideoUseCaseConfig(
 
     @Bean
     fun deleteVideoUseCase() = DefaultDeleteVideoUseCase(
-        mediaResourceGateway = mediaResourceGateway, videoGateway = videoGateway
+        mediaResourceGateway = mediaResourceGateway,
+        videoGateway = videoGateway
     )
 
     @Bean
@@ -62,6 +63,7 @@ class VideoUseCaseConfig(
 
     @Bean
     fun uploadMediaUseCase() = DefaultUploadMediaUseCase(
-        videoGateway = videoGateway, mediaResourceGateway = mediaResourceGateway
+        videoGateway = videoGateway,
+        mediaResourceGateway = mediaResourceGateway
     )
 }

@@ -24,11 +24,13 @@ class DefaultUpdateMediaStatusUseCase(
 
         val encodedPath = "$folder/$filename"
 
-        if (matches(resourceId, aVideo.video))
+        if (matches(resourceId, aVideo.video)) {
             updateVideo(VIDEO, status, aVideo, encodedPath)
+        }
 
-        if (matches(resourceId, aVideo.trailer))
+        if (matches(resourceId, aVideo.trailer)) {
             updateVideo(TRAILER, status, aVideo, encodedPath)
+        }
     }
 
     private fun updateVideo(
@@ -45,8 +47,9 @@ class DefaultUpdateMediaStatusUseCase(
     }
 
     private fun matches(anId: String, aMedia: AudioVideoMedia?): Boolean {
-        if (aMedia != null)
+        if (aMedia != null) {
             return aMedia.id == anId
+        }
 
         return false
     }

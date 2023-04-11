@@ -47,5 +47,7 @@ class GoogleCloudStorageService(
             contentType = contentType,
             name = name
         )
-    } else null
+    } else {
+        null
+    }
 }

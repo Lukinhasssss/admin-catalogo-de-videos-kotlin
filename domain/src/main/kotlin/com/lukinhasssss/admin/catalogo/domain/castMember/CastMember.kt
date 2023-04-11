@@ -19,11 +19,12 @@ data class CastMember(
         val notification = Notification.create()
         validate(notification)
 
-        if (notification.hasError())
+        if (notification.hasError()) {
             throw NotificationException(
                 notification = notification,
                 message = "Failed to create Aggregate CastMember"
             )
+        }
     }
 
     override fun validate(handler: ValidationHandler) =

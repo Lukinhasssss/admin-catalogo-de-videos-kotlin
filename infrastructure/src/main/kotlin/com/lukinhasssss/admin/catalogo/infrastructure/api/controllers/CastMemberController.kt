@@ -54,7 +54,7 @@ class CastMemberController(
         page: Int,
         perPage: Int,
         sort: String,
-        direction: String,
+        direction: String
     ): Pagination<CastMemberListResponse> {
         Logger.info(message = "Iniciando processo de listagem de membros de elenco...")
 

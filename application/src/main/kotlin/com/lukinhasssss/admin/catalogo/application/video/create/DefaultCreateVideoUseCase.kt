@@ -56,16 +56,17 @@ class DefaultCreateVideoUseCase(
             aRating = aRating,
             categories = categories,
             genres = genres,
-            members = members,
+            members = members
         )
 
         aVideo.validate(notification)
 
-        if (notification.hasError())
+        if (notification.hasError()) {
             throw NotificationException(
                 message = "Could not create Aggregate Video",
                 notification = notification
             )
+        }
 
         CreateVideoOutput.from(create(aCommand = this, aVideo = aVideo))
     }
@@ -76,33 +77,38 @@ class DefaultCreateVideoUseCase(
         try {
             val aVideoMedia = if (video != null) {
                 mediaResourceGateway.storeAudioVideo(
-                    anId = anId, videoResource = VideoResource.with(video, VIDEO)
+                    anId = anId,
+                    videoResource = VideoResource.with(video, VIDEO)
                 )
-            } else null
+            } else { null }
 
             val aTrailerMedia = if (trailer != null) {
                 mediaResourceGateway.storeAudioVideo(
-                    anId = anId, videoResource = VideoResource.with(trailer, TRAILER)
+                    anId = anId,
+                    videoResource = VideoResource.with(trailer, TRAILER)
                 )
-            } else null
+            } else { null }
 
             val aBannerMedia = if (banner != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, imageResource = VideoResource.with(banner, BANNER)
+                    anId = anId,
+                    imageResource = VideoResource.with(banner, BANNER)
                 )
-            } else null
+            } else { null }
 
             val aThumbnailMedia = if (thumbnail != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, imageResource = VideoResource.with(thumbnail, THUMBNAIL)
+                    anId = anId,
+                    imageResource = VideoResource.with(thumbnail, THUMBNAIL)
                 )
-            } else null
+            } else { null }
 
             val aThumbnailHalfMedia = if (thumbnailHalf != null) {
                 mediaResourceGateway.storeImage(
-                    anId = anId, imageResource = VideoResource.with(thumbnailHalf, THUMBNAIL_HALF)
+                    anId = anId,
+                    imageResource = VideoResource.with(thumbnailHalf, THUMBNAIL_HALF)
                 )
-            } else null
+            } else { null }
 
             videoGateway.create(
                 aVideo.copy(

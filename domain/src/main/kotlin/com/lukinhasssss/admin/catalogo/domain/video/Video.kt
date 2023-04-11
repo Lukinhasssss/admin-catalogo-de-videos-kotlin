@@ -255,21 +255,25 @@ data class Video(
     )
 
     fun processing(aMediaType: VideoMediaType): Video {
-        if (aMediaType == VIDEO && video != null)
+        if (aMediaType == VIDEO && video != null) {
             return updateVideoMedia(video!!.processing())
+        }
 
-        if (aMediaType == TRAILER && trailer != null)
+        if (aMediaType == TRAILER && trailer != null) {
             return updateTrailerMedia(trailer!!.processing())
+        }
 
         return this
     }
 
     fun completed(aMediaType: VideoMediaType, encodedPath: String): Video {
-        if (aMediaType == VIDEO && video != null)
+        if (aMediaType == VIDEO && video != null) {
             return updateVideoMedia(video!!.completed(encodedPath))
+        }
 
-        if (aMediaType == TRAILER && trailer != null)
+        if (aMediaType == TRAILER && trailer != null) {
             return updateTrailerMedia(trailer!!.completed(encodedPath))
+        }
 
         return this
     }
