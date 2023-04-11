@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version Version.KOTLIN
     id("org.sonarqube") version Version.SONARQUBE
     id("io.gitlab.arturbosch.detekt") version Version.DETEKT
+    id("org.jlleitschuh.gradle.ktlint") version Version.KTLINT apply(false)
 }
 
 group = "com.lukinhasssss.admin.catalogo"
@@ -37,6 +38,7 @@ val detektReportMerge by tasks.registering(ReportMergeTask::class) {
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     plugins.withType(DetektPlugin::class) {
         tasks.withType(Detekt::class) detekt@{
