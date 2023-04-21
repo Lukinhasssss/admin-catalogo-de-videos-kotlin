@@ -9,19 +9,22 @@ metricbeat.modules:
     period: 10s
     hosts: ["elasticsearch-admin-do-catalogo:9200"]
 
-  - module: postgresql
-    metricsets: [ "database", "bgwriter", "activity" ]
-    period: 10s
-    hosts: [ "postgres:////localhost:5432", "postgres://postgres-admin-do-catalogo:5432", "postgres://postgres-admin-do-catalogo:5432/adm_videos" ]
-
   - module: prometheus
     period: 10s
     metricsets: [ "collector" ]
     hosts: [ "prometheus-admin-do-catalogo:9090" ]
     metrics_path: /metrics
 
+  - module: postgresql
+    metricsets: [ "database", "bgwriter", "activity" ]
+    period: 10s
+    hosts: [ "postgres:////localhost:5432", "postgres://postgres-admin-do-catalogo:5432", "postgres://postgres-admin-do-catalogo:5432/adm_videos", "postgres-admin-do-catalogo:5432" ]
+
 output.elasticsearch:
   hosts: ["elasticsearch-admin-do-catalogo:9200"]
+
+#output.logstash:
+#  hosts: ["logstash-admin-do-catalogo:5044"]
 
 setup.kibana:
   host: "kibana-admin-do-catalogo:5601"
