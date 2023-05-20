@@ -80,6 +80,7 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:${Version.TEST_CONTAINERS}")
     testImplementation("org.testcontainers:junit-jupiter:${Version.TEST_CONTAINERS}")
     testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
+    testImplementation("org.keycloak:keycloak-core:21.1.1")
     testImplementation("org.jboss.resteasy:resteasy-core:4.7.9.Final")
     testImplementation("org.jboss.resteasy:resteasy-multipart-provider:4.7.9.Final")
 }

@@ -48,7 +48,7 @@ class SecurityConfig {
                 it.requestMatchers("/categories/**").hasAnyRole(ROLE_ADMIN, ROLE_CATEGORIES)
                 it.requestMatchers("/genres/**").hasAnyRole(ROLE_ADMIN, ROLE_GENRES)
                 it.requestMatchers("/videos/**").hasAnyRole(ROLE_ADMIN, ROLE_VIDEOS)
-                it.anyRequest().hasRole("ROLE_ADMIN")
+                it.anyRequest().hasAuthority("ROLE_ADMIN")
             }
             .oauth2ResourceServer {
                 it.jwt().jwtAuthenticationConverter(KeycloakJwtConverter())

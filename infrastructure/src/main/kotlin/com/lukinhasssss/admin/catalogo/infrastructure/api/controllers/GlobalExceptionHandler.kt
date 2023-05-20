@@ -1,6 +1,6 @@
 package com.lukinhasssss.admin.catalogo.infrastructure.api.controllers
 
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.lukinhasssss.admin.catalogo.domain.exception.DomainException
 import com.lukinhasssss.admin.catalogo.domain.exception.NotFoundException
 import com.lukinhasssss.admin.catalogo.domain.validation.Error
@@ -16,8 +16,8 @@ class GlobalExceptionHandler {
     // fun handleCannotCreateTransactionException(ex: CannotCreateTransactionException) =
     //     ResponseEntity.badRequest().body(ApiError.from(ex))
 
-    @ExceptionHandler(value = [MissingKotlinParameterException::class])
-    fun handleMissingKotlinParameterException(ex: MissingKotlinParameterException) =
+    @ExceptionHandler(value = [MismatchedInputException::class])
+    fun handleMissingKotlinParameterException(ex: MismatchedInputException) =
         ResponseEntity.badRequest().body(ApiError.from(ex))
 
     @ExceptionHandler(value = [NotFoundException::class])
@@ -34,7 +34,7 @@ class GlobalExceptionHandler {
                 ApiError(message, errors)
             }
 
-            fun from(ex: MissingKotlinParameterException) = with(ex) {
+            fun from(ex: MismatchedInputException) = with(ex) {
                 val errors = path.map {
                     val message = "'${it.fieldName}' should not be null"
                     Error(message)
