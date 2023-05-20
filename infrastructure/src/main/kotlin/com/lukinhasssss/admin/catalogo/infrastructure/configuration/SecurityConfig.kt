@@ -53,7 +53,7 @@ class SecurityConfig {
                 it.anyRequest().hasAuthority("ROLE_ADMIN")
             }
             .oauth2ResourceServer {
-                it.jwt { jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(KeycloakJwtConverter())}
+                it.jwt { jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(KeycloakJwtConverter()) }
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .headers { headers -> headers.frameOptions { it.sameOrigin().disable() } }

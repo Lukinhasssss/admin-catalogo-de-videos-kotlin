@@ -92,8 +92,8 @@ services:
       - "18443:8443"
       - "19990:9990"
     command:
-#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
-      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+#      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
     networks:
       - adm_videos_network
     volumes:
