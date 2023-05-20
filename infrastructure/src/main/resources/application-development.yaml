@@ -1,28 +1,15 @@
-amqp:
-  admin:
-    auto-create: true
-  host: ${AMQP_RABBIT_HOST:localhost}
-  port: ${AMQP_RABBIT_PORT:5672}
-  username: ${AMQP_RABBIT_USERNAME:adm_videos}
-  password: ${AMQP_RABBIT_PASSWORD:123456}
-
-keycloak:
-  realm: ${KEYCLOAK_REALM:codeflix}
-  host: ${KEYCLOAK_HOST:http://localhost:18080}
-
 postgres:
-  url: ${DB_POSTGRES_URL:localhost:5432}
-  username: ${DB_POSTGRES_USERNAME:username}
-  password: ${DB_POSTGRES_PASSWORD:password}
+  url: localhost:5432
+  username: lukinhasssss
+  password: 348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn
   schema: adm_videos
 
-server:
-  port: 8080
-  undertow:
-    threads:
-      worker: 10
-      io: 2
-
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
   jpa:
-    show-sql: false
+    show-sql: true

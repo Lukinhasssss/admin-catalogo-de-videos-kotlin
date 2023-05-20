@@ -57,7 +57,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
     implementation("com.google.cloud:google-cloud-storage:2.20.1")
@@ -80,6 +80,7 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:${Version.TEST_CONTAINERS}")
     testImplementation("org.testcontainers:junit-jupiter:${Version.TEST_CONTAINERS}")
     testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
+    testImplementation("org.keycloak:keycloak-core:21.1.1")
     testImplementation("org.jboss.resteasy:resteasy-core:4.7.9.Final")
     testImplementation("org.jboss.resteasy:resteasy-multipart-provider:4.7.9.Final")
 }

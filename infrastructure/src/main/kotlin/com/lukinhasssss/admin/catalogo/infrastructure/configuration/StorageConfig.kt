@@ -3,6 +3,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.configuration
 import com.google.cloud.storage.Storage
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.google.GoogleStorageProperties
 import com.lukinhasssss.admin.catalogo.infrastructure.configuration.properties.storage.StorageProperties
+import com.lukinhasssss.admin.catalogo.infrastructure.services.StorageService
 import com.lukinhasssss.admin.catalogo.infrastructure.services.impl.GoogleCloudStorageService
 import com.lukinhasssss.admin.catalogo.infrastructure.services.local.InMemoryStorageService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -18,14 +19,14 @@ class StorageConfig {
     @ConfigurationProperties(value = "storage.catalogo-videos")
     fun storageProperties() = StorageProperties()
 
-    @Bean(name = ["storageService"])
-    @Profile(value = ["development", "production"])
+    @Bean
+    @Profile(value = ["development", "test-integration", "test-e2e"])
+    fun inMemoryStorageService(): StorageService = InMemoryStorageService()
+
+    @Bean
+    @ConditionalOnMissingBean
     fun googleCloudStorageService(
         props: GoogleStorageProperties,
         storage: Storage
-    ) = with(props) { GoogleCloudStorageService(bucket, storage) }
-
-    @Bean(name = ["storageService"])
-    @ConditionalOnMissingBean
-    fun inMemoryStorageService() = InMemoryStorageService()
+    ): StorageService = with(props) { GoogleCloudStorageService(bucket, storage) }
 }
