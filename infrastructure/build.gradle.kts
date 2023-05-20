@@ -57,7 +57,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
     implementation("com.google.cloud:google-cloud-storage:2.20.1")

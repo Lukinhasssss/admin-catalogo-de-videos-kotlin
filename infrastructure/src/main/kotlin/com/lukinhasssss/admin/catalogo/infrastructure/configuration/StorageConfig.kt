@@ -18,14 +18,14 @@ class StorageConfig {
     @ConfigurationProperties(value = "storage.catalogo-videos")
     fun storageProperties() = StorageProperties()
 
-    @Bean(name = ["storageService"])
-    @Profile(value = ["development", "production"])
+    @Bean
+    @Profile(value = ["development", "test-integration", "test-e2e"])
+    fun inMemoryStorageService() = InMemoryStorageService()
+
+    @Bean
+    @ConditionalOnMissingBean
     fun googleCloudStorageService(
         props: GoogleStorageProperties,
         storage: Storage
     ) = with(props) { GoogleCloudStorageService(bucket, storage) }
-
-    @Bean(name = ["storageService"])
-    @ConditionalOnMissingBean
-    fun inMemoryStorageService() = InMemoryStorageService()
 }
