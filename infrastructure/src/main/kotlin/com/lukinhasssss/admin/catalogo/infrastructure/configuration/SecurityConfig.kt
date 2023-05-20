@@ -2,6 +2,7 @@ package com.lukinhasssss.admin.catalogo.infrastructure.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -21,6 +22,7 @@ import java.util.stream.Stream
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@Profile(value = ["!development"])
 class SecurityConfig {
 
     companion object {
@@ -51,10 +53,10 @@ class SecurityConfig {
                 it.anyRequest().hasAuthority("ROLE_ADMIN")
             }
             .oauth2ResourceServer {
-                it.jwt().jwtAuthenticationConverter(KeycloakJwtConverter())
+                it.jwt { jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(KeycloakJwtConverter())}
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .headers { it.frameOptions().sameOrigin() }
+            .headers { headers -> headers.frameOptions { it.sameOrigin().disable() } }
             .build()
 
     private class KeycloakJwtConverter(
