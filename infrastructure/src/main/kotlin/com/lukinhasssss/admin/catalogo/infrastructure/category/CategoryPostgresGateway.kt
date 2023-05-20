@@ -62,8 +62,10 @@ class CategoryPostgresGateway(
         with(anID.value) {
             Logger.info(message = "Iniciando deleção da categoria salva no banco...")
 
-            if (repository.existsById(this)) repository.deleteById(this).also {
-                Logger.info(message = "Categoria deletada do banco com sucesso!")
+            if (repository.existsById(this)) {
+                repository.deleteById(this).also {
+                    Logger.info(message = "Categoria deletada do banco com sucesso!")
+                }
             }
         }
     }

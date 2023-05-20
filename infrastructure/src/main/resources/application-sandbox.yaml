@@ -1,0 +1,28 @@
+amqp:
+  admin:
+    auto-create: true
+  host: localhost
+  port: 5672
+  username: adm_videos
+  password: 123456
+
+keycloak:
+  realm: codeflix
+  host: http://localhost:18080
+
+postgres:
+  url: localhost:5432
+  username: lukinhasssss
+  password: 348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn
+  schema: adm_videos
+
+server:
+  port: 8080
+  undertow:
+    threads:
+      worker: 10
+      io: 2
+
+spring:
+  jpa:
+    show-sql: false

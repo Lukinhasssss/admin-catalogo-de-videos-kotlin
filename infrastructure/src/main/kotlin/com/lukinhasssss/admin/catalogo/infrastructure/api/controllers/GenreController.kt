@@ -46,7 +46,7 @@ class GenreController(
         page: Int,
         perPage: Int,
         sort: String,
-        direction: String,
+        direction: String
     ): Pagination<GenreListResponse> {
         Logger.info(message = "Iniciando processo de listagem de gêneros...")
 

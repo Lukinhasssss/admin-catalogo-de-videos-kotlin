@@ -21,7 +21,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = true
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         with(actualCategory) {
@@ -45,7 +47,9 @@ class CategoryTest : UnitTest() {
         val expectedErrorCount = 1
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         val actualException = assertThrows<DomainException> {
@@ -67,7 +71,9 @@ class CategoryTest : UnitTest() {
         val expectedErrorCount = 1
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         val actualException = assertThrows<DomainException> {
@@ -89,7 +95,9 @@ class CategoryTest : UnitTest() {
         val expectedErrorCount = 1
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         val actualException = assertThrows<DomainException> {
@@ -109,7 +117,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = true
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         assertDoesNotThrow { actualCategory.validate(ThrowsValidationHandler()) }
@@ -133,7 +143,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = false
 
         val actualCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = expectedIsActive
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = expectedIsActive
         )
 
         assertDoesNotThrow { actualCategory.validate(ThrowsValidationHandler()) }
@@ -157,7 +169,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = false
 
         val aCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = true
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = true
         )
 
         assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
@@ -185,7 +199,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = true
 
         val aCategory = Category.newCategory(
-            aName = expectedName, aDescription = expectedDescription, isActive = false
+            aName = expectedName,
+            aDescription = expectedDescription,
+            isActive = false
         )
 
         assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
@@ -213,7 +229,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = true
 
         val aCategory = Category.newCategory(
-            aName = "Film", aDescription = "A categoria", isActive = expectedIsActive
+            aName = "Film",
+            aDescription = "A categoria",
+            isActive = expectedIsActive
         )
 
         assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
@@ -245,7 +263,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = false
 
         val aCategory = Category.newCategory(
-            aName = "Film", aDescription = "A categoria", isActive = true
+            aName = "Film",
+            aDescription = "A categoria",
+            isActive = true
         )
 
         assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }
@@ -277,7 +297,9 @@ class CategoryTest : UnitTest() {
         val expectedIsActive = true
 
         val aCategory = Category.newCategory(
-            aName = "Film", aDescription = "A categoria", isActive = expectedIsActive
+            aName = "Film",
+            aDescription = "A categoria",
+            isActive = expectedIsActive
         )
 
         assertDoesNotThrow { aCategory.validate(ThrowsValidationHandler()) }

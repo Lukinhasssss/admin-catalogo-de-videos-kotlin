@@ -1,4 +1,6 @@
 amqp:
+  admin:
+    auto-create: ${AMQO_ADMIN_AUTO_CREATE}
   host: ${AMQP_RABBIT_HOST}
   port: ${AMQP_RABBIT_PORT}
   username: ${AMQP_RABBIT_USERNAME}

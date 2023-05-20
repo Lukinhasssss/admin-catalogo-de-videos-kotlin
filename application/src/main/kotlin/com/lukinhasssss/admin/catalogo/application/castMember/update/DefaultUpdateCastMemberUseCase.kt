@@ -21,8 +21,9 @@ class DefaultUpdateCastMemberUseCase(
 
         val anUpdatedCastMember = notification.validate { aMember.update(name, type) }
 
-        if (notification.hasError())
+        if (notification.hasError()) {
             notify(notification)
+        }
 
         return UpdateCastMemberOutput.from(castMemberGateway.update(anUpdatedCastMember!!))
     }

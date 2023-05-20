@@ -27,8 +27,9 @@ class GenreValidator(
 
             val nameLength = trim().length
 
-            if (nameLength < MIN_NAME_LENGTH || nameLength > MAX_NAME_LENGTH)
+            if (nameLength < MIN_NAME_LENGTH || nameLength > MAX_NAME_LENGTH) {
                 validationHandler.append(Error(message = "'name' must be between 1 and 255 characters"))
+            }
         }
     }
 }

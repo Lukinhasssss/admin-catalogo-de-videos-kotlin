@@ -44,7 +44,10 @@ class UpdateGenreUseCaseIT {
         val expectedCategories = emptyList<CategoryID>()
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         // when
@@ -87,7 +90,10 @@ class UpdateGenreUseCaseIT {
         val expectedCategories = listOf(filmes.id, series.id)
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         // when
@@ -124,7 +130,10 @@ class UpdateGenreUseCaseIT {
         val expectedCategories = emptyList<CategoryID>()
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         assertTrue(aGenre.isActive())
@@ -166,7 +175,10 @@ class UpdateGenreUseCaseIT {
         val expectedErrorCount = 1
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         // when
@@ -201,7 +213,10 @@ class UpdateGenreUseCaseIT {
         val expectedErrorMessageTwo = "'name' should not be empty"
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         // when

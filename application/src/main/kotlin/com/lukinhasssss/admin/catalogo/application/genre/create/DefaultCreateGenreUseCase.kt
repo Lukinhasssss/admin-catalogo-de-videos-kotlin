@@ -11,7 +11,7 @@ import com.lukinhasssss.admin.catalogo.domain.validation.handler.Notification
 
 class DefaultCreateGenreUseCase(
     private val categoryGateway: CategoryGateway,
-    private val genreGateway: GenreGateway,
+    private val genreGateway: GenreGateway
 ) : CreateGenreUseCase() {
 
     override fun execute(anIn: CreateGenreCommand): CreateGenreOutput {
@@ -23,8 +23,9 @@ class DefaultCreateGenreUseCase(
 
             val aGenre = notification.validate { Genre.newGenre(name, isActive) }
 
-            if (notification.hasError())
+            if (notification.hasError()) {
                 throw NotificationException("Could not create Aggregate Genre", notification)
+            }
 
             aGenre?.addCategories(categories)
 

@@ -29,12 +29,15 @@ class DefaultUpdateGenreUseCase(
 
             val aGenreUpdated = notification.validate {
                 aGenre.update(
-                    aName = name, isActive = isActive, categories = categories.toMutableList()
+                    aName = name,
+                    isActive = isActive,
+                    categories = categories.toMutableList()
                 )
             }
 
-            if (notification.hasError())
+            if (notification.hasError()) {
                 throw NotificationException("Could not update Aggregate Genre $id", notification)
+            }
 
             return UpdateGenreOutput.from(genreGateway.update(aGenreUpdated!!))
         }

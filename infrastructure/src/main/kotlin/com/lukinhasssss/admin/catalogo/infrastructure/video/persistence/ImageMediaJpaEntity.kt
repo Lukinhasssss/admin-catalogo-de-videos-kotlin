@@ -25,14 +25,16 @@ class ImageMediaJpaEntity(
 
     companion object {
         fun from(media: ImageMedia?) = with(media) {
-            if (this != null)
+            if (this != null) {
                 ImageMediaJpaEntity(
                     id = id,
                     name = name,
                     checksum = checksum,
                     filePath = location
                 )
-            else null
+            } else {
+                null
+            }
         }
     }
 

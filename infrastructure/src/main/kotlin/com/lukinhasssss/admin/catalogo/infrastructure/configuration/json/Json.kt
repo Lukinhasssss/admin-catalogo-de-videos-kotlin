@@ -25,7 +25,9 @@ enum class Json {
             SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
         )
         .modules(
-            JavaTimeModule(), Jdk8Module(), afterburnerModule(),
+            JavaTimeModule(),
+            Jdk8Module(),
+            afterburnerModule(),
             KotlinModule.Builder()
                 .withReflectionCacheSize(Json.REFLECTION_CACHE_SIZE)
                 .configure(KotlinFeature.NullToEmptyCollection, true)
@@ -74,6 +76,7 @@ enum class Json {
  * FAIL_ON_UNKNOWN_PROPERTIES: Se vier uma propriedade que meu objeto não mapeou, eu quero simplesmente ignorar
  * FAIL_ON_NULL_FOR_PRIMITIVES: Se vier null para uma propriedade primitiva, eu quero simplesmente ignorar
  *
- * JavaTimeModule: Este modulo faz com que o ObjectMapper entenda como serializar e deserializar datas que vieram do package JavaTime do Java8
+ * JavaTimeModule: Este modulo faz com que o ObjectMapper entenda como serializar e deserializar datas
+ * que vieram do package JavaTime do Java8
  * Jdk8Module: Este modulo faz com que o Optional entenda como serializar e deserializar com optionals
  */

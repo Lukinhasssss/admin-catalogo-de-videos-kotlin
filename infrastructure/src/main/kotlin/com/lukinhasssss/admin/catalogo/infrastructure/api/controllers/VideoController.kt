@@ -220,7 +220,7 @@ class VideoController(
     }
 
     private fun resourceOf(multipartFile: MultipartFile?) =
-        if (multipartFile != null)
+        if (multipartFile != null) {
             try {
                 Resource.with(
                     checksum = HashingUtils.checksum(multipartFile.bytes),
@@ -231,5 +231,7 @@ class VideoController(
             } catch (t: Throwable) {
                 throw RuntimeException(t)
             }
-        else null
+        } else {
+            null
+        }
 }

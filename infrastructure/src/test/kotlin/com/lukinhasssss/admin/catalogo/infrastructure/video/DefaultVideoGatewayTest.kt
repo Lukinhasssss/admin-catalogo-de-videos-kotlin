@@ -777,7 +777,7 @@ class DefaultVideoGatewayTest {
         "system, 0, 10, 1, 1, System Design no Mercado Livre na prática",
         "microsser, 0, 10, 1, 1, Não cometa esses erros ao trabalhar com Microsserviços",
         "empreendedorismo, 0, 10, 1, 1, Aula de empreendedorismo",
-        "21, 0, 10, 1, 1, 21.1 Implementação dos testes integrados do findAll",
+        "21, 0, 10, 1, 1, 21.1 Implementação dos testes integrados do findAll"
     )
     fun givenAValidTerm_whenCallsFindAll_shouldReturnFiltered(
         expectedTerms: String,
@@ -822,7 +822,7 @@ class DefaultVideoGatewayTest {
         "title, asc, 0, 10, 4, 4, 21.1 Implementação dos testes integrados do findAll",
         "title, desc, 0, 10, 4, 4, System Design no Mercado Livre na prática",
         "createdAt, asc, 0, 10, 4, 4, System Design no Mercado Livre na prática",
-        "createdAt, desc, 0, 10, 4, 4, Aula de empreendedorismo",
+        "createdAt, desc, 0, 10, 4, 4, Aula de empreendedorismo"
     )
     fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnOrdered(
         expectedSort: String,
@@ -865,7 +865,7 @@ class DefaultVideoGatewayTest {
     @ParameterizedTest
     @CsvSource(
         "0, 2, 2, 4, 21.1 Implementação dos testes integrados do findAll;Aula de empreendedorismo",
-        "1, 2, 2, 4, Não cometa esses erros ao trabalhar com Microsserviços;System Design no Mercado Livre na prática",
+        "1, 2, 2, 4, Não cometa esses erros ao trabalhar com Microsserviços;System Design no Mercado Livre na prática"
     )
     fun givenAValidPaging_whenCallsFindAll_shouldReturnPaged(
         expectedPage: Int,

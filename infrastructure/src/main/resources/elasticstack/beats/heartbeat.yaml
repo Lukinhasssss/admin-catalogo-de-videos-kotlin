@@ -17,6 +17,9 @@ heartbeat.monitors:
 processors:
   - add_cloud_metadata: ~
 
+#output.logstash:
+#  hosts: 'logstash-admin-do-catalogo:5044'
+
 output.elasticsearch:
   hosts: 'elasticsearch-admin-do-catalogo:9200'
   username: 'elastic' # elasticsearch default user

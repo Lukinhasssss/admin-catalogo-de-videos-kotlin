@@ -18,7 +18,11 @@ data class UpdateMediaStatusCommand(
             folder: String,
             filename: String
         ) = UpdateMediaStatusCommand(
-            videoId, status, resourceId, folder, filename
+            videoId,
+            status,
+            resourceId,
+            folder,
+            filename
         )
     }
 }

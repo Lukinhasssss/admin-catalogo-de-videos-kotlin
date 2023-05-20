@@ -22,7 +22,9 @@ class DefaultUpdateCategoryUseCase(
             val notification = Notification.create()
 
             val updatedCategory = aCategory.update(
-                aName = name, aDescription = description, isActive = isActive
+                aName = name,
+                aDescription = description,
+                isActive = isActive
             ).apply { validate(notification) }
 
             return if (notification.hasError()) left(notification) else update(updatedCategory)

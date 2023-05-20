@@ -42,7 +42,10 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         val expectedCategories = emptyList<CategoryID>()
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         every { genreGateway.findById(any()) } returns aGenre
@@ -86,7 +89,10 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         )
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         every { genreGateway.findById(any()) } returns aGenre
@@ -130,7 +136,10 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         val expectedCategories = emptyList<CategoryID>()
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         every { genreGateway.findById(any()) } returns aGenre
@@ -176,7 +185,10 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         val expectedErrorCount = 1
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         every { genreGateway.findById(any()) } returns aGenre
@@ -211,7 +223,10 @@ class UpdateGenreUseCaseTest : UseCaseTest() {
         val expectedErrorMessageTwo = "'name' should not be empty"
 
         val aCommand = UpdateGenreCommand.with(
-            expectedId.value, expectedName, expectedIsActive, expectedCategories.asString()
+            expectedId.value,
+            expectedName,
+            expectedIsActive,
+            expectedCategories.asString()
         )
 
         every { genreGateway.findById(any()) } returns aGenre

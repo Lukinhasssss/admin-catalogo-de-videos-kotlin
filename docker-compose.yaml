@@ -13,34 +13,31 @@ services:
       - adm_videos_network
     restart: on-failure
     depends_on:
-      - postgres-admin-do-catalogo
+      postgres-admin-do-catalogo:
+        condition: service_healthy
+      rabbitmq-admin-do-catalogo:
+        condition: service_healthy
+      apm-admin-do-catalogo:
+        condition: service_started
     env_file:
       - .env
+    labels:
+      filebeat_collector: true
 
-  nginx-admin-do-catalogo:
-    container_name: nginx-admin-do-catalogo
-    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
-    ports:
-      - '80:80'
-    depends_on:
-      - admin-do-catalogo
-    networks:
-      - adm_videos_network
+#  nginx-admin-do-catalogo:
+#    container_name: nginx-admin-do-catalogo
+#    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
+#    ports:
+#      - '80:80'
+#    depends_on:
+#      - admin-do-catalogo
+#    networks:
+#      - adm_videos_network
 
   postgres-admin-do-catalogo:
     container_name: adm_videos_postgres
     image: postgres:latest
-    #    platform: linux/amd64
     restart: unless-stopped
-    #    volumes:
-    #      - postgres_data:/var/lib/postgresql/data
-    security_opt:
-      - seccomp:unconfined
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
     ports:
       - "5432:5432"
     networks:
@@ -49,10 +46,24 @@ services:
       POSTGRES_USER: ${POSTGRES_USER-username}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
       POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    security_opt:
+      - seccomp:unconfined
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    #    volumes:
+    #      - postgres_data:/var/lib/postgresql/data
 
   rabbitmq-admin-do-catalogo:
     container_name: rabbitmq-admin-do-catalogo
     image: rabbitmq:3-management
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     environment:
       - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
       - RABBITMQ_DEFAULT_USER=adm_videos
@@ -81,7 +92,8 @@ services:
       - "18443:8443"
       - "19990:9990"
     command:
-      - start-dev
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
     networks:
       - adm_videos_network
     volumes:
@@ -188,7 +200,12 @@ services:
 
   elasticsearch-admin-do-catalogo:
     container_name: elasticsearch-admin-do-catalogo
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:9200/_cat/health?h=status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     environment:
       - node.name=elasticsearch-admin-do-catalogo
       - cluster.name=es-docker-cluster
@@ -211,9 +228,17 @@ services:
 
   kibana-admin-do-catalogo:
     container_name: kibana-admin-do-catalogo
-    image: docker.elastic.co/kibana/kibana:8.6.0
+    image: docker.elastic.co/kibana/kibana:8.7.0
     ports:
       - "5601:5601"
+    depends_on:
+      elasticsearch-admin-do-catalogo:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     environment:
       ELASTICSEARCH_URL: http://elasticsearch-admin-do-catalogo:9200
       ELASTICSEARCH_HOSTS: '["http://elasticsearch-admin-do-catalogo:9200"]'
@@ -222,7 +247,7 @@ services:
 
   metricbeat-admin-do-catalogo:
     container_name: metricbeat-admin-do-catalogo
-    image: docker.elastic.co/beats/metricbeat:8.6.0
+    image: docker.elastic.co/beats/metricbeat:8.7.0
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -230,14 +255,17 @@ services:
     command:
       - '-strict.perms=false'
     restart: on-failure
+    ports:
+      - "5066:5066"
     depends_on:
-      - kibana-admin-do-catalogo
+      kibana-admin-do-catalogo:
+        condition: service_healthy
     networks:
       - adm_videos_network
 
   heartbeat-admin-do-catalogo:
     container_name: heartbeat-admin-do-catalogo
-    image: docker.elastic.co/beats/heartbeat:8.6.0
+    image: docker.elastic.co/beats/heartbeat:8.7.0
     volumes:
       - ./infrastructure/src/main/resources/elasticstack/beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
     command:
@@ -245,13 +273,34 @@ services:
     environment:
       - setup.kibana.host=kibana-admin-do-catalogo:5601
     depends_on:
-      - kibana-admin-do-catalogo
+      kibana-admin-do-catalogo:
+        condition: service_healthy
     networks:
       - adm_videos_network
 
+  filebeat-admin-do-catalogo:
+    container_name: filebeat-admin-do-catalogo
+    image: docker.elastic.co/beats/filebeat:8.7.0
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro                                                     # Docker logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro                                                                 # Additional information about containers
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro  # Configuration file
+      - filebeat_data:/usr/share/filebeat/data:rw                                                                    # Persistence data
+    user: root                                                                                                       # Allow access to log files and docker.sock
+    environment:
+      ELASTICSEARCH_HOST: "http://elasticsearch-admin-do-catalogo:9200"
+    restart: on-failure
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    networks:
+      - adm_videos_network
+    command:
+      - '-strict.perms=false'
+
   apm-admin-do-catalogo:
     container_name: apm-admin-do-catalogo
-    image: docker.elastic.co/apm/apm-server:7.17.8
+    image: docker.elastic.co/apm/apm-server:7.17.9
     volumes:
       - ./infrastructure/src/main/resources/elasticstack/apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
     command:
@@ -259,34 +308,28 @@ services:
     ports:
       - "8200:8200"
     restart: on-failure
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:8200/healthcheck" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     networks:
       - adm_videos_network
-
-  filebeat-admin-do-catalogo:
-    container_name: filebeat-admin-do-catalogo
-    image: docker.elastic.co/beats/filebeat:8.6.0
-    user: root
-    networks:
-      - adm_videos_network
-    volumes:
-      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml
-      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/etc/filebeat/filebeat.yml
-#      - ./infrastructure/src/main/resources/logs:/var/log
-#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/application.log
-#      - ./infrastructure/src/main/resources/logs/application.log:/var/log/app_logs/application.log
-    environment:
-      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
-    command:
-      - '-strict.perms=false'
 
 #  logstash-admin-do-catalogo:
 #    container_name: logstash-admin-do-catalogo
-#    image: docker.elastic.co/logstash/logstash:8.6.0
-##    volumes:
-##      - ./logstash/logstash.conf:/etc/logstash/conf.d
+#    image: docker.elastic.co/logstash/logstash:8.7.0
+#    volumes:
+#      - ./infrastructure/src/main/resources/elasticstack/logstash/pipeline:/usr/share/logstash/pipeline:ro
 #    environment:
-#      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
 #      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
+#    ports:
+#      - "5044:5044"
+#      - "25826:25826"
 #    depends_on:
 #      - elasticsearch-admin-do-catalogo
 #    networks:

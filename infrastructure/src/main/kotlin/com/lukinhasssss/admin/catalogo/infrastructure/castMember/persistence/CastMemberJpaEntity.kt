@@ -44,6 +44,10 @@ class CastMemberJpaEntity(
     }
 
     fun toAggregate() = CastMember.with(
-        anId = id, aName = name, aType = type, aCreationDate = createdAt, anUpdateDate = updatedAt
+        anId = id,
+        aName = name,
+        aType = type,
+        aCreationDate = createdAt,
+        anUpdateDate = updatedAt
     )
 }
