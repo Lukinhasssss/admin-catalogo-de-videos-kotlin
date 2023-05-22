@@ -2,9 +2,6 @@ apm-server:
   host: "apm-admin-do-catalogo:8200"
   rum:
     enabled: true
-    allow_origins: ['*']
-    library_pattern: "node_modules|bower_components|~"
-    exclude_from_grouping: "^/webpack"
     source_mapping:
       enabled: true
       elasticsearch:
@@ -18,6 +15,8 @@ apm-server:
     host: "kibana-admin-do-catalogo:5601"
 output.elasticsearch:
   hosts: ["elasticsearch-admin-do-catalogo:9200"]
+  username: 'elastic'
+  password: 'changeme'
   enabled: true
 output.logstash:
   hosts: ["logstash-admin-do-catalogo:5044"]

@@ -15,7 +15,7 @@ FROM eclipse-temurin:17.0.6_10-jre-alpine
 ARG JAR_FILE=/app/build/libs/app*.jar
 
 COPY --from=builder $JAR_FILE /app.jar
-COPY --from=docker.elastic.co/observability/apm-agent-java:1.37.0 /usr/agent/elastic-apm-agent.jar /apm-agent.jar
+COPY --from=docker.elastic.co/observability/apm-agent-java:1.38.0 /usr/agent/elastic-apm-agent.jar /apm-agent.jar
 COPY opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
 
 RUN addgroup -S spring && adduser -S spring -G spring
