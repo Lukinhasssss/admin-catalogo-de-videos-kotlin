@@ -12,15 +12,10 @@ exporters:
     endpoint: jaeger-admin-do-catalogo:14250
     tls:
       insecure: true
-  logging:
-    logLevel: info
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [jaeger, logging]
-    metrics:
-      receivers: [otlp]
-      exporters: [logging]
+      exporters: [jaeger]
   extensions: [health_check]
