@@ -33,7 +33,7 @@ tasks.withType<Detekt>().configureEach {
 }
 
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
-    output.set(rootProject.buildDir.resolve("reports/detekt/detekt-report.xml"))
+    output.set(rootProject.layout.buildDirectory.file("reports/detekt/detekt-report.xml"))
 }
 
 subprojects {
