@@ -46,3 +46,5 @@ bin/
 .env
 /logs/
 /infrastructure/src/main/resources/logs/
+sandbox/.docker
+sandbox/app/.env

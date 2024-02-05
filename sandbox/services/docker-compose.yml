@@ -1,0 +1,68 @@
+version: '3.9'
+
+services:
+  postgres-admin-do-catalogo:
+    container_name: postgres-admin-do-catalogo
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+      POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ../.docker/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready -U lukinhasssss -d adm_videos" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    networks:
+      - admin-do-catalogo-services
+
+  rabbitmq-admin-do-catalogo:
+    container_name: rabbitmq-admin-do-catalogo
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=adm_videos
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - ../.docker/rabbitmq:/var/lib/rabbitmq:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - admin-do-catalogo-services
+
+  keycloak-admin-do-catalogo:
+    container_name: keycloak-admin-do-catalogo
+    image: quay.io/keycloak/keycloak:21.0.1
+    ports:
+      - "8443:8080"
+#      - "18443:8443"
+#      - "19990:9990"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      #      - keycloak_data:/opt/keycloak/data/
+      - ../.docker/keycloak:/opt/keycloak/data/h2:rw
+    command:
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+    networks:
+      - admin-do-catalogo-services
+
+networks:
+  admin-do-catalogo-services:
+    external: true

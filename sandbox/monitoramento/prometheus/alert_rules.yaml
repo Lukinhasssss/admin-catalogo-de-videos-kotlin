@@ -1,0 +1,54 @@
+groups:
+  - name: ops-codeflix
+    rules:
+      - alert: 'QUEBRA DE SLO'
+        expr: (histogram_quantile(0.90, sum(rate(http_server_requests_seconds_bucket{job="app-admin-do-catalogo", uri!="/actuator/prometheus"}[1m])) by (le))) >= 0.5
+        for: 1m
+        labels:
+          app: 'api-admin-do-catalogo'
+          severity: 'critical'
+          group: 'ops-codeflix'
+          env: 'production'
+        annotations:
+          title: 'QUEBRA DE SLO'
+          summary: '90% das requisições estão sendo atendidas a 500ms ou mais.'
+          description: 'API de administração do catálogo está quebrando o SLO, 90% das requisições estão sendo atendidas em 500ms ou mais no último minuto.'
+
+      - alert: 'ERRO 500'
+        expr: (sum(rate(http_server_requests_seconds_count{job="app-admin-do-catalogo", status=~"5..", uri!="/actuator/prometheus"}[1m])) / sum(rate(http_server_requests_seconds_count{job="app-admin-do-catalogo", uri!="/actuator/prometheus"}[1m]))) >= 0.01
+        for: 1m
+        labels:
+          app: 'api-admin-do-catalogo'
+          severity: 'critical'
+          group: 'ops-codeflix'
+          env: 'production'
+        annotations:
+          title: 'ERRO 500'
+          summary: 'Erro 500 acima de 1% no último minuto.'
+          description: 'API de administração do catálogo está com taxa de erros 500 acima de 1% no último minuto.'
+
+      - alert: 'QUEBRA DE SLO'
+        expr: (histogram_quantile(0.90, sum(rate(http_server_requests_seconds_bucket{job="app-catalogo-de-videos", uri!="/actuator/prometheus"}[1m])) by (le))) >= 0.5
+        for: 1m
+        labels:
+          app: 'api-catalogo-de-videos'
+          severity: 'critical'
+          group: 'ops-codeflix'
+          env: 'production'
+        annotations:
+          title: 'QUEBRA DE SLO'
+          summary: '90% das requisições estão sendo atendidas a 500ms ou mais.'
+          description: 'API de administração do catálogo está quebrando o SLO, 90% das requisições estão sendo atendidas em 500ms ou mais no último minuto.'
+
+      - alert: 'ERRO 500'
+        expr: (sum(rate(http_server_requests_seconds_count{job="app-catalogo-de-videos", status=~"5..", uri!="/actuator/prometheus"}[1m])) / sum(rate(http_server_requests_seconds_count{job="app-catalogo-de-videos", uri!="/actuator/prometheus"}[1m]))) >= 0.01
+        for: 1m
+        labels:
+          app: 'api-catalogo-de-videos'
+          severity: 'critical'
+          group: 'ops-codeflix'
+          env: 'production'
+        annotations:
+          title: 'ERRO 500'
+          summary: 'Erro 500 acima de 1% no último minuto.'
+          description: 'API de administração do catálogo está com taxa de erros 500 acima de 1% no último minuto.'

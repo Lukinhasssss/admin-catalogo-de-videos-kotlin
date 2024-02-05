@@ -1,0 +1,36 @@
+filebeat:
+  autodiscover:
+    providers:
+      - type: docker
+        labels.dedot: true
+        templates:
+          - condition:
+              contains:
+                container.labels.filebeat_collector: "true"
+            config:
+              - type: container
+                format: docker
+                paths:
+                  - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+                processors:
+                  - decode_json_fields:
+                      when.equals:
+                        docker.container.labels.decode_log_event_to_json_object: "true"
+                      fields: ["message"]
+                      target: ""
+                      overwrite_keys: true
+
+output:
+  logstash:
+    hosts: logstash-codeflix:5044
+
+#output.elasticsearch:
+#  hosts: ["elasticsearch-codeflix:9200"]
+
+setup:
+  kibana:
+    host: "kibana-codeflix:5601"
+  dashboards:
+    enabled: true
+
+logging.metrics.enabled: false
