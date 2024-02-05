@@ -1,0 +1,2061 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS_ADMIN DO CATÁLOGO",
+      "label": "Prometheus Admin do Catálogo",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.3.2"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 36,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Memória heap utilizada",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 80
+                  },
+                  {
+                    "color": "dark-purple",
+                    "value": 100
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 3,
+            "x": 0,
+            "y": 1
+          },
+          "id": 34,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(jvm_memory_used_bytes{application=\"$application\", instance=\"$instance\", job=\"$job\", area=\"heap\"}) * 100 / sum(jvm_memory_max_bytes{application=\"$application\", instance=\"$instance\", job=\"$job\", area=\"heap\"})",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "HEAP USED",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Utilização de CPU",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 10,
+            "x": 3,
+            "y": 1
+          },
+          "id": 40,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull",
+                "sum"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "system_cpu_usage{application=\"$application\", instance=\"$instance\", job=\"$job\"}",
+              "legendFormat": "System CPU Usage",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "process_cpu_usage{application=\"$application\", instance=\"$instance\", job=\"$job\"}",
+              "hide": false,
+              "legendFormat": "Process CPU Usage",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "CPU UTILIZATION",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Média de uso de CPU",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 11,
+            "x": 13,
+            "y": 1
+          },
+          "id": 42,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "system_load_average_1m{application=\"$application\", instance=\"$instance\", job=\"$job\"}",
+              "legendFormat": "Load Average [1m]",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "system_cpu_count{application=\"$application\", instance=\"$instance\", job=\"$job\"}",
+              "hide": false,
+              "legendFormat": "CPU Core Size",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "LOAD AVERAGE",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Memória non-heap utilizada",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 80
+                  },
+                  {
+                    "color": "dark-purple",
+                    "value": 100
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 3,
+            "x": 0,
+            "y": 7
+          },
+          "id": 38,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(jvm_memory_used_bytes{application=\"$application\", instance=\"$instance\", job=\"$job\", area=\"nonheap\"}) * 100 / sum(jvm_memory_max_bytes{application=\"$application\", instance=\"$instance\", job=\"$job\", area=\"nonheap\"})",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "NON-HEAP USED",
+          "type": "gauge"
+        }
+      ],
+      "title": "API USE",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 20,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Número de requisições no último minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-red"
+                  },
+                  {
+                    "color": "dark-orange",
+                    "value": 30
+                  },
+                  {
+                    "color": "dark-green",
+                    "value": 60
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 4,
+            "x": 0,
+            "y": 2
+          },
+          "id": 22,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "TOTAL REQUESTS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Latência média por minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 4,
+            "y": 2
+          },
+          "id": 26,
+          "options": {
+            "legend": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m])) by (le))",
+              "legendFormat": "99%",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.90, sum(rate(http_server_requests_seconds_bucket{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m])) by (le))",
+              "hide": false,
+              "legendFormat": "90%",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.75, sum(rate(http_server_requests_seconds_bucket{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m])) by (le))",
+              "hide": false,
+              "legendFormat": "75%",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m])) by (le))",
+              "hide": false,
+              "legendFormat": "50%",
+              "range": true,
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.25, sum(rate(http_server_requests_seconds_bucket{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[1m])) by (le))",
+              "hide": false,
+              "legendFormat": "25%",
+              "range": true,
+              "refId": "E"
+            }
+          ],
+          "title": "LATENCY AVERAGE",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Tempo de resposta no último minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 5,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 2
+          },
+          "id": 24,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status!~\"4..|5..\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status!~\"4..|5..\"}[1m])",
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "ENDPOINT RESPONSE TIME",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Número de requisições por endpoint no último minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 12
+          },
+          "id": 28,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/categories\"}[1m]))",
+              "legendFormat": "/categories",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/categories/{id}\"}[1m]))",
+              "hide": false,
+              "legendFormat": "/categories/{id}",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/genres\"}[1m]))",
+              "hide": false,
+              "legendFormat": "/genres",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/genres/{id}\"}[1m]))",
+              "hide": false,
+              "legendFormat": "/genres/{id}",
+              "range": true,
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/cast_members\"}[1m]))",
+              "hide": false,
+              "legendFormat": "/cast_members",
+              "range": true,
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri=\"/cast_members/{id}\"}[1m]))",
+              "hide": false,
+              "legendFormat": "/cast_members/{id}",
+              "range": true,
+              "refId": "F"
+            }
+          ],
+          "title": "REQUESTS COUNT",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Duração média de requisições no último minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 12
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/categories\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/categories\"}[1m])",
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/categories/{id}\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/categories/{id}\"}[1m])",
+              "hide": false,
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/genres\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/genres\"}[1m])",
+              "hide": false,
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/genres/{id}\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/genres/{id}\"}[1m])",
+              "hide": false,
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/cast_members\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/cast_members\"}[1m])",
+              "hide": false,
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "rate(http_server_requests_seconds_sum{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/cast_members/{id}\"}[1m]) / rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri=\"/cast_members/{id}\"}[1m])",
+              "hide": false,
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "F"
+            }
+          ],
+          "title": "REQUEST DURATION AVERAGE",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Duração máxima de uma requisição",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 6,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 12
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "http_server_requests_seconds_max{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", status=\"200\", uri!=\"/actuator/prometheus\"}",
+              "legendFormat": "{{uri}} {{method}} {{status}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "MAX REQUEST DURATION",
+          "type": "timeseries"
+        }
+      ],
+      "title": "API RED",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 2,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Hora da inicialização da API",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-purple"
+                  }
+                ]
+              },
+              "unit": "dateTimeAsLocalNoDateIfToday"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 0,
+            "y": 3
+          },
+          "id": 6,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "process_start_time_seconds{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\"} * 1000",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "START TIME",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "API uptime",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-purple"
+                  }
+                ]
+              },
+              "unit": "dthms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 4,
+            "y": 3
+          },
+          "id": 4,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "process_uptime_seconds{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\"}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "UPTIME",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Número de erro 500 no último minuto",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 3
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 8,
+            "y": 3
+          },
+          "id": 16,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status=\"500\"}[1m]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "ERROR 500",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Taxa de erros nos últimos 5 minutos",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "500"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "422"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "404"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "super-light-blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "400"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "mean",
+                "lastNotNull",
+                "sum"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status=\"400\"}[5m])) / sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[5m]))",
+              "legendFormat": "400",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status=\"404\"}[5m])) / sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[5m]))",
+              "hide": false,
+              "legendFormat": "404",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status=\"422\"}[5m])) / sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[5m]))",
+              "hide": false,
+              "legendFormat": "422",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\", status=\"500\"}[5m])) / sum(rate(http_server_requests_seconds_count{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", uri!=\"/actuator/prometheus\"}[5m]))",
+              "hide": false,
+              "legendFormat": "500",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "ERROR RATE",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Conexões com o database em timeout",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 5
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 0,
+            "y": 9
+          },
+          "id": 14,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "increase(hikaricp_connections_timeout_total{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", pool=\"$pool\"}[1m])",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "DB CONNECTION TIMEOUT",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Pool de conexões JDBC",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-red"
+                  },
+                  {
+                    "color": "dark-green",
+                    "value": 10
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 4,
+            "y": 9
+          },
+          "id": 10,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "hikaricp_connections{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", pool=\"$pool\"}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "JDBC POOL CONECTIONS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Warnings e erros logados nas últimas 3 horas",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Errors"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Warnings"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "light-orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "lastNotNull",
+                "sum"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(logback_events_total{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", level=\"warn\"}[3h]))",
+              "legendFormat": "Warnings",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "sum(increase(logback_events_total{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", level=\"error\"}[3h]))",
+              "hide": false,
+              "legendFormat": "Errors",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "WARN & ERROR LOG",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+          },
+          "description": "Estado das conexões com o database",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [
+                "min",
+                "max",
+                "lastNotNull"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "hikaricp_connections_active{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", pool=\"$pool\"}",
+              "legendFormat": "Active",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "hikaricp_connections_idle{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", pool=\"$pool\"}",
+              "hide": false,
+              "legendFormat": "Idle",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+              },
+              "editorMode": "code",
+              "expr": "hikaricp_connections_pending{application=\"$application\", instance=\"$instance\", job=\"app-admin-do-catalogo\", pool=\"$pool\"}",
+              "hide": false,
+              "legendFormat": "Pending",
+              "range": true,
+              "refId": "C"
+            }
+          ],
+          "title": "CONNECTION STATE",
+          "type": "timeseries"
+        }
+      ],
+      "title": "API BASIC",
+      "type": "row"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+        },
+        "definition": "label_values(application)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "application",
+        "multi": false,
+        "name": "application",
+        "options": [],
+        "query": {
+          "query": "label_values(application)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+        },
+        "definition": "label_values(jvm_classes_loaded_classes {application = \"$application\"}, instance)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "instance",
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(jvm_classes_loaded_classes {application = \"$application\"}, instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+        },
+        "definition": "label_values(hikaricp_connections {instance = \"$instance\", application = \"$application\"}, pool)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "pool",
+        "multi": false,
+        "name": "pool",
+        "options": [],
+        "query": {
+          "query": "label_values(hikaricp_connections {instance = \"$instance\", application = \"$application\"}, pool)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS_ADMIN DO CATÁLOGO}"
+        },
+        "definition": "label_values(job)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "job",
+        "options": [],
+        "query": {
+          "query": "label_values(job)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "dashboard-admin-do-catalogo",
+  "uid": "5FN5QG24k",
+  "version": 17,
+  "weekStart": ""
+}

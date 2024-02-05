@@ -1,0 +1,147 @@
+version: '3.9'
+
+services:
+  elasticsearch-codeflix:
+    container_name: elasticsearch-admin-do-catalogo
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    ports:
+      - "9200:9200"
+    environment:
+      - node.name=elasticsearch-admin-do-catalogo
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.license.self_generated.type=basic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ../.docker/elasticsearch-admin-do-catalogo:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:9200/_cat/health?h=status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+
+  kibana-codeflix:
+    container_name: kibana-codeflix
+    image: docker.elastic.co/kibana/kibana:8.12.0
+#    image: docker.elastic.co/kibana/kibana:8.7.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-codeflix:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-codeflix:9200"]'
+    depends_on:
+      elasticsearch-codeflix:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+
+  apm-codeflix:
+    container_name: apm-codeflix
+#    image: docker.elastic.co/apm/apm-server:8.12.0
+    image: docker.elastic.co/apm/apm-server:7.17.9
+    ports:
+      - "8200:8200"
+    command:
+      - '-strict.perms=false'
+    restart: on-failure
+    volumes:
+      - ./apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:8200/healthcheck" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+
+  metricbeat-codeflix:
+    container_name: metricbeat-codeflix
+    image: docker.elastic.co/beats/metricbeat:8.12.0
+#    image: docker.elastic.co/beats/metricbeat:8.7.0
+    ports:
+      - "5066:5066"
+    command:
+      - '-strict.perms=false'
+    user: root
+    restart: on-failure
+    environment:
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - KIBANA_HOSTS=http://kibana-codeflix:5601
+      - LOGSTASH_HOSTS=http://logstash-codeflix:9600
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./beats/metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+    depends_on:
+      kibana-codeflix:
+        condition: service_healthy
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo-services
+      - monitoramento-codeflix
+
+  heartbeat-codeflix:
+    container_name: heartbeat-codeflix
+    image: docker.elastic.co/beats/heartbeat:8.12.0
+    environment:
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - KIBANA_HOSTS=http://kibana-codeflix:5601
+      - LOGSTASH_HOSTS=http://logstash-codeflix:9600
+    command:
+      - '-strict.perms=false'
+    volumes:
+      - ./beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
+    depends_on:
+      kibana-codeflix:
+        condition: service_healthy
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  logstash-codeflix:
+    container_name: logstash-codeflix
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - xpack.monitoring.enabled=false
+    depends_on:
+      elasticsearch-codeflix:
+        condition: service_healthy
+    ports:
+      - "5044:5044"
+      - "25826:25826"
+    networks:
+      - elasticsearch-codeflix
+
+networks:
+  elasticsearch-codeflix:
+    external: true
+  admin-do-catalogo:
+    external: true
+  admin-do-catalogo-services:
+    external: true
+  monitoramento-codeflix:
+    external: true
+  catalogo-de-videos:
+    external: true

@@ -1,0 +1,349 @@
+version: '3.9'
+
+services:
+  admin-do-catalogo:
+    container_name: admin-do-catalogo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lukinhasssss/admin-do-catalogo
+    ports:
+      - "8080:8080"
+    networks:
+      - adm_videos_network
+    restart: on-failure
+    depends_on:
+      postgres-admin-do-catalogo:
+        condition: service_healthy
+      rabbitmq-admin-do-catalogo:
+        condition: service_healthy
+      apm-admin-do-catalogo:
+        condition: service_started
+    env_file:
+      - .env
+    labels:
+      filebeat_collector: true
+
+#  nginx-admin-do-catalogo:
+#    container_name: nginx-admin-do-catalogo
+#    build: ./infrastructure/src/main/resources/nginx # dcu -d --build nginx-admin-do-catalogo
+#    ports:
+#      - '80:80'
+#    depends_on:
+#      - admin-do-catalogo
+#    networks:
+#      - adm_videos_network
+
+  postgres-admin-do-catalogo:
+    container_name: adm_videos_postgres
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    networks:
+      - adm_videos_network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+      POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    security_opt:
+      - seccomp:unconfined
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    #    volumes:
+    #      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq-admin-do-catalogo:
+    container_name: rabbitmq-admin-do-catalogo
+    image: rabbitmq:3-management
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=adm_videos
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - adm_videos_network
+
+  keycloak-admin-do-catalogo:
+    container_name: keycloak-admin-do-catalogo
+    image: quay.io/keycloak/keycloak:21.0.1
+    environment:
+      #      - DB_VENDOR=postgres
+      #      - DB_USER=keycloak
+      #      - DB_DATABASE=keycloak
+      #      - DB_PASSWORD=6jhVPaQWhgEMl0sXPnNmkLfS
+      #      - DB_PORT=5432
+      #      - DB_ADDR=keycloak_db
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "18080:8080"
+      - "18443:8443"
+      - "19990:9990"
+    command:
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+    networks:
+      - adm_videos_network
+    volumes:
+      - keycloak_data:/opt/keycloak/data/
+
+  #  keycloak_db:
+  #    image: postgres:latest
+  #    ports:
+  #      - "15432:15432"
+  #    environment:
+  #      - POSTGRES_DB=keycloak
+  #      - POSTGRES_USER=keycloak
+  #      - POSTGRES_PASSWORD=6jhVPaQWhgEMl0sXPnNmkLfS
+  #      - POSTGRES_ROOT_PASSWORD=qgZqZGdoe5loJ0OrZvq36LBr
+  #    volumes:
+  #      - keycloak_postgresql:/var/lib/postgresql
+  #      - keycloak_postgresql_data:/var/lib/postgresql/data
+
+  prometheus-admin-do-catalogo:
+    container_name: prometheus-admin-do-catalogo
+    image: prom/prometheus
+#    user: "1000" # use command 'id -u' for get user id
+    volumes:
+      - prometheus_data:/prometheus
+      - ./infrastructure/src/main/resources/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/src/main/resources/prometheus/alert_rules.yaml:/etc/prometheus/alert_rules.yaml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - adm_videos_network
+    restart: always
+
+  alertmanager-admin-do-catalogo:
+    container_name: alertmanager-admin-do-catalogo
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./infrastructure/src/main/resources/alertmanager/:/etc/alertmanager/:ro
+    networks:
+      - adm_videos_network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yaml'
+      - '--storage.path=/alertmanager'
+    depends_on:
+      - prometheus-admin-do-catalogo
+
+  grafana-admin-do-catalogo:
+    container_name: grafana-admin-do-catalogo
+    image: grafana/grafana
+#    user: "1000" # use command 'id -u' for get user id
+    depends_on:
+      - alertmanager-admin-do-catalogo
+    ports:
+      - "3000:3000"
+    networks:
+      - adm_videos_network
+    volumes:
+      - grafana_data:/var/lib/grafana
+#      - ./infrastructure/src/main/resources/grafana/provisioning/:/etc/grafana/provisioning/
+#    env_file:
+#      - ./grafana/config.monitoring
+    restart: always
+
+  ### START OF OPEN TELEMETRY CONTAINERS ###
+
+  collector-admin-do-catalogo:
+    container_name: collector-admin-do-catalogo
+    image: otel/opentelemetry-collector
+    volumes:
+      - ./infrastructure/src/main/resources/collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command:
+      - "--config=/etc/otel-collector-config.yaml"
+    ports:
+      - "1888:1888"   # pprof extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+    networks:
+      - adm_videos_network
+
+  jaeger-admin-do-catalogo:
+    container_name: jaeger-admin-do-catalogo
+    image: jaegertracing/opentelemetry-all-in-one
+    ports:
+      - "16686:16686"
+    networks:
+      - adm_videos_network
+    depends_on:
+      - collector-admin-do-catalogo
+
+  ### END OF OPEN TELEMETRY CONTAINERS ###
+
+  ### START OF ELASTIC STACK CONTAINERS ###
+
+  elasticsearch-admin-do-catalogo:
+    container_name: elasticsearch-admin-do-catalogo
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:9200/_cat/health?h=status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    environment:
+      - node.name=elasticsearch-admin-do-catalogo
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - adm_videos_network
+
+  kibana-admin-do-catalogo:
+    container_name: kibana-admin-do-catalogo
+    image: docker.elastic.co/kibana/kibana:8.7.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch-admin-do-catalogo:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-admin-do-catalogo:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-admin-do-catalogo:9200"]'
+    networks:
+      - adm_videos_network
+
+  metricbeat-admin-do-catalogo:
+    container_name: metricbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/metricbeat:8.7.0
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./infrastructure/src/main/resources/elasticstack/beats/metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+    command:
+      - '-strict.perms=false'
+    restart: on-failure
+    ports:
+      - "5066:5066"
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    networks:
+      - adm_videos_network
+
+  heartbeat-admin-do-catalogo:
+    container_name: heartbeat-admin-do-catalogo
+    image: docker.elastic.co/beats/heartbeat:8.7.0
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
+    command:
+      - '-strict.perms=false'
+    environment:
+      - setup.kibana.host=kibana-admin-do-catalogo:5601
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    networks:
+      - adm_videos_network
+
+  filebeat-admin-do-catalogo:
+    container_name: filebeat-admin-do-catalogo
+    image: docker.elastic.co/beats/filebeat:8.7.0
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro                                                     # Docker logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro                                                                 # Additional information about containers
+      - ./infrastructure/src/main/resources/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro  # Configuration file
+      - filebeat_data:/usr/share/filebeat/data:rw                                                                    # Persistence data
+    user: root                                                                                                       # Allow access to log files and docker.sock
+    environment:
+      ELASTICSEARCH_HOST: "http://elasticsearch-admin-do-catalogo:9200"
+    restart: on-failure
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    networks:
+      - adm_videos_network
+    command:
+      - '-strict.perms=false'
+
+  apm-admin-do-catalogo:
+    container_name: apm-admin-do-catalogo
+    image: docker.elastic.co/apm/apm-server:7.17.9
+    volumes:
+      - ./infrastructure/src/main/resources/elasticstack/apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
+    command:
+      - '-strict.perms=false'
+    ports:
+      - "8200:8200"
+    restart: on-failure
+    depends_on:
+      kibana-admin-do-catalogo:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:8200/healthcheck" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - adm_videos_network
+
+#  logstash-admin-do-catalogo:
+#    container_name: logstash-admin-do-catalogo
+#    image: docker.elastic.co/logstash/logstash:8.7.0
+#    volumes:
+#      - ./infrastructure/src/main/resources/elasticstack/logstash/pipeline:/usr/share/logstash/pipeline:ro
+#    environment:
+#      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+#      - ELASTICSEARCH_HOST=http://elasticsearch-admin-do-catalogo:9200
+#    ports:
+#      - "5044:5044"
+#      - "25826:25826"
+#    depends_on:
+#      - elasticsearch-admin-do-catalogo
+#    networks:
+#      - adm_videos_network
+
+  ### END OF ELASTIC STACK CONTAINERS ###
+
+networks:
+  adm_videos_network:
+
+volumes:
+#  postgres_data:
+  prometheus_data:
+  grafana_data:
+  elasticsearch_data:
+  filebeat_data:
+  keycloak_data:

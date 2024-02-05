@@ -17,7 +17,7 @@ class EventConfig {
     @Bean
     @VideoCreatedQueue
     @Profile(value = ["development"])
-    fun inMemoryVideoCreatedEventService(): EventService = InMemoryEventService()
+    fun videoCreatedInMemoryEventService(): EventService = InMemoryEventService()
 
     @Bean
     @VideoCreatedQueue

@@ -1,0 +1,27 @@
+heartbeat.monitors:
+  - type: http
+    schedule: '@every 5s'
+    urls:
+      - http://elasticsearch-codeflix:9200
+      - http://kibana-codeflix:5601
+      - http://admin-do-catalogo:8080/api
+      - http://catalogo-de-videos:8081/api
+
+  - type: icmp
+    schedule: '@every 5s'
+    hosts:
+      - elasticsearch-codeflix
+      - kibana-codeflix
+      - apm-codeflix
+      - metricbeat-codeflix
+
+processors:
+  - add_cloud_metadata: ~
+
+#output.logstash:
+#  hosts: 'logstash-codeflix:5044'
+
+output.elasticsearch:
+  hosts: 'elasticsearch-codeflix:9200'
+  username: 'elastic' # elasticsearch default user
+  password: 'changeme'  # elasticsearch default password

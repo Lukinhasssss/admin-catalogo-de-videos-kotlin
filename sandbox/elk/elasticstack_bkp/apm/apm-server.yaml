@@ -1,0 +1,23 @@
+apm-server:
+  host: "apm-admin-do-catalogo:8200"
+  rum:
+    enabled: true
+    source_mapping:
+      enabled: true
+      elasticsearch:
+        hosts: ["elasticsearch-admin-do-catalogo:9200"]
+        username: "elastic"
+        password: "changeme"
+        expiration: 5m
+      index_pattern: "apm-*-sourcemap*"
+  kibana:
+    enabled: true
+    host: "kibana-admin-do-catalogo:5601"
+output.elasticsearch:
+  hosts: ["elasticsearch-admin-do-catalogo:9200"]
+  username: 'elastic'
+  password: 'changeme'
+  enabled: true
+output.logstash:
+  hosts: ["logstash-admin-do-catalogo:5044"]
+  enabled: false
