@@ -1,8 +1,10 @@
 version: '3.9'
 
+name: services-admin-do-catalogo
+
 services:
-  postgres-admin-do-catalogo:
-    container_name: postgres-admin-do-catalogo
+  postgres_admin_do_catalogo:
+    container_name: postgres_admin_do_catalogo
     image: postgres:latest
     restart: unless-stopped
     ports:
@@ -11,10 +13,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER-username}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
       POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    command: postgres -c wal_level=logical # Serve para o kafka connect se conectar corretamente com o banco
     security_opt:
       - seccomp:unconfined
     volumes:
-      - ../.docker/postgresql:/var/lib/postgresql/data
+      - postgresql-admin-do-catalogo:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready -U lukinhasssss -d adm_videos" ]
       timeout: 45s
@@ -35,7 +38,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=123456
       - RABBITMQ_DEFAULT_VHOST=/
     volumes:
-      - ../.docker/rabbitmq:/var/lib/rabbitmq:rw
+      - rabbitmq-admin-do-catalogo:/var/lib/rabbitmq:rw
     healthcheck:
       test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
       interval: 5s
@@ -55,13 +58,20 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
-      #      - keycloak_data:/opt/keycloak/data/
-      - ../.docker/keycloak:/opt/keycloak/data/h2:rw
+      - keycloak-admin-do-catalogo:/opt/keycloak/data/
     command:
-#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
-      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+#      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
     networks:
       - admin-do-catalogo-services
+
+volumes:
+  postgresql-admin-do-catalogo:
+    external: true
+  rabbitmq-admin-do-catalogo:
+    external: true
+  keycloak-admin-do-catalogo:
+    external: true
 
 networks:
   admin-do-catalogo-services:

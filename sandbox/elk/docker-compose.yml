@@ -1,10 +1,11 @@
 version: '3.9'
 
+name: elasticstack-admin-do-catalogo
+
 services:
   elasticsearch-codeflix:
     container_name: elasticsearch-admin-do-catalogo
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-#    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
     ports:
       - "9200:9200"
     environment:
@@ -22,7 +23,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ../.docker/elasticsearch-admin-do-catalogo:/usr/share/elasticsearch/data
+      - elasticsearch-admin-do-catalogo:/usr/share/elasticsearch/data
     healthcheck:
       test: [ "CMD-SHELL", "curl --silent --fail http://localhost:9200/_cat/health?h=status" ]
       interval: 5s
@@ -133,6 +134,10 @@ services:
       - "25826:25826"
     networks:
       - elasticsearch-codeflix
+
+volumes:
+  elasticsearch-admin-do-catalogo:
+    external: true
 
 networks:
   elasticsearch-codeflix:
