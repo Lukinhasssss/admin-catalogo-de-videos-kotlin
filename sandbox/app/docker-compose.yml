@@ -1,5 +1,7 @@
 version: '3.9'
 
+name: app-admin-do-catalogo
+
 services:
   admin-do-catalogo:
     container_name: admin-do-catalogo
@@ -27,7 +29,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro                                                     # Docker logs
       - /var/run/docker.sock:/var/run/docker.sock:ro                                                                 # Additional information about containers
       - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro  # Configuration file
-      - ../.docker/filebeat:/usr/share/filebeat/data:rw                                                              # Persistence data
+      - filebeat-admin-do-catalogo:/usr/share/filebeat/data:rw                                                       # Persistence data
     user: root                                                                                                       # Allow access to log files and docker.sock
     environment:
       - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
@@ -39,6 +41,10 @@ services:
     networks:
       - admin-do-catalogo
       - elasticsearch-codeflix
+
+volumes:
+  filebeat-admin-do-catalogo:
+    external: true
 
 networks:
   admin-do-catalogo:

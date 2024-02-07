@@ -1,11 +1,11 @@
-printf "Criando as pastas com permissões...\n"
-sudo chown root app/filebeat/filebeat.yaml
-mkdir -m 777 .docker
-mkdir -m 777 .docker/postgresql
-mkdir -m 777 .docker/rabbitmq
-mkdir -m 777 .docker/keycloak
-mkdir -m 777 .docker/filebeat
-mkdir -m 777 .docker/elasticsearch-admin-do-catalogo
+printf "Criando os docker volumes...\n"
+docker volume create postgresql-admin-do-catalogo
+docker volume create rabbitmq-admin-do-catalogo
+docker volume create keycloak-admin-do-catalogo
+docker volume create grafana-data-codeflix
+docker volume create prometheus-data-codeflix
+docker volume create elasticsearch-admin-do-catalogo
+docker volume create filebeat-admin-do-catalogo
 
 # ----------------------------------------------------
 

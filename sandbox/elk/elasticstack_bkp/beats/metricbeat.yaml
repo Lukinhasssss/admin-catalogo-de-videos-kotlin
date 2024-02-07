@@ -18,7 +18,7 @@ metricbeat.modules:
   - module: postgresql
     metricsets: [ "database", "bgwriter", "activity" ]
     period: 10s
-    hosts: [ "postgres:////localhost:5432", "postgres://postgres-admin-do-catalogo:5432", "postgres://postgres-admin-do-catalogo:5432/adm_videos", "postgres-admin-do-catalogo:5432" ]
+    hosts: [ "postgres:////localhost:5432", "postgres://postgres_admin_do_catalogo:5432", "postgres://postgres_admin_do_catalogo:5432/adm_videos", "postgres_admin_do_catalogo:5432" ]
 
 output.elasticsearch:
   hosts: ["elasticsearch-admin-do-catalogo:9200"]

@@ -13,7 +13,7 @@ services:
       - adm_videos_network
     restart: on-failure
     depends_on:
-      postgres-admin-do-catalogo:
+      postgres_admin_do_catalogo:
         condition: service_healthy
       rabbitmq-admin-do-catalogo:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
 #    networks:
 #      - adm_videos_network
 
-  postgres-admin-do-catalogo:
+  postgres_admin_do_catalogo:
     container_name: adm_videos_postgres
     image: postgres:latest
     restart: unless-stopped
