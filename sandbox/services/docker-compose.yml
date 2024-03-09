@@ -50,6 +50,7 @@ services:
   keycloak-admin-do-catalogo:
     container_name: keycloak-admin-do-catalogo
     image: quay.io/keycloak/keycloak:21.0.1
+    hostname: keycloak.internal
     ports:
       - "8443:8080"
 #      - "18443:8443"
@@ -60,8 +61,8 @@ services:
     volumes:
       - keycloak-admin-do-catalogo:/opt/keycloak/data/
     command:
-      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
-#      - start-dev --hostname-url=http://keycloak-admin-do-catalogo:8080 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+      - start-dev --hostname-url=http://keycloak.internal:8443 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
     networks:
       - admin-do-catalogo-services
 
