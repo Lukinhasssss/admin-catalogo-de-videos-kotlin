@@ -1,7 +1,7 @@
 # To build and run:
 
 # build stage
-FROM gradle:8.5-jdk21-alpine AS builder
+FROM gradle:8.7-jdk21-alpine AS builder
 
 WORKDIR /app
 
