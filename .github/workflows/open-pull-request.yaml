@@ -1,0 +1,28 @@
+name: Open Pull Request
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - 'develop'
+
+jobs:
+  open_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: "${{ github.ref }}"
+          destination_branch: ${{ startsWith(github.ref, 'refs/heads/feature/') && 'develop' || 'main' }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Automated PR from ${{ env.BRANCH_NAME }}"
+          pr_body: "New changes to ${{ env.BRANCH_NAME }}. Check the files changed and merge if everything is ok."
+          pr_label: 'automated-pr'
