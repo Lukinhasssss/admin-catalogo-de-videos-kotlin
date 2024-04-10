@@ -49,6 +49,7 @@ server:
       io: 4 # Number of I/O threads to create for the worker. The default is derived from the number of available processors.
 
 spring:
+  threads.virtual.enabled: true # Habilita o uso de threads virtuais. https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.spring-application.thread-pool
   datasource:
     url: jdbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${postgres.username}
