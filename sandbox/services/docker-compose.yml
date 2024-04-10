@@ -49,7 +49,7 @@ services:
 
   keycloak-admin-do-catalogo:
     container_name: keycloak-admin-do-catalogo
-    image: quay.io/keycloak/keycloak:24.0.2
+    image: quay.io/keycloak/keycloak:latest
     hostname: keycloak.internal
     ports:
       - "8443:8080"
@@ -58,11 +58,32 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME=keycloak.internal
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres_keycloak_admin_do_catalogo:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
     volumes:
       - keycloak-admin-do-catalogo:/opt/keycloak/data/
     command:
 #      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
-      - start-dev --hostname-url=http://keycloak.internal:8443 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+#      - start-dev --hostname-url=http://keycloak.internal:8443 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+      - start-dev
+    networks:
+      - admin-do-catalogo-services
+
+  postgres_keycloak_admin_do_catalogo:
+    container_name: postgres_keycloak_admin_do_catalogo
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgresql-keycloak-admin-do-catalogo:/var/lib/postgresql/data
     networks:
       - admin-do-catalogo-services
 
@@ -73,6 +94,7 @@ volumes:
     external: true
   keycloak-admin-do-catalogo:
     external: true
+  postgresql-keycloak-admin-do-catalogo:
 
 networks:
   admin-do-catalogo-services:

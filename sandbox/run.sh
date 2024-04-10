@@ -25,5 +25,5 @@ docker compose -f services/docker-compose.yml up -d
 docker compose -f elk/docker-compose.yml up -d
 docker compose -f monitoramento/docker-compose.yml up -d
 docker compose -f open-telemetry/docker-compose.yml up -d
-docker compose -f app/docker-compose.yml up -d --build --force-recreate
-#docker compose -f app/docker-compose.yml up -d
+#docker compose -f app/docker-compose.yml up -d --build --force-recreate
+docker compose -f app/docker-compose.yml up -d
