@@ -5,6 +5,7 @@ import io.gatling.javaapi.core.CoreDsl.scenario
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
 import io.gatling.javaapi.http.HttpDsl.status
+import java.time.Duration
 
 class CategoryPerformanceTest : Simulation() {
 
@@ -72,8 +73,7 @@ class CategoryPerformanceTest : Simulation() {
     init {
         setUp(
             scenario.injectClosed(
-                constantConcurrentUsers(100).during(360)
-                // rampConcurrentUsers(10).to(20).during(10)
+                constantConcurrentUsers(100).during(Duration.ofMinutes(5))
             ).protocols(httpProtocol)
         )
 

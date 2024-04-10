@@ -1,7 +1,7 @@
 object Configuration {
-    const val TOKEN_URL = "http://localhost:18080/realms/codeflix/protocol/openid-connect/token"
+    const val TOKEN_URL = "http://keycloak.internal:8443/realms/codeflix/protocol/openid-connect/token"
     const val CLIENT_ID = "admin-do-catalogo"
-    const val CLIENT_SECRET = "aougNuf62ULKc1QSA8yeXDCy6VdJ6Bu3"
+    const val CLIENT_SECRET = "Td5scdSINqzhib0ket0UFUnvEPP6KAal"
     const val USERNAME = "lukinhasssss"
     const val PASSWORD = "123456"
     const val GRANT_TYPE = "password"
