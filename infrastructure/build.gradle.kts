@@ -15,6 +15,12 @@ plugins {
     kotlin("plugin.jpa") version Version.KOTLIN
 }
 
+buildscript {
+    dependencies {
+        classpath("org.flywaydb:flyway-database-postgresql:${Version.FLYWAY}")
+    }
+}
+
 group = "com.lukinhasssss.admin.catalogo.infrastructure"
 version = "1.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_21
@@ -53,6 +59,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-database-postgresql:${Version.FLYWAY}")
     implementation("org.hibernate:hibernate-validator:8.0.1.Final")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -80,20 +87,9 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:${Version.TEST_CONTAINERS}")
     testImplementation("org.testcontainers:postgresql:${Version.TEST_CONTAINERS}")
     testImplementation("org.testcontainers:junit-jupiter:${Version.TEST_CONTAINERS}")
-    // testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
     testImplementation("com.github.dasniko:testcontainers-keycloak:3.3.0")
-    // testImplementation("org.keycloak:keycloak-core:21.1.1")
     testImplementation("org.keycloak:keycloak-core:24.0.2")
-    // testImplementation("org.jboss.resteasy:resteasy-core:6.2.8.Final")
-    // testImplementation("org.jboss.resteasy:resteasy-multipart-provider:6.2.8.Final")
 }
-
-// Define version for Spring Boot and Spring Dependency Management
-// dependencyManagement {
-//     imports {
-//         mavenBom("org.springframework.boot:spring-boot-dependencies:${Version.SPRING_BOOT}")
-//     }
-// }
 
 // Define version for plugins with vulnerabilities
 configurations.all {
@@ -151,6 +147,8 @@ flyway {
     url = System.getenv("FLYWAY_DB") ?: "jdbc:postgresql://localhost:5432/adm_videos"
     user = System.getenv("FLYWAY_USER") ?: "lukinhasssss"
     password = System.getenv("FLYWAY_PASSWORD") ?: "348t7y30549g4qptbq4rtbq4b5rq3rvq34rfq3784yq23847yqor78hvgoreiuvn"
+
+    locations = arrayOf("classpath:db/migration/main")
 
     cleanDisabled = false
 }

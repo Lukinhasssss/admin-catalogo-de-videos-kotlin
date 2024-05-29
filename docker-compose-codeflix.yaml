@@ -1,0 +1,335 @@
+name: codeflix
+
+services:
+  ### START OF KEYCLOAK CONTAINERS ###
+  keycloak-codeflix:
+    container_name: keycloak-codeflix
+    image: quay.io/keycloak/keycloak:latest
+    hostname: keycloak.internal
+    ports:
+      - "8443:8080"
+#      - "18443:8443"
+#      - "19990:9990"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME=keycloak.internal
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres_keycloak_codeflix:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+    volumes:
+      - keycloak-codeflix:/opt/keycloak/data/
+    command:
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+#      - start-dev --hostname-url=http://keycloak.internal:8443 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+      - start-dev
+    networks:
+      - keycloak-codeflix
+
+  postgres_keycloak_codeflix:
+    container_name: postgres_keycloak_codeflix
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgresql-keycloak-codeflix:/var/lib/postgresql/data
+    networks:
+      - keycloak-codeflix
+  ### END OF KEYCLOAK CONTAINERS ###
+
+  ### START OF MONITORING CONTAINERS ###
+  prometheus-codeflix:
+    container_name: prometheus-codeflix
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    restart: always
+    volumes:
+      - ./sandbox/monitoramento/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./sandbox/monitoramento/prometheus/alert_rules.yaml:/etc/prometheus/alert_rules.yaml
+      - prometheus-data-codeflix:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - monitoramento-codeflix
+      - open-telemetry-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  alertmanager-codeflix:
+    container_name: alertmanager-codeflix
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    depends_on:
+      - prometheus-codeflix
+    restart: unless-stopped
+    volumes:
+      - ./sandbox/monitoramento/alertmanager/:/etc/alertmanager/:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yaml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - monitoramento-codeflix
+
+  grafana-codeflix:
+    container_name: grafana-codeflix
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus-codeflix
+    restart: always
+    volumes:
+      - grafana-data-codeflix:/var/lib/grafana
+    networks:
+      - monitoramento-codeflix
+  ### END OF MONITORING CONTAINERS ###
+
+  ### START OF OPEN TELEMETRY CONTAINERS ###
+  jaeger-codeflix:
+    container_name: jaeger-codeflix
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250:14250"
+    environment:
+      - COLLECTOR_OLTP_ENABLED=true
+    #      - METRICS_STORAGE_TYPE=prometheus
+    #      - PROMETHEUS_SERVER_URL=http://prometheus-codeflix:9090
+    networks:
+      - open-telemetry-codeflix
+      - monitoramento-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  zipkin-codeflix:
+    container_name: zipkin-codeflix
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+    networks:
+      - open-telemetry-codeflix
+      - monitoramento-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  otel-collector-codeflix:
+    container_name: otel-collector-codeflix
+    image: otel/opentelemetry-collector-contrib:latest
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "55679:55679" # zpages extension
+      - "4317:4317"   # otlp receiver
+    volumes:
+      - ./sandbox/open-telemetry/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    depends_on:
+      - jaeger-codeflix
+      - zipkin-codeflix
+    networks:
+      - open-telemetry-codeflix
+      - monitoramento-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+  ### END OF OPEN TELEMETRY CONTAINERS ###
+
+  ### START OF ELASTIC STACK CONTAINERS ###
+  elasticsearch-codeflix:
+    container_name: elasticsearch-codeflix
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    ports:
+      - "9200:9200"
+    environment:
+      - node.name=elasticsearch-codeflix
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.license.self_generated.type=basic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-codeflix:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:9200/_cat/health?h=status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  kibana-codeflix:
+    container_name: kibana-codeflix
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    #    image: docker.elastic.co/kibana/kibana:8.7.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-codeflix:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch-codeflix:9200"]'
+    depends_on:
+      elasticsearch-codeflix:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+
+  apm-codeflix:
+    container_name: apm-codeflix
+    image: docker.elastic.co/apm/apm-server:7.17.9
+#    image: docker.elastic.co/apm/apm-server:8.13.4
+    ports:
+      - "8200:8200"
+    command:
+      - '-strict.perms=false'
+    restart: on-failure
+    volumes:
+      - ./sandbox/elasticstack/apm/apm-server.yaml:/usr/share/apm-server/apm-server.yml
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail http://localhost:8200/healthcheck" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  metricbeat-codeflix:
+    container_name: metricbeat-codeflix
+    image: docker.elastic.co/beats/metricbeat:8.13.4
+    #    image: docker.elastic.co/beats/metricbeat:8.7.0
+    ports:
+      - "5066:5066"
+    command:
+      - '-strict.perms=false'
+    user: root
+    restart: on-failure
+    environment:
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - KIBANA_HOSTS=http://kibana-codeflix:5601
+      - LOGSTASH_HOSTS=http://logstash-codeflix:9600
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./sandbox/elasticstack/beats/metricbeat.yaml:/usr/share/metricbeat/metricbeat.yml
+    depends_on:
+      kibana-codeflix:
+        condition: service_healthy
+    networks:
+      - elasticsearch-codeflix
+      - monitoramento-codeflix
+      - postgresql-admin-do-catalogo
+
+  heartbeat-codeflix:
+    container_name: heartbeat-codeflix
+    image: docker.elastic.co/beats/heartbeat:8.13.4
+    environment:
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - KIBANA_HOSTS=http://kibana-codeflix:5601
+      - LOGSTASH_HOSTS=http://logstash-codeflix:9600
+    command:
+      - '-strict.perms=false'
+    volumes:
+      - ./sandbox/elasticstack/beats/heartbeat.yaml:/usr/share/heartbeat/heartbeat.yml
+    depends_on:
+      kibana-codeflix:
+        condition: service_healthy
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+
+  filebeat-codeflix:
+    container_name: filebeat-codeflix
+    image: docker.elastic.co/beats/filebeat:8.13.4
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro      # Docker logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro                  # Additional information about containers
+      - ./sandbox/elasticstack/filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro  # Configuration file
+      - filebeat-codeflix:/usr/share/filebeat/data:rw                 # Persistence data
+    user: root                                                        # Allow access to log files and docker.sock
+    environment:
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - KIBANA_HOSTS=http://kibana-codeflix:5601
+      - LOGSTASH_HOSTS=http://logstash-codeflix:9600
+    restart: on-failure
+    command:
+      - '-strict.perms=false'
+    networks:
+      - admin-do-catalogo
+      - elasticsearch-codeflix
+
+  logstash-codeflix:
+    container_name: logstash-codeflix
+    image: docker.elastic.co/logstash/logstash:8.13.4
+    volumes:
+      - ./sandbox/elasticstack/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+      - ELASTIC_HOSTS=http://elasticsearch-codeflix:9200
+      - xpack.monitoring.enabled=false
+    depends_on:
+      elasticsearch-codeflix:
+        condition: service_healthy
+    ports:
+      - "5044:5044"
+      - "25826:25826"
+    networks:
+      - elasticsearch-codeflix
+      - admin-do-catalogo
+      - catalogo-de-videos
+  ### END OF ELASTIC STACK CONTAINERS ###
+
+networks:
+  admin-do-catalogo:
+    external: true
+  postgresql-admin-do-catalogo:
+    external: true
+  catalogo-de-videos:
+    external: true
+  keycloak-codeflix:
+    external: true
+  monitoramento-codeflix:
+    external: true
+  open-telemetry-codeflix:
+    external: true
+  elasticsearch-codeflix:
+    external: true
+
+volumes:
+  keycloak-codeflix:
+    external: true
+  postgresql-keycloak-codeflix:
+    external: true
+  prometheus-data-codeflix:
+    external: true
+  grafana-data-codeflix:
+    external: true
+  elasticsearch-codeflix:
+    external: true
+  filebeat-codeflix:
+    external: true

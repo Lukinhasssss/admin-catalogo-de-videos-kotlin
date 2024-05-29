@@ -16,3 +16,5 @@ spring:
       path: /h2
   jpa:
     show-sql: true
+  flyway:
+    locations: classpath:db/migration/test

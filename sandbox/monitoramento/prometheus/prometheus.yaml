@@ -23,8 +23,8 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus-codeflix:9090']
 
-  - job_name: 'otel-collector-codeflix-codeflix'
-    scrape_interval: 5s
+  - job_name: 'otel-collector-codeflix'
+    scrape_interval: 2s
     static_configs:
       - targets: ['otel-collector-codeflix:8888']
       - targets: ['otel-collector-codeflix:8889']

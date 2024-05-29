@@ -13,11 +13,13 @@ apm-server:
   kibana:
     enabled: true
     host: "kibana-codeflix:5601"
+
 output.elasticsearch:
   hosts: ["elasticsearch-codeflix:9200"]
   username: 'elastic'
   password: 'changeme'
   enabled: true
+
 output.logstash:
   hosts: ["logstash-codeflix:5044"]
   enabled: false
