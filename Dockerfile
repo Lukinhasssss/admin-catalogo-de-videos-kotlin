@@ -12,6 +12,9 @@ RUN gradle bootJar
 # build runtime
 FROM eclipse-temurin:21-jre-alpine
 
+# Install curl
+RUN apk add --no-cache curl
+
 ARG JAR_FILE=/app/build/libs/app*.jar
 
 COPY --from=builder $JAR_FILE /app.jar

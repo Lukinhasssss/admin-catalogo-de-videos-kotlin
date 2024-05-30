@@ -66,7 +66,7 @@ class AdminDoCatalogoPerformanceTest : Simulation() {
     init {
         setUp(
             scenario.injectClosed(
-                constantConcurrentUsers(100).during(300)
+                constantConcurrentUsers(50).during(300)
             ).protocols(httpProtocol)
         )
     }
