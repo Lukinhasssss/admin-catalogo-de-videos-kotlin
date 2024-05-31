@@ -24,6 +24,7 @@ services:
       - postgresql-admin-do-catalogo
       - rabbitmq-admin-do-catalogo
       - keycloak-codeflix
+      - elasticsearch-codeflix
 
   postgres_admin_do_catalogo:
     container_name: postgres_admin_do_catalogo
@@ -77,6 +78,8 @@ networks:
   rabbitmq-admin-do-catalogo:
     external: true
   keycloak-codeflix:
+    external: true
+  elasticsearch-codeflix:
     external: true
 
 volumes:

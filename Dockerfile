@@ -38,6 +38,8 @@ ENTRYPOINT [ "java", \
              "-Delastic.apm.environment=codeflix", \
              "-javaagent:/opentelemetry-javaagent.jar", \
              "-Dotel.service.name=admin-do-catalogo", \
-             "-Dotel.exporter.otlp.endpoint=http://otel-collector-codeflix:4318", \
+             "-Dotel.exporter.otlp.endpoint=http://jaeger-codeflix:4318", \
+             "-Dotel.trace.exporter=zipkin", \
+             "-Dotel.trace.exporter.zipkin.endpoint=http://jaeger-codeflix:9411/api/v2/spans", \
              "-jar", "/app.jar" \
 ]

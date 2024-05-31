@@ -64,7 +64,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus:1.12.4")
-    // implementation("ch.qos.logback:logback-classic:1.5.3")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.38.0")
     implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
     implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 

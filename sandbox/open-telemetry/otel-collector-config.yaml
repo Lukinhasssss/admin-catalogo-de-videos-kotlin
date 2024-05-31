@@ -2,33 +2,37 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+processors:
+  batch:
 
 exporters:
+  logging:
+    loglevel: info
+
+  otlp/jaeger:
+    endpoint: http://jaeger-codeflix:4317
+    tls:
+      insecure: true
+
   prometheus:
-    endpoint: "0.0.0.0:8889"
+    endpoint: 0.0.0.0:8889
     namespace: prometheus-codeflix
     const_labels:
       label1: value1
-  logging:
-    loglevel: debug
 
   zipkin:
-    endpoint: "http://zipkin-codeflix:9411/api/v2/spans"
+    endpoint: http://jaeger-codeflix:9411/api/v2/spans
     format: proto
-
-  otlp/jaeger:
-    endpoint: jaeger-codeflix:14250
-    tls:
-      insecure: true
 
 # Alternatively, use jaeger_thrift_http with the settings below. In this case
 # update the list of exporters on the traces pipeline.
 #
 #  jaeger_thrift_http:
 #    url: http://jaeger-codeflix:14268/api/traces
-
-processors:
-  batch:
 
 extensions:
   health_check:
@@ -47,4 +51,4 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, prometheus]
+      exporters: [logging, prometheus, otlp/jaeger]
