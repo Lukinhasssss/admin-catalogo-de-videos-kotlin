@@ -1,0 +1,101 @@
+version: '3.9'
+
+name: services-admin-do-catalogo
+
+services:
+  postgres_admin_do_catalogo:
+    container_name: postgres_admin_do_catalogo
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+      POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    command: postgres -c wal_level=logical # Serve para o kafka connect se conectar corretamente com o banco
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - postgresql-admin-do-catalogo:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready -U lukinhasssss -d adm_videos" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    networks:
+      - admin-do-catalogo-services
+
+  rabbitmq-admin-do-catalogo:
+    container_name: rabbitmq-admin-do-catalogo
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=adm_videos
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq-admin-do-catalogo:/var/lib/rabbitmq:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - admin-do-catalogo-services
+
+  keycloak-admin-do-catalogo:
+    container_name: keycloak-admin-do-catalogo
+    image: quay.io/keycloak/keycloak:latest
+    hostname: keycloak.internal
+    ports:
+      - "8443:8080"
+#      - "18443:8443"
+#      - "19990:9990"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME=keycloak.internal
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres_keycloak_admin_do_catalogo:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+    volumes:
+      - keycloak-admin-do-catalogo:/opt/keycloak/data/
+    command:
+#      - start-dev # Deve ser utilizado quando a aplicação estiver rodando fora de um container
+#      - start-dev --hostname-url=http://keycloak.internal:8443 # Deve ser utilizado quando a aplicação estiver rodando dentro de um container
+      - start-dev
+    networks:
+      - admin-do-catalogo-services
+
+  postgres_keycloak_admin_do_catalogo:
+    container_name: postgres_keycloak_admin_do_catalogo
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgresql-keycloak-admin-do-catalogo:/var/lib/postgresql/data
+    networks:
+      - admin-do-catalogo-services
+
+volumes:
+  postgresql-admin-do-catalogo:
+    external: true
+  rabbitmq-admin-do-catalogo:
+    external: true
+  keycloak-admin-do-catalogo:
+    external: true
+  postgresql-keycloak-admin-do-catalogo:
+
+networks:
+  admin-do-catalogo-services:
+    external: true

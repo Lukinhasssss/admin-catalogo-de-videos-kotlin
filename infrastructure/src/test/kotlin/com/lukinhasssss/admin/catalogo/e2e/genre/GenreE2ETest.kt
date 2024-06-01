@@ -33,7 +33,7 @@ class GenreE2ETest : MockDsl, KeycloakTestContainers {
 
     companion object {
         @Container
-        val POSTGRESQL_CONTAINER: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:alpine")
+        val POSTGRESQL_CONTAINER: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:latest")
             .withUsername("username")
             .withPassword("password")
             .withDatabaseName("adm_videos")

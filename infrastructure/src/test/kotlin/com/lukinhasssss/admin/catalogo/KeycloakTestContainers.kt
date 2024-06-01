@@ -23,7 +23,7 @@ interface KeycloakTestContainers {
 
         @Container
         var keycloak: KeycloakContainer =
-            KeycloakContainer("quay.io/keycloak/keycloak:21.0.1")
+            KeycloakContainer("quay.io/keycloak/keycloak:24.0.2")
                 .withRealmImportFile("/keycloak/realm-export.json")
 
         init {
@@ -41,7 +41,7 @@ interface KeycloakTestContainers {
     }
 
     fun getAccessToken(): String {
-        val url = keycloak.authServerUrl.plus("realms/codeflix/protocol/openid-connect/token")
+        val url = keycloak.authServerUrl.plus("/realms/codeflix/protocol/openid-connect/token")
 
         var token = ""
 

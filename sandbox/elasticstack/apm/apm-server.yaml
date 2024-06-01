@@ -1,0 +1,25 @@
+apm-server:
+  host: "apm-codeflix:8200"
+  rum:
+    enabled: true
+    source_mapping:
+      enabled: true
+      elasticsearch:
+        hosts: ["elasticsearch-codeflix:9200"]
+        username: "elastic"
+        password: "changeme"
+        expiration: 5m
+      index_pattern: "apm-*-sourcemap*"
+  kibana:
+    enabled: true
+    host: "kibana-codeflix:5601"
+
+output.elasticsearch:
+  hosts: ["elasticsearch-codeflix:9200"]
+  username: 'elastic'
+  password: 'changeme'
+  enabled: true
+
+output.logstash:
+  hosts: ["logstash-codeflix:5044"]
+  enabled: false

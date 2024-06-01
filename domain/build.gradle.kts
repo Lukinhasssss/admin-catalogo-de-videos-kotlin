@@ -17,6 +17,34 @@ dependencies {
     testImplementation("io.github.serpro69:kotlin-faker:1.13.0")
 }
 
+// Define version for plugins with vulnerabilities
+configurations.all {
+    resolutionStrategy {
+        // failOnVersionConflict()
+
+        eachDependency {
+            if (requested.name == "kotlin-reflect") {
+                useVersion(Version.KOTLIN)
+            }
+            if (requested.name == "kotlin-stdlib") {
+                useVersion(Version.KOTLIN)
+            }
+            if (requested.name == "kotlin-stdlib-jdk7") {
+                useVersion(Version.KOTLIN)
+            }
+            if (requested.name == "kotlin-stdlib-jdk8") {
+                useVersion(Version.KOTLIN)
+            }
+            if (requested.name.startsWith("junit-jupiter")) {
+                useVersion("5.9.2")
+            }
+            if (requested.name == "slf4j-api") {
+                useVersion("2.0.0")
+            }
+        }
+    }
+}
+
 configurations {
     create("testClasses") {
         extendsFrom(testImplementation.get())
