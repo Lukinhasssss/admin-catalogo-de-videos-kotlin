@@ -8,7 +8,7 @@ amqp:
 
 keycloak:
   realm: codeflix
-  host: http://localhost:18080
+  host: http://keycloak.internal:8443
 
 postgres:
   url: localhost:5432

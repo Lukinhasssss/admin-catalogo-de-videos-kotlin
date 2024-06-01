@@ -1,0 +1,89 @@
+name: admin-do-catalogo
+
+services:
+  admin-do-catalogo:
+    container_name: admin-do-catalogo
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    image: lukinhasssss/admin-do-catalogo
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+#      postgres_admin_do_catalogo:
+#        condition: service_healthy
+      rabbitmq-admin-do-catalogo:
+        condition: service_healthy
+    env_file:
+      - .env
+    labels:
+      filebeat_collector: true
+    networks:
+      - admin-do-catalogo
+      - postgresql-admin-do-catalogo
+      - rabbitmq-admin-do-catalogo
+      - keycloak-codeflix
+      - elasticsearch-codeflix
+
+  postgres_admin_do_catalogo:
+    container_name: postgres_admin_do_catalogo
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-password}
+      POSTGRES_DB: ${POSTGRES_DB-adm_videos}
+    command: postgres -c wal_level=logical # Serve para o kafka connect se conectar corretamente com o banco
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - postgresql-admin-do-catalogo:/var/lib/postgresql/data
+#    healthcheck:
+#      test: [ "CMD", "pg_isready -U lukinhasssss -d adm_videos" ]
+#      timeout: 45s
+#      interval: 10s
+#      retries: 10
+    networks:
+      - postgresql-admin-do-catalogo
+
+  rabbitmq-admin-do-catalogo:
+    container_name: rabbitmq-admin-do-catalogo
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=adm_videos
+      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq-admin-do-catalogo:/var/lib/rabbitmq:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - rabbitmq-admin-do-catalogo
+
+networks:
+  admin-do-catalogo:
+    external: true
+  postgresql-admin-do-catalogo:
+    external: true
+  rabbitmq-admin-do-catalogo:
+    external: true
+  keycloak-codeflix:
+    external: true
+  elasticsearch-codeflix:
+    external: true
+
+volumes:
+  postgresql-admin-do-catalogo:
+    external: true
+  rabbitmq-admin-do-catalogo:
+    external: true

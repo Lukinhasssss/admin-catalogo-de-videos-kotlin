@@ -49,6 +49,7 @@ server:
       io: 4 # Number of I/O threads to create for the worker. The default is derived from the number of available processors.
 
 spring:
+  threads.virtual.enabled: true # Habilita o uso de threads virtuais. https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.spring-application.thread-pool
   datasource:
     url: jdbc:postgresql://${postgres.url}/${postgres.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${postgres.username}
@@ -76,6 +77,8 @@ spring:
       "[hibernate.connection.provider_disables_autocommit]": true
       # Para aumentar a performance ao máximo, desabilitamos o auto-commit e o open-in-view.
       # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
+  flyway:
+    locations: classpath:db/migration/main
   rabbitmq:
     dynamic: ${amqp.admin.auto-create}
     host: ${amqp.host}
@@ -86,8 +89,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${keycloak.host}/realms/${keycloak.realm}/protocol/openid-connect/certs
           issuer-uri: ${keycloak.host}/realms/${keycloak.realm}
+          jwk-set-uri: ${keycloak.host}/realms/${keycloak.realm}/protocol/openid-connect/certs
   servlet:
     multipart:
       max-file-size: 10GB
